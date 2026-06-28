@@ -1,0 +1,20 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+<div class="frame">
+  <div class="head">
+    {% if d.eyebrow %}<div data-ppt="text" class="kicker">{{ d.eyebrow }}</div>{% endif %}
+    <div data-ppt="text" class="h-title">{{ d.title }}</div>
+  </div>
+  <div data-ppt="rect" class="head-rule"></div>
+  <div class="body bullets-body">
+    <div class="bullets">
+      {% for b in d.bullets %}
+      <div class="brow">
+        <div data-ppt="rect" class="bmark"></div>
+        <div data-ppt="text" class="btext {{ 'em' if b.emphasis else '' }}">{{ b.text }}</div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

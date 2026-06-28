@@ -1,0 +1,23 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+<div class="frame">
+  <div class="head">
+    {% if d.eyebrow %}<div data-ppt="text" class="kicker">{{ d.eyebrow }}</div>{% endif %}
+    <div data-ppt="text" class="h-title">{{ d.title }}</div>
+  </div>
+  <div data-ppt="rect" class="head-rule"></div>
+  <div class="body toc-body">
+    <div class="toc-grid">
+      {% for it in d['items'] %}
+      <div class="toc-item">
+        <div class="toc-row">
+          <div data-ppt="text" class="toc-num">{{ '%02d' % loop.index }}</div>
+          <div data-ppt="text" class="toc-title">{{ it.title }}</div>
+        </div>
+        <div data-ppt="rect" class="toc-line"></div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}
