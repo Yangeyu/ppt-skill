@@ -1,0 +1,23 @@
+{% extends "base.html.j2" %}
+{% import "_deco.html.j2" as deco %}
+{% block bg %}{% endblock %}
+{% block frame %}
+<!-- full sage; serif statement with floral punctuation -->
+<div data-ppt="rect" data-ppt-z="-30" style="position:absolute;inset:0;background:{{ colors['sage'] }};"></div>
+{{ deco.flower(70, 60, 0.9, colors['sage-deep']) }}
+{{ deco.umbel(1120, 440, 0.85, colors['sage-deep'], mirror=True) }}
+{{ deco.blobline(1050, 90, 130, colors['hairline-2']) }}
+<div class="m-quote-frame">
+  <div data-ppt="text" data-ppt-deco class="m-quote-mark">“</div>
+  <div data-ppt="text" class="m-quote-text">{{ d.quote }}</div>
+  <div style="display:flex;align-items:center;gap:14px;margin-top:34px;">
+    <div data-ppt="rect" style="width:40px;height:2px;background:{{ colors['accent-2'] }};"></div>
+    {% if d.attribution %}<div data-ppt="text" class="m-quote-attr">{{ d.attribution }}</div>{% endif %}
+  </div>
+</div>
+<div data-ppt="rect" style="position:absolute;left:110px;right:110px;bottom:64px;height:1px;background:{{ colors['hairline-2'] }};"></div>
+<div style="position:absolute;left:110px;right:110px;bottom:36px;display:flex;justify-content:space-between;">
+  <div data-ppt="text" style="font-family:var(--font-latin);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:{{ colors['on-sage-muted'] }};">QUOTE</div>
+  <div data-ppt="text" style="font-family:var(--font-latin);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:{{ colors['on-sage-muted'] }};">MORANDI · FRESH</div>
+</div>
+{% endblock %}

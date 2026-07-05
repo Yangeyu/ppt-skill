@@ -1,0 +1,24 @@
+{% extends "base.html.j2" %}
+{% import "_deco.html.j2" as deco %}
+{% block bg %}{% endblock %}
+{% block frame %}
+<!-- cover's mirror: sage field, cream plate, pebbles left / type right -->
+<div data-ppt="rect" data-ppt-z="-30" style="position:absolute;inset:0;background:{{ colors['sage'] }};"></div>
+{{ deco.umbel(60, 50, 0.8, colors['sage-deep']) }}
+{{ deco.flower(1160, 60, 0.75, colors['sage-deep'], mirror=True) }}
+{{ deco.flower(50, 480, 0.75, colors['sage-deep']) }}
+<div data-ppt="rect" data-ppt-z="-10" style="position:absolute;left:96px;top:96px;right:96px;bottom:96px;background:{{ colors['paper'] }};"></div>
+<!-- pebble trio, left of the plate -->
+{{ deco.blob(210, 230, 180, colors['accent']) }}
+{{ deco.blob(330, 310, 140, colors['accent-2'], rot=180) }}
+{{ deco.umbel(280, 200, 1.0, colors['ink'], z=-2) }}
+<!-- type block, right -->
+<div style="position:absolute;left:620px;right:170px;top:96px;bottom:96px;display:flex;flex-direction:column;justify-content:center;">
+  <div data-ppt="text" style="font-family:var(--font-latin);font-size:12px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;color:{{ colors['terra-deep'] }};">THANKS FOR WATCHING</div>
+  <div data-ppt="text" style="font-family:var(--font-display);font-weight:400;font-size:58px;line-height:1.2;color:{{ colors['ink'] }};margin-top:18px;white-space:normal;">{{ d.title }}</div>
+  {% if d.subtitle %}<div data-ppt="text" style="font-family:var(--font-body);font-size:14.5px;line-height:1.7;color:{{ colors['secondary'] }};margin-top:20px;white-space:normal;">{{ d.subtitle }}</div>{% endif %}
+  <div data-ppt="rect" style="width:100%;height:1px;background:{{ colors['hairline'] }};margin-top:30px;"></div>
+  {% if d.contact %}<div data-ppt="text" style="font-family:var(--font-latin);font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:{{ colors['secondary'] }};margin-top:16px;">{{ d.contact }}</div>{% endif %}
+  <div data-ppt="text" style="font-family:var(--font-latin);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:{{ colors['muted'] }};margin-top:10px;">MORANDI · FRESH SERIES · SOFT SAGE</div>
+</div>
+{% endblock %}

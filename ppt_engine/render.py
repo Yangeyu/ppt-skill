@@ -19,7 +19,7 @@ ALIGN = {"left": PP_ALIGN.LEFT, "center": PP_ALIGN.CENTER, "right": PP_ALIGN.RIG
          "start": PP_ALIGN.LEFT, "end": PP_ALIGN.RIGHT, "justify": PP_ALIGN.JUSTIFY}
 # families that carry CJK glyphs — used to split a:latin (Latin face) from
 # a:ea (East-Asian face) so a heavy Latin display + a CJK black can coexist in one run
-CJK_FAMILIES = {"Noto Sans SC", "Noto Serif SC", "Noto Sans SC Black", "Noto Sans SC Light",
+CJK_FAMILIES = {"Noto Sans SC", "Noto Serif SC", "Noto Serif SC Medium", "Noto Sans SC Black", "Noto Sans SC Light",
                 "PingFang SC", "Songti SC", "STSong", "Hiragino Sans GB", "Microsoft YaHei", "SimHei"}
 CHART_T = {"column": XL_CHART_TYPE.COLUMN_CLUSTERED, "bar": XL_CHART_TYPE.BAR_CLUSTERED,
            "line": XL_CHART_TYPE.LINE_MARKERS}

@@ -1,0 +1,64 @@
+{# hand-drawn deco assets — the template's signature line florals & pebble blobs.
+   All emitted as data-ppt="icon" (rasterized by the browser) + data-ppt-deco
+   (invisible to the sparse selfcheck). Coordinates are fixed: decks stay
+   deterministic across rebuilds. #}
+
+{% macro flower(x, y, s, color, mirror=False, z=-6) %}
+{# single-line poppy: curved stem, looped petal knot, one leaf + one bud branch.
+   z: keep -6 on the sage field; raise above the plate (> -5) when drawn on a card #}
+<div data-ppt="icon" data-ppt-deco data-ppt-z="{{ z }}" style="position:absolute;left:{{ x }}px;top:{{ y }}px;width:{{ (110 * s)|round|int }}px;height:{{ (200 * s)|round|int }}px;{% if mirror %}transform:scaleX(-1);{% endif %}">
+<svg width="100%" height="100%" viewBox="0 0 110 200" fill="none" stroke="{{ color }}" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M55 196 C61 152 45 118 54 88"/>
+  <path d="M54 88 C26 80 22 48 42 38 C34 18 58 8 66 28 C90 18 98 48 76 60 C92 78 70 98 54 88 Z"/>
+  <path d="M60 58 C66 48 64 38 56 32"/>
+  <path d="M57 148 C74 138 84 122 82 104"/>
+  <path d="M51 168 C35 162 25 148 27 134"/>
+</svg></div>
+{% endmacro %}
+
+{% macro umbel(x, y, s, color, mirror=False, z=-6) %}
+{# dill / fennel umbel: straight-ish stem, radial spokes tipped with seeds #}
+<div data-ppt="icon" data-ppt-deco data-ppt-z="{{ z }}" style="position:absolute;left:{{ x }}px;top:{{ y }}px;width:{{ (120 * s)|round|int }}px;height:{{ (210 * s)|round|int }}px;{% if mirror %}transform:scaleX(-1);{% endif %}">
+<svg width="100%" height="100%" viewBox="0 0 120 210" fill="none" stroke="{{ color }}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M60 206 C55 162 66 132 60 102"/>
+  <path d="M60 102 C46 88 32 74 24 56"/><circle cx="22" cy="52" r="2.6"/>
+  <path d="M60 102 C52 82 46 62 44 40"/><circle cx="43" cy="36" r="2.6"/>
+  <path d="M60 102 C60 80 62 56 62 34"/><circle cx="62" cy="30" r="2.6"/>
+  <path d="M60 102 C70 82 78 62 84 42"/><circle cx="85" cy="38" r="2.6"/>
+  <path d="M60 102 C74 90 88 76 98 62"/><circle cx="100" cy="58" r="2.6"/>
+  <path d="M60 102 C50 96 40 90 32 80"/><circle cx="30" cy="77" r="2.2"/>
+  <path d="M60 102 C70 96 82 92 92 84"/><circle cx="95" cy="82" r="2.2"/>
+  <path d="M58 156 C44 150 36 140 36 128"/>
+</svg></div>
+{% endmacro %}
+
+{% macro blob(x, y, w, color, rot=0) %}
+{# solid organic pebble (cover motif) — rot only 0/180 to stay in the box #}
+<div data-ppt="icon" data-ppt-deco data-ppt-z="-4" style="position:absolute;left:{{ x }}px;top:{{ y }}px;width:{{ w }}px;height:{{ (w * 0.92)|round|int }}px;{% if rot %}transform:rotate({{ rot }}deg);{% endif %}">
+<svg width="100%" height="100%" viewBox="0 0 160 148" fill="{{ color }}">
+  <path d="M22 62 C18 26 56 6 94 12 C136 19 154 52 146 90 C138 126 96 144 60 134 C28 125 26 96 22 62 Z"/>
+</svg></div>
+{% endmacro %}
+
+{% macro blobline(x, y, w, color, rot=0, z=-3) %}
+{# stroke-only pebble outline, slightly different silhouette #}
+<div data-ppt="icon" data-ppt-deco data-ppt-z="{{ z }}" style="position:absolute;left:{{ x }}px;top:{{ y }}px;width:{{ w }}px;height:{{ (w * 0.9)|round|int }}px;{% if rot %}transform:rotate({{ rot }}deg);{% endif %}">
+<svg width="100%" height="100%" viewBox="0 0 160 144" fill="none" stroke="{{ color }}" stroke-width="1.6">
+  <path d="M28 70 C20 34 50 10 88 10 C128 10 152 40 148 78 C144 116 108 140 68 134 C36 129 34 100 28 70 Z"/>
+</svg></div>
+{% endmacro %}
+
+{% macro node(size, ring, fill, extra_style='') %}
+{# soft circle node (timeline / process), flows with the layout; circles must
+   rasterize — rect prims stay square in pptx #}
+<div data-ppt="icon" style="width:{{ size }}px;height:{{ size }}px;flex:0 0 auto;{{ extra_style }}">
+<svg width="100%" height="100%" viewBox="0 0 20 20" fill="none">
+  <circle cx="10" cy="10" r="8.4" stroke="{{ ring }}" stroke-width="1.8"/>
+  <circle cx="10" cy="10" r="3.6" fill="{{ fill }}"/>
+</svg></div>
+{% endmacro %}
+
+{% macro leafmark(color) %}
+{# tiny leaf bullet marker (inline flex item, not absolute) #}
+<svg width="13" height="13" viewBox="0 0 13 13" fill="{{ color }}"><path d="M1.5 11.5 C1.5 5.5 5.5 1.5 11.5 1.5 C11.5 7.5 7.5 11.5 1.5 11.5 Z"/></svg>
+{% endmacro %}

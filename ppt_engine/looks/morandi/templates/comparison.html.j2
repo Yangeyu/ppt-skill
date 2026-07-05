@@ -1,0 +1,28 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+<div class="m-frame">
+  {% include "_head.html.j2" %}
+  <div class="m-body">
+    <div class="m-cmp">
+      {% for side in [d.left, d.right] %}
+      {% set strong = loop.first %}
+      <div class="m-cmp-cell">
+        <div data-ppt="rect" class="m-cmp-card" style="background:{{ colors['accent'] if strong else colors['card'] }};">
+          <div data-ppt="text" class="m-cmp-h" style="color:{{ colors['on-accent'] if strong else colors['ink'] }};">{{ side.heading }}</div>
+          <div data-ppt="rect" class="m-cmp-rule" style="background:{{ colors['accent-2'] if strong else colors['sage'] }};"></div>
+          <div class="m-cmp-points">
+            {% for p in side.points %}
+            <div class="m-cmp-row">
+              <div data-ppt="rect" class="m-cmp-sq" style="background:{{ colors['accent-2'] if strong else colors['sage'] }};"></div>
+              <div data-ppt="text" class="m-cmp-text" style="color:{{ colors['on-accent'] if strong else colors['secondary'] }};">{{ p }}</div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% include "_foot.html.j2" %}
+</div>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends "base.html.j2" %}
+{% import "_deco.html.j2" as deco %}
+{% block frame %}
+<div class="m-frame">
+  {% include "_head.html.j2" %}
+  <div class="m-body">
+    <div class="m-vlist">
+      {% for b in d.bullets %}
+      <div class="m-vrow">
+        {% if not loop.first %}<div data-ppt="rect" class="m-vhair"></div>{% endif %}
+        <div data-ppt="icon" class="m-vmark">{{ deco.leafmark(colors['terra-deep'] if b.emphasis else colors['accent']) }}</div>
+        <div data-ppt="text" class="m-vtext {{ 'em' if b.emphasis else '' }}">{{ b.text }}</div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% include "_foot.html.j2" %}
+</div>
+{% endblock %}

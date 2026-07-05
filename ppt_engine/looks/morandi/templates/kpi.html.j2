@@ -1,0 +1,24 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+<div class="m-frame">
+  {% include "_head.html.j2" %}
+  <div class="m-body">
+    <div class="m-ledger">
+      {% for s in d.stats %}
+      <div class="m-led-row">
+        {% if not loop.first %}<div data-ppt="rect" class="m-led-hair"></div>{% endif %}
+        <div data-ppt="text" class="m-led-val" style="color:{{ colors['terra-deep'] if loop.last else colors['accent'] }};">{{ s.value }}</div>
+        <div data-ppt="text" class="m-led-label">{{ s.label }}</div>
+        {% if s.delta %}
+        <div class="m-led-delta-wrap" style="position:relative;">
+          <div data-ppt="rect" style="position:absolute;inset:0;background:{{ colors['accent'] if s.delta_dir == 'up' else (colors['terra-deep'] if s.delta_dir == 'down' else colors['hairline-2']) }};"></div>
+          <div data-ppt="text" class="m-led-delta" style="position:relative;color:{{ colors['ink'] if s.delta_dir == 'flat' else colors['on-accent'] }};">{{ s.delta }}</div>
+        </div>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% include "_foot.html.j2" %}
+</div>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+<div class="m-frame">
+  {% include "_head.html.j2" %}
+  <div class="m-body">
+    <div class="m-toc">
+      {% for it in d['items'] %}
+      <div class="m-toc-item">
+        {% if not loop.first %}<div data-ppt="rect" class="m-toc-hair"></div>{% endif %}
+        <div class="m-toc-row">
+          <div data-ppt="rect" class="m-toc-numsq" style="background:{{ colors['accent-2'] if loop.last else colors['accent'] }};">
+            <div data-ppt="text" class="m-toc-num">{{ '%02d' % loop.index }}</div>
+          </div>
+          <div data-ppt="text" class="m-toc-title">{{ it.title }}</div>
+          {% if it.desc %}<div data-ppt="text" class="m-toc-desc">{{ it.desc }}</div>{% endif %}
+          {% if it.pages %}<div data-ppt="text" class="m-toc-pages">{{ it.pages }}</div>{% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% include "_foot.html.j2" %}
+</div>
+{% endblock %}

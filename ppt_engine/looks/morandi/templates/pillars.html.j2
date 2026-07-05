@@ -1,0 +1,39 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+<div class="m-frame">
+  {% include "_head.html.j2" %}
+  <div class="m-body">
+    <div class="m-pillars">
+      {% for col in d.columns %}
+      {# pricing-card columns (template slide 16): sage headers, deep green on the last #}
+      {% set strong = loop.last %}
+      <div class="m-pillar">
+        <div class="m-pillar-card">
+          <div class="m-phead">
+            <div data-ppt="rect" class="m-phead-bg" style="background:{{ colors['accent'] if strong else colors['sage'] }};"></div>
+            {% if col.tag %}<div data-ppt="text" class="m-ptag" style="color:{{ colors['on-accent-muted'] if strong else colors['on-sage-soft'] }};">{{ col.tag }}</div>{% endif %}
+            <div data-ppt="text" class="m-ph" style="color:{{ colors['on-accent'] if strong else colors['on-sage'] }};">{{ col.heading }}</div>
+          </div>
+          <div class="m-pbody">
+            <div data-ppt="rect" class="m-pbody-bg" style="background:{{ colors['card'] }};"></div>
+            <div class="m-ppoints">
+              {% for p in col.points %}
+              <div class="m-prow">
+                <div data-ppt="rect" class="m-psq" style="background:{{ colors['accent'] if strong else colors['sage'] }};"></div>
+                <div data-ppt="text" class="m-ptext">{{ p }}</div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+          <div class="m-pfoot">
+            <div data-ppt="rect" class="m-pfoot-bg" style="background:{{ colors['accent-2'] if strong else colors['paper-2'] }};"></div>
+            <div data-ppt="text" class="m-pnum" style="color:{{ colors['on-accent'] if strong else colors['muted'] }};">NO. {{ '%02d' % loop.index }}</div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% include "_foot.html.j2" %}
+</div>
+{% endblock %}

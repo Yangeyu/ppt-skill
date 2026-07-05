@@ -1,0 +1,36 @@
+{% extends "base.html.j2" %}
+{% import "_deco.html.j2" as deco %}
+{% block bg %}{% endblock %}
+{% block frame %}
+<!-- sage field scattered with line florals; centered cream card (template slide 1) -->
+<div data-ppt="rect" data-ppt-z="-30" style="position:absolute;inset:0;background:{{ colors['sage'] }};"></div>
+{{ deco.flower(52, 30, 0.85, colors['sage-deep']) }}
+{{ deco.umbel(1140, 60, 0.8, colors['sage-deep'], mirror=True) }}
+{{ deco.umbel(90, 470, 0.95, colors['sage-deep']) }}
+{{ deco.flower(1170, 470, 0.7, colors['sage-deep'], mirror=True) }}
+<div data-ppt="text" style="position:absolute;left:0;right:0;top:26px;text-align:center;font-family:var(--font-latin);font-size:9.5px;letter-spacing:.3em;text-transform:uppercase;color:{{ colors['on-sage-muted'] }};">CREATIVE TEMPLATE · MORANDI PALETTE</div>
+<!-- the cream plate -->
+<div data-ppt="rect" data-ppt-z="-10" style="position:absolute;left:96px;top:96px;right:96px;bottom:96px;background:{{ colors['paper'] }};"></div>
+<!-- pebble trio, right of centre -->
+{{ deco.blob(700, 210, 190, colors['accent-2']) }}
+{{ deco.blob(830, 280, 150, colors['accent'], rot=180) }}
+{{ deco.blobline(770, 190, 120, colors['muted']) }}
+{{ deco.flower(790, 200, 0.9, colors['ink'], z=-2) }}
+<!-- title block, left of the plate -->
+<div style="position:absolute;left:170px;top:236px;width:520px;">
+  {% if d.eyebrow %}
+  <div style="display:flex;align-items:center;gap:12px;">
+    <div data-ppt="rect" style="width:26px;height:3px;background:{{ colors['accent-2'] }};"></div>
+    <div data-ppt="text" style="font-family:var(--font-latin);font-size:12px;font-weight:700;letter-spacing:.26em;text-transform:uppercase;color:{{ colors['accent'] }};">{{ d.eyebrow }}</div>
+  </div>
+  {% endif %}
+  <div data-ppt="text" style="font-family:var(--font-display);font-weight:400;font-size:58px;line-height:1.18;color:{{ colors['ink'] }};margin-top:20px;white-space:normal;">{{ d.title }}</div>
+  {% if d.subtitle %}<div data-ppt="text" style="font-family:var(--font-body);font-size:14.5px;line-height:1.7;color:{{ colors['secondary'] }};margin-top:22px;max-width:470px;white-space:normal;">{{ d.subtitle }}</div>{% endif %}
+</div>
+<!-- plate footer -->
+<div data-ppt="rect" style="position:absolute;left:170px;right:170px;bottom:150px;height:1px;background:{{ colors['hairline'] }};"></div>
+<div style="position:absolute;left:170px;right:170px;bottom:118px;display:flex;justify-content:space-between;">
+  {% if d.footer %}<div data-ppt="text" style="font-family:var(--font-latin);font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:{{ colors['secondary'] }};">{{ d.footer }}</div>{% else %}<div></div>{% endif %}
+  <div data-ppt="text" style="font-family:var(--font-latin);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:{{ colors['muted'] }};">SOFT SAGE #9DA9A0</div>
+</div>
+{% endblock %}

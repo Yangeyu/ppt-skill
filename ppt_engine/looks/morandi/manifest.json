@@ -1,0 +1,48 @@
+{
+  "id": "morandi",
+  "name": "Morandi",
+  "colors": {
+    "bg-content": "#9DA9A0",
+    "sage": "#9DA9A0",
+    "sage-deep": "#7E897F",
+    "surface": "#F2F1EA",
+    "paper": "#F2F1EA",
+    "paper-2": "#EEECE1",
+    "card": "#FDFDFB",
+    "bg": "#183C32",
+    "ink": "#333A31",
+    "secondary": "#59615A",
+    "muted": "#8A8F85",
+    "hairline": "#DBD9CC",
+    "hairline-2": "#B7BEB2",
+    "primary": "#495141",
+    "accent": "#495141",
+    "primary-2": "#D0AE93",
+    "accent-2": "#D0AE93",
+    "terra-deep": "#B98F6E",
+    "on-accent": "#F7F6EF",
+    "on-accent-muted": "#C2C9BA",
+    "on-sage": "#FFFFFF",
+    "on-sage-soft": "#F0F2EC",
+    "on-sage-muted": "#E2E6DD",
+    "pos": "#495141",
+    "neg": "#B98F6E"
+  },
+  "font_vars": {
+    "font-display": "\"Montserrat SemiBold\", \"Noto Sans SC Black\", sans-serif",
+    "font-body": "\"Noto Sans SC\", \"PingFang SC\", sans-serif",
+    "font-latin": "\"Montserrat\", \"Noto Sans SC\", sans-serif",
+    "font-serif": "\"Noto Serif SC Medium\", \"Noto Sans SC\", serif"
+  },
+  "embed_fonts": ["Montserrat", "Montserrat SemiBold", "Noto Sans SC", "Noto Sans SC Black", "Noto Serif SC Medium"],
+  "major_font": "Noto Sans SC Black",
+  "minor_font": "Noto Sans SC",
+  "chart_palette": ["495141", "9DA9A0", "D0AE93", "737B72", "C2C9BA", "EEECE1"],
+  "fonts": {
+    "Montserrat": ["Montserrat-Regular.ttf", "Montserrat-Bold.ttf"],
+    "Montserrat SemiBold": ["Montserrat-Bold.ttf", "Montserrat-Bold.ttf"],
+    "Noto Sans SC": ["NotoSansSC-Regular.ttf", "NotoSansSC-Bold.ttf"],
+    "Noto Sans SC Black": ["NotoSansSC-Black.ttf", "NotoSansSC-Black.ttf"],
+    "Noto Serif SC Medium": ["NotoSerifSC-Medium.ttf", "NotoSerifSC-Medium.ttf"]
+  }
+}

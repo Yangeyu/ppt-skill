@@ -1,0 +1,26 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+<div class="m-frame">
+  {% include "_head.html.j2" %}
+  <div class="m-body">
+    <div class="m-cols">
+      <div data-ppt="rect" class="m-cols-vrule"></div>
+      {% for side in [d.left, d.right] %}
+      <div class="m-col">
+        <div data-ppt="rect" class="m-col-rule" style="background:{{ colors['accent'] if loop.first else colors['accent-2'] }};"></div>
+        <div data-ppt="text" class="m-col-h">{{ side.heading }}</div>
+        <div class="m-col-points">
+          {% for p in side.points %}
+          <div class="m-col-row">
+            <div data-ppt="rect" class="m-col-sq" style="background:{{ colors['accent'] if loop.index0 % 2 == 0 else colors['accent-2'] }};"></div>
+            <div data-ppt="text" class="m-col-text">{{ p }}</div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% include "_foot.html.j2" %}
+</div>
+{% endblock %}

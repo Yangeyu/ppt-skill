@@ -3,7 +3,7 @@
 {% set n = d.cards|length %}
 <div class="s-frame">
   {% include "_head.html.j2" %}
-  <div class="s-grid" {% if n <= 4 %}style="grid-template-columns:repeat({{ [n, 2]|max }}, 1fr);grid-template-rows:repeat({{ 1 if n <= 3 else 2 }}, 1fr);"{% endif %}>
+  <div class="s-grid" {% if n <= 4 %}style="grid-template-columns:repeat({{ n if n <= 3 else 2 }}, 1fr);grid-template-rows:repeat({{ 1 if n <= 3 else 2 }}, 1fr);"{% endif %}>
     {% for card in d.cards %}
     {# S16 discipline: grey cells, exactly ONE accent cell (the last) #}
     {% set on_accent = loop.last %}

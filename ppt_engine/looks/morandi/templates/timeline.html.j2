@@ -1,0 +1,23 @@
+{% extends "base.html.j2" %}
+{% import "_deco.html.j2" as deco %}
+{% block frame %}
+<div class="m-frame">
+  {% include "_head.html.j2" %}
+  <div class="m-body">
+    <div class="m-tl">
+      <div data-ppt="rect" class="m-tl-axis"></div>
+      <div class="m-tl-row">
+        {% for m in d.milestones %}
+        <div class="m-tl-item">
+          <div data-ppt="text" class="m-tl-year" style="color:{{ colors['terra-deep'] if loop.last else colors['accent'] }};">{{ m.year }}</div>
+          {{ deco.node(20, colors['terra-deep'] if loop.last else colors['accent'], colors['accent-2'] if loop.last else colors['sage'], 'margin-top:34px;transform:translateY(11px);') }}
+          <div data-ppt="text" class="m-tl-title">{{ m.title }}</div>
+          <div data-ppt="text" class="m-tl-desc">{{ m.desc }}</div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  {% include "_foot.html.j2" %}
+</div>
+{% endblock %}

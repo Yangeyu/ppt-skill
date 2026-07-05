@@ -1,0 +1,4 @@
+{
+  "_comment": "cross-field caps the generator must respect on top of the IR schema",
+  "toc_max_items": 6
+}
