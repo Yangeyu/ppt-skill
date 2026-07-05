@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<style>
+{% if fonts %}{% for fam in fonts.families %}
+@font-face { font-family: "{{ fam.typeface }}"; font-weight: 400; font-style: normal;
+  src: url(data:font/ttf;base64,{{ fam.regular_b64 }}) format("truetype"); }
+@font-face { font-family: "{{ fam.typeface }}"; font-weight: 700; font-style: normal;
+  src: url(data:font/ttf;base64,{{ fam.bold_b64 }}) format("truetype"); }
+{% endfor %}{% endif %}
+{{ css_vars|safe }}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+.slide {
+  width: 1280px; height: 720px; position: relative; overflow: hidden;
+  background: var(--bg-content); color: var(--ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased; text-rendering: geometricPrecision;
+}
+[data-ppt] { box-sizing: border-box; }
+/* swiss 大字/角标单行为主 — 默认不折行，正文类在底部白名单放开 */
+[data-ppt="text"] { margin: 0; padding: 0; white-space: nowrap; }
+
+/* ---- shared content frame ---- */
+.s-frame { position: absolute; inset: 0; padding: 38px 64px 32px; display: flex; flex-direction: column; }
+.s-chrome { flex: 0 0 auto; display: flex; justify-content: space-between; align-items: baseline; }
+.s-chrome-rule { flex: 0 0 auto; width: 100%; height: 1px; background: var(--grey-2); margin-top: 13px; }
+.s-chrome-t { font-family: var(--font-mono); font-size: 11px; font-weight: 400; letter-spacing: .16em;
+              text-transform: uppercase; color: var(--grey-3); }
+.s-head { flex: 0 0 auto; margin-top: 30px; }
+.s-kick-row { display: flex; align-items: center; gap: 10px; }
+.s-kick-sq { width: 8px; height: 8px; background: var(--accent); }
+.s-kicker { font-family: var(--font-mono); font-size: 12px; font-weight: 400; letter-spacing: .22em;
+            text-transform: uppercase; color: var(--accent); }
+.s-title-row { display: flex; align-items: baseline; margin-top: 16px; }
+.s-title { font-family: var(--font-display); font-weight: 400; font-size: 50px; line-height: 1.06;
+           letter-spacing: -.02em; color: var(--ink); }
+.s-sub { font-family: var(--font-mono); font-size: 11.5px; font-weight: 400; letter-spacing: .14em;
+         text-transform: uppercase; color: var(--grey-3); margin-top: 12px; }
+.s-body { flex: 1 1 auto; margin-top: 34px; display: flex; min-height: 0; }
+.s-foot { position: absolute; left: 64px; right: 64px; bottom: 16px; display: flex;
+          justify-content: space-between; align-items: baseline; }
+.s-foot-t { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .14em;
+            text-transform: uppercase; color: var(--grey-3); }
+/* page chrome foot: 左 deck 名 · 中分页点阵 · 右口号（demo 的翻页 dots） */
+.s-pagefoot { position: absolute; left: 64px; right: 64px; bottom: 15px; display: flex;
+              justify-content: space-between; align-items: center; }
+.s-dots { display: flex; gap: 6px; }
+
+/* ===== toc / index ===== */
+.s-toc { width: 100%; display: flex; flex-direction: column; justify-content: space-evenly; }
+.s-toc-row { display: flex; align-items: baseline; gap: 28px; }
+.s-toc-rule { width: 100%; height: 1px; background: var(--grey-2); margin-top: 15px; }
+.s-toc-num { font-family: var(--font-mono); font-size: 13px; font-weight: 700; color: var(--accent);
+             flex: 0 0 auto; min-width: 34px; }
+.s-toc-title { font-family: var(--font-display); font-weight: 400; font-size: 26px;
+               letter-spacing: -.01em; color: var(--ink); }
+.s-toc-desc { font-family: var(--font-body); font-size: 14px; color: var(--grey-3); align-self: center; }
+.s-toc-pages { margin-left: auto; font-family: var(--font-mono); font-size: 11.5px;
+               letter-spacing: .1em; color: var(--grey-3); align-self: center; }
+
+/* ===== section (S03 split statement) ===== */
+.s-sec-left { position: absolute; left: 0; top: 0; width: 42%; height: 100%; }
+.s-sec-num { font-family: var(--font-display); font-weight: 400; font-size: 260px; line-height: .9;
+             letter-spacing: -.04em; }
+.s-sec-right { position: absolute; left: 42%; top: 0; right: 0; height: 100%;
+               padding: 64px 64px 56px 72px; display: flex; flex-direction: column; justify-content: center; }
+.s-sec-title-row { display: flex; align-items: baseline; margin-top: 18px; }
+.s-sec-title { font-family: var(--font-display); font-weight: 400; font-size: 68px; line-height: 1.04;
+               letter-spacing: -.02em; color: var(--ink); }
+.s-sec-sub { font-family: var(--font-mono); font-size: 12.5px; letter-spacing: .16em;
+             text-transform: uppercase; color: var(--grey-3); margin-top: 22px; }
+
+/* ===== kpi row ===== */
+.s-kpis { width: 100%; display: flex; gap: 34px; align-items: stretch; }
+.s-kpi { flex: 1 1 0; display: flex; flex-direction: column; }
+.s-kpi-rule { width: 100%; height: 2px; background: var(--ink); }
+.s-kpi-val { font-family: var(--font-display); font-weight: 400; font-size: 76px; line-height: .96;
+             letter-spacing: -.03em; margin-top: 26px; }
+.s-kpi-label { font-family: var(--font-body); font-weight: 700; font-size: 16px; color: var(--ink); margin-top: 16px; }
+.s-kpi-delta { font-family: var(--font-mono); font-size: 11.5px; letter-spacing: .1em;
+               text-transform: uppercase; color: var(--grey-3); margin-top: 10px; }
+
+/* ===== table (hairline ledger) ===== */
+.s-table { width: 100%; height: 100%; display: flex; flex-direction: column; }
+.s-trow { display: flex; flex: 1 1 0; align-items: center; }
+.s-trow.h-row { flex: 0 0 auto; padding-bottom: 10px; }
+.s-trule { flex: 0 0 auto; width: 100%; height: 1px; background: var(--grey-2); }
+.s-trule.strong { height: 2px; background: var(--ink); }
+.s-tcell { flex: 1 1 0; padding: 8px 14px 8px 0; display: flex; align-items: center; min-width: 0; }
+.s-tcell-h { font-family: var(--font-mono); font-size: 11.5px; font-weight: 700; letter-spacing: .12em;
+             text-transform: uppercase; color: var(--grey-3); }
+.s-tcell-t { font-family: var(--font-body); font-size: 15px; line-height: 1.35; color: var(--ink); }
+.s-tcell-t.lead-col { font-weight: 700; }
+
+/* ===== chart ===== */
+.s-chart-wrap { width: 100%; display: flex; gap: 44px; align-items: center; }
+.s-chart-area { flex: 1 1 0; height: 360px; }
+.s-chart-box { width: 100%; height: 100%; }
+.s-take { flex: 0 0 300px; background: var(--accent); padding: 26px 26px 24px; }
+.s-take-k { font-family: var(--font-mono); font-size: 11px; letter-spacing: .18em;
+            text-transform: uppercase; color: rgba(255,255,255,.72); }
+.s-take-text { font-family: var(--font-body); font-weight: 400; font-size: 18px; line-height: 1.55;
+               color: var(--accent-on); margin-top: 14px; }
+
+/* ===== comparison (S08 duo compare) ===== */
+.s-cmp { width: 100%; display: flex; align-items: stretch; position: relative; }
+.s-cmp-col { flex: 1 1 0; display: flex; flex-direction: column; }
+.s-cmp-col.a { padding-right: 44px; }
+.s-cmp-col.b { padding-left: 44px; }
+.s-cmp-div { position: absolute; left: 50%; top: 0; bottom: 0; width: 1px; background: var(--grey-2); }
+.s-cmp-h { font-family: var(--font-display); font-weight: 400; font-size: 27px; letter-spacing: -.01em; }
+.s-cmp-bar { width: 34px; height: 3px; margin-top: 14px; }
+.s-cmp-points { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: space-evenly; margin-top: 8px; }
+.s-cmp-row { display: flex; align-items: flex-start; gap: 14px; }
+.s-cmp-mark { width: 8px; height: 8px; margin-top: 9px; flex: 0 0 auto; }
+.s-cmp-text { font-family: var(--font-body); font-size: 16px; line-height: 1.5; color: var(--ink); }
+
+/* ===== two columns (accent card × grey card) ===== */
+.s-cols { width: 100%; display: flex; gap: 32px; align-items: stretch; }
+.s-col-card { flex: 1 1 0; padding: 30px 34px 24px; display: flex; flex-direction: column; }
+.s-col-h { font-family: var(--font-display); font-weight: 400; font-size: 27px; letter-spacing: -.01em; }
+.s-col-rule { width: 100%; height: 1px; margin-top: 16px; }
+.s-col-points { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: space-evenly; }
+.s-col-row { display: flex; align-items: baseline; gap: 15px; }
+.s-col-num { font-family: var(--font-mono); font-size: 12px; font-weight: 700; flex: 0 0 auto; }
+.s-col-text { font-family: var(--font-body); font-size: 16.5px; line-height: 1.5; }
+.s-col-foot { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .14em;
+              text-transform: uppercase; padding-top: 12px; }
+
+/* ===== icon grid (S04 six cells) ===== */
+.s-grid { flex: 1 1 auto; display: grid; grid-template-columns: repeat(3, 1fr);
+          grid-template-rows: repeat(2, 1fr); column-gap: 34px; row-gap: 26px; margin-top: 30px; }
+.s-cell { padding-top: 15px; position: relative;
+          display: flex; flex-direction: column; }
+.s-cell-num { position: absolute; right: 0; top: 15px; font-family: var(--font-mono);
+              font-size: 12px; color: var(--grey-3); }
+.s-cell-ico { width: 28px; height: 28px; color: var(--ink); }
+.s-cell-title { font-family: var(--font-body); font-weight: 700; font-size: 18px; margin-top: 12px; }
+.s-cell-sub { font-family: var(--font-mono); font-size: 10px; letter-spacing: .12em;
+              text-transform: uppercase; color: var(--grey-3); margin-top: 5px; }
+.s-cell-line { font-family: var(--font-body); font-size: 13px; line-height: 1.42; color: var(--ink); margin-top: 4px; }
+.s-cell-line.first { margin-top: 11px; }
+.s-cell-punch { font-family: var(--font-body); font-weight: 700; font-size: 13px;
+                color: var(--accent); margin-top: auto; padding-top: 8px; }
+
+/* ===== timeline (S11 horizontal) ===== */
+.s-tl { position: relative; width: 100%; }
+.s-tl-axis { position: absolute; left: 0; right: 0; top: 46px; height: 1px; background: var(--ink); }
+.s-tl-row { display: flex; gap: 20px; }
+.s-tl-item { flex: 1 1 0; display: flex; flex-direction: column; align-items: flex-start; }
+.s-tl-year { font-family: var(--font-mono); font-size: 13px; font-weight: 700; color: var(--ink); }
+.s-tl-node { width: 9px; height: 9px; background: var(--ink); margin-top: 22px; }
+.s-tl-title { font-family: var(--font-body); font-weight: 700; font-size: 16.5px; margin-top: 20px; }
+.s-tl-desc { font-family: var(--font-body); font-size: 13px; line-height: 1.45; color: var(--grey-3); margin-top: 8px; }
+
+/* ===== bullets (ledger list) ===== */
+.s-vlist { width: 100%; display: flex; flex-direction: column; justify-content: space-evenly; }
+.s-vrow { display: flex; align-items: baseline; gap: 24px; }
+.s-vrule { width: 100%; height: 1px; background: var(--grey-2); margin-top: 14px; }
+.s-vnum { font-family: var(--font-mono); font-size: 12.5px; color: var(--grey-3);
+          flex: 0 0 auto; min-width: 34px; }
+.s-vbar { width: 3px; align-self: stretch; background: var(--accent); flex: 0 0 auto; }
+.s-vtext { font-family: var(--font-body); font-size: 18px; line-height: 1.5; color: var(--ink); }
+.s-vtext.em { font-weight: 700; }
+
+/* ===== quote / statement (S09) ===== */
+.s-quote-frame { position: absolute; inset: 0; padding: 96px 96px 80px; display: flex;
+                 flex-direction: column; justify-content: center; }
+.s-quote-row { display: flex; flex-wrap: wrap; align-items: baseline; max-width: 1080px;
+               row-gap: 14px; }
+.s-quote-text { font-family: var(--font-display); font-weight: 400; font-size: 66px; line-height: 1.2;
+                letter-spacing: -.02em; color: var(--ink); }
+.s-quote-attr { font-family: var(--font-mono); font-size: 13px; letter-spacing: .14em;
+                text-transform: uppercase; color: var(--grey-3); margin-top: 34px; }
+
+/* ===== closing (S10 split) ===== */
+.s-out-left { position: absolute; left: 0; top: 0; width: 56%; height: 100%;
+              padding: 64px; display: flex; flex-direction: column; justify-content: center; }
+.s-out-title-row { display: flex; flex-wrap: wrap; align-items: baseline; }
+.s-out-title { font-family: var(--font-display); font-weight: 400; font-size: 78px; line-height: 1.08;
+               letter-spacing: -.02em; }
+.s-out-right { position: absolute; left: 56%; top: 0; right: 0; height: 100%;
+               padding: 64px 64px 56px 56px; display: flex; flex-direction: column; justify-content: center; }
+.s-out-sub { font-family: var(--font-body); font-weight: 700; font-size: 19px; color: var(--ink); }
+.s-out-contact { font-family: var(--font-mono); font-size: 12px; letter-spacing: .12em;
+                 text-transform: uppercase; color: var(--grey-3); margin-top: 20px; }
+
+/* ===== hero (S22 image hero) ===== */
+.sh-strip { position: absolute; left: 0; top: 0; width: 100%; height: 268px; overflow: hidden; }
+.sh-frame { position: absolute; left: 0; top: 268px; right: 0; bottom: 0;
+            padding: 34px 64px 48px; display: flex; flex-direction: column; }
+.sh-title-row { display: flex; align-items: baseline; margin-top: 14px; }
+.sh-title { font-family: var(--font-display); font-weight: 400; font-size: 84px; line-height: 1.0;
+            letter-spacing: -.025em; color: var(--ink); }
+.sh-sub { font-family: var(--font-body); font-size: 17px; line-height: 1.5; color: var(--grey-3);
+          margin-top: 16px; max-width: 760px; }
+.sh-facts { margin-top: auto; display: flex; gap: 34px; }
+.sh-fact { flex: 1 1 0; display: flex; flex-direction: column; }
+.sh-fact-rule { width: 100%; height: 1px; background: var(--ink); }
+.sh-fact-val { font-family: var(--font-display); font-weight: 400; font-size: 40px; line-height: 1;
+               letter-spacing: -.02em; color: var(--ink); margin-top: 14px; }
+.sh-fact-label { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .12em;
+                 text-transform: uppercase; color: var(--grey-3); margin-top: 9px; }
+
+/* ===== cover (S01 IKB full-bleed, 无图封面用) ===== */
+.sc-frame { position: absolute; inset: 0; padding: 38px 64px 32px; display: flex; flex-direction: column; }
+.sc-title-row { display: flex; flex-wrap: wrap; align-items: baseline; }
+.sc-title { font-family: var(--font-display); font-weight: 400; font-size: 96px; line-height: 1.02;
+            letter-spacing: -.03em; }
+
+/* ===== process / steps ===== */
+.s-steps { width: 100%; display: flex; gap: 34px; align-items: stretch; }
+.s-step { flex: 1 1 0; display: flex; flex-direction: column; }
+.s-step-rule { width: 100%; height: 2px; background: var(--ink); }
+.s-step-num { font-family: var(--font-display); font-weight: 400; font-size: 44px;
+              letter-spacing: -.02em; color: var(--grey-2); margin-top: 16px; }
+.s-step-title { font-family: var(--font-body); font-weight: 700; font-size: 18px; margin-top: 14px; }
+.s-step-desc { font-family: var(--font-body); font-size: 13.5px; line-height: 1.5;
+               color: var(--grey-3); margin-top: 10px; }
+
+/* ===== pillars ===== */
+.s-pillars { width: 100%; display: flex; gap: 34px; align-items: stretch; }
+.s-pillar { flex: 1 1 0; display: flex; flex-direction: column; }
+.s-pillar-rule { width: 100%; height: 2px; background: var(--ink); margin-bottom: 16px; }
+.s-pillar-h { font-family: var(--font-display); font-weight: 400; font-size: 24px; }
+.s-pillar-tag { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .12em;
+                text-transform: uppercase; color: var(--grey-3); margin-top: 7px; }
+.s-pillar-row { display: flex; align-items: flex-start; gap: 12px; margin-top: 14px; }
+.s-pillar-mark { width: 7px; height: 7px; margin-top: 8px; flex: 0 0 auto; background: var(--grey-3); }
+.s-pillar-text { font-family: var(--font-body); font-size: 14.5px; line-height: 1.45; color: var(--ink); }
+
+/* body text that may run long must wrap (overrides the single-line default) */
+.s-vtext, .s-cmp-text, .s-col-text, .s-tcell-t, .s-cell-line, .s-tl-desc, .s-step-desc,
+.s-pillar-text, .s-take-text, .s-quote-text, .s-out-sub, .sh-sub, .s-toc-desc { white-space: normal; }
+/* wrapping body text inside flex rows must fill + be allowed to shrink */
+.s-vtext, .s-cmp-text, .s-col-text, .s-tcell-t, .s-pillar-text { flex: 1 1 auto; min-width: 0; }
+</style>
+</head>
+<body class="slide {% block klass %}{% endblock %}">
+{% block bg %}<div data-ppt="rect" data-ppt-z="-30" style="position:absolute;inset:0;background:var(--bg-content);"></div>{% endblock %}
+{% block frame %}{% endblock %}
+</body>
+</html>

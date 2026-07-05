@@ -1,0 +1,24 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+{# S03 Split Statement — 左 IKB 半屏巨号编号,右纸底章节标题 #}
+<div class="s-sec-left">
+  <div data-ppt="rect" data-ppt-z="-20" style="position:absolute;inset:0;background:{{ colors['accent'] }};"></div>
+  <div style="position:absolute;left:56px;top:44px;right:48px;display:flex;justify-content:space-between;">
+    <div data-ppt="text" class="s-chrome-t" style="color:rgba(255,255,255,.62);">SECTION</div>
+    <div data-ppt="text" class="s-chrome-t" style="color:rgba(255,255,255,.62);">IKB</div>
+  </div>
+  <div data-ppt="text" class="s-sec-num" style="position:absolute;left:52px;bottom:52px;color:{{ colors['accent-on'] }};">{{ d.number }}</div>
+</div>
+<div class="s-sec-right">
+  <div data-ppt="text" class="s-kicker">SECTION {{ d.number }}{% if page_total %} · {{ '%02d / %02d'|format(page_no, page_total) }}{% endif %}</div>
+  <div class="s-sec-title-row">
+    {% for seg in d.title|marksplit %}
+    <div data-ppt="text" class="s-sec-title"{% if seg.mark %} style="color:{{ colors['accent'] }};"{% endif %}>{{ seg.text }}</div>
+    {% endfor %}
+  </div>
+  {% if d.subtitle %}<div data-ppt="text" class="s-sec-sub">{{ d.subtitle }}</div>{% endif %}
+  <div data-ppt="rect" style="width:100%;height:1px;background:{{ colors['grey-2'] }};margin-top:40px;"></div>
+</div>
+{% set foot_left = '' %}
+{% include "_foot.html.j2" %}
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+<div class="s-frame">
+  {% include "_head.html.j2" %}
+  <div class="s-body">
+    <div class="s-table">
+      <div class="s-trow h-row">
+        {% for h in d.headers %}
+        <div class="s-tcell"><div data-ppt="text" class="s-tcell-h">{{ h }}</div></div>
+        {% endfor %}
+      </div>
+      <div data-ppt="rect" class="s-trule strong"></div>
+      {% for row in d.rows %}
+      <div class="s-trow">
+        {% for cell in row %}
+        <div class="s-tcell">
+          <div data-ppt="text" class="s-tcell-t {{ 'lead-col' if loop.first else '' }}">{{ cell }}</div>
+        </div>
+        {% endfor %}
+      </div>
+      {% if not loop.last %}<div data-ppt="rect" class="s-trule"></div>{% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% include "_foot.html.j2" %}
+{% endblock %}

@@ -7,6 +7,7 @@ t2i style suffix / re-ink post-pass / procedural fallback — lives in the look
 package too; the engine never special-cases a look."""
 from __future__ import annotations
 import json
+import re
 import shutil
 import tempfile
 from pathlib import Path
@@ -25,6 +26,23 @@ from .units import CANVAS_W_PX, CANVAS_H_PX
 
 TPL_DIR = Path(__file__).parent / "templates"
 
+# 标题强调词标记：**词** —— 模板把每段拆成独立文本原语，标记段上强调色。
+# （文本原语是叶子级单色 run，行内混色必须拆段才能原生进 pptx。）
+_MARK_RE = re.compile(r"\*\*(.+?)\*\*")
+
+
+def marksplit(s: str) -> list[dict]:
+    out, pos = [], 0
+    s = s or ""
+    for m in _MARK_RE.finditer(s):
+        if m.start() > pos:
+            out.append({"text": s[pos:m.start()], "mark": False})
+        out.append({"text": m.group(1), "mark": True})
+        pos = m.end()
+    if pos < len(s):
+        out.append({"text": s[pos:], "mark": False})
+    return out or [{"text": "", "mark": False}]
+
 
 class Engine:
     def __init__(self):
@@ -33,16 +51,19 @@ class Engine:
     def _env_for(self, template_dir: str):
         if template_dir not in self._envs:
             dirs = [template_dir, str(TPL_DIR)] if template_dir else [str(TPL_DIR)]
-            self._envs[template_dir] = Environment(
+            env = Environment(
                 loader=FileSystemLoader(dirs),
                 autoescape=select_autoescape(["html", "j2"]),
             )
+            env.filters["marksplit"] = marksplit
+            self._envs[template_dir] = env
         return self._envs[template_dir]
 
     def _context(self, slide, theme, look, fonts=None, extra=None):
         d = slide.data.model_dump()
         ctx = {"d": d, "css_vars": theme.css_vars(), "colors": theme.render_colors(),
-               "icons": look.icons or ICONS, "fonts": fonts}
+               "icons": look.icons or ICONS, "fonts": fonts,
+               "page_no": 0, "page_total": 0, "deck_title": ""}
         if extra:
             ctx.update(extra)
         if slide.kind == "chart":
@@ -98,7 +119,8 @@ class Engine:
                 device_scale_factor=2,
             )
             for idx, slide in enumerate(deck.slides):
-                extra = {}
+                extra = {"page_no": idx + 1, "page_total": len(deck.slides),
+                         "deck_title": deck.meta.title}
                 if slide.kind == "hero":
                     extra["hero_img"] = self._hero_image(slide, theme, look, asset_dir, idx)
                 page.set_content(self.html_for(slide, theme, fonts, extra, look),

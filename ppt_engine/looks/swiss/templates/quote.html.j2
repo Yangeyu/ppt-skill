@@ -1,0 +1,17 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+{# S09 Statement — 细字重巨字宣言(强调词 accent) + 角部方阵点缀 #}
+{% for i in range(3) %}{% for j in range(3) %}
+<div data-ppt="rect" data-ppt-deco style="position:absolute;right:{{ 64 + j * 18 }}px;top:{{ 56 + i * 18 }}px;width:7px;height:7px;background:{{ colors['accent'] if (i == 0 and j == 2) else colors['grey-2'] }};"></div>
+{% endfor %}{% endfor %}
+<div class="s-quote-frame">
+  <div data-ppt="rect" style="width:12px;height:12px;background:{{ colors['accent'] }};margin-bottom:36px;"></div>
+  <div class="s-quote-row">
+    {% for seg in d.quote|marksplit %}
+    <div data-ppt="text" class="s-quote-text"{% if seg.mark %} style="color:{{ colors['accent'] }};"{% endif %}>{{ seg.text }}</div>
+    {% endfor %}
+  </div>
+  {% if d.attribution %}<div data-ppt="text" class="s-quote-attr">{{ d.attribution }}</div>{% endif %}
+</div>
+{% include "_foot.html.j2" %}
+{% endblock %}

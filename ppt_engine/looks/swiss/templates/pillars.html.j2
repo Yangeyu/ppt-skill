@@ -1,0 +1,24 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+<div class="s-frame">
+  {% include "_head.html.j2" %}
+  <div class="s-body">
+    <div class="s-pillars">
+      {% for p in d.pillars %}
+      <div class="s-pillar">
+        <div data-ppt="rect" class="s-pillar-rule"></div>
+        <div data-ppt="text" class="s-pillar-h">{{ p.heading }}</div>
+        {% if p.tag %}<div data-ppt="text" class="s-pillar-tag">{{ p.tag }}</div>{% endif %}
+        {% for pt in p.points %}
+        <div class="s-pillar-row">
+          <div data-ppt="rect" class="s-pillar-mark"></div>
+          <div data-ppt="text" class="s-pillar-text">{{ pt }}</div>
+        </div>
+        {% endfor %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% include "_foot.html.j2" %}
+{% endblock %}

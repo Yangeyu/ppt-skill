@@ -1,0 +1,27 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+{# S08 Duo Compare — 中线对开;右列为焦点侧(accent 标记),左列中性灰标记 #}
+<div class="s-frame">
+  {% include "_head.html.j2" %}
+  <div class="s-body">
+    <div class="s-cmp">
+      <div class="s-cmp-div" data-ppt="rect"></div>
+      {% for col, mark in [(d.left, colors['grey-3']), (d.right, colors['accent'])] %}
+      <div class="s-cmp-col {{ 'a' if loop.first else 'b' }}">
+        <div data-ppt="text" class="s-cmp-h">{{ col.heading }}</div>
+        <div data-ppt="rect" class="s-cmp-bar" style="background:{{ mark }};"></div>
+        <div class="s-cmp-points">
+          {% for pt in col.points %}
+          <div class="s-cmp-row">
+            <div data-ppt="rect" class="s-cmp-mark" style="background:{{ mark }};"></div>
+            <div data-ppt="text" class="s-cmp-text">{{ pt }}</div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% include "_foot.html.j2" %}
+{% endblock %}

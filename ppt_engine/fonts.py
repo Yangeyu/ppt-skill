@@ -20,6 +20,10 @@ FONT_FILES = {
     "Noto Sans SC Black": ("NotoSansSC-Black.ttf", "NotoSansSC-Black.ttf"),
     "Anton": ("Anton-Regular.ttf", "Anton-Regular.ttf"),
     "Space Mono": ("SpaceMono-Regular.ttf", "SpaceMono-Regular.ttf"),
+    "Noto Sans SC Light": ("NotoSansSC-Light.ttf", "NotoSansSC-Light.ttf"),
+    "Inter": ("Inter-Regular.ttf", "Inter-SemiBold.ttf"),
+    "Inter Light": ("InterLight.ttf", "InterLight.ttf"),
+    "JetBrains Mono": ("JetBrainsMono-Regular.ttf", "JetBrainsMono-Bold.ttf"),
 }
 
 # glyphs templates inject beyond the IR text (punctuation, quotes, latin, digits)

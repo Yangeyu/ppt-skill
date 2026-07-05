@@ -22,8 +22,9 @@ CHART_T = {"column": XL_CHART_TYPE.COLUMN_CLUSTERED, "bar": XL_CHART_TYPE.BAR_CL
 ZRANK = {"rect": 0, "line": 0, "image": 5, "icon": 6, "chart": 5, "text": 10}
 # families that carry CJK glyphs — used to split a:latin (Latin face) from
 # a:ea (East-Asian face) so a heavy Latin display + a CJK black can coexist in one run
-CJK_FAMILIES = {"Noto Sans SC", "Noto Serif SC", "Noto Sans SC Black", "PingFang SC",
-                "Songti SC", "STSong", "Hiragino Sans GB", "Microsoft YaHei", "SimHei"}
+CJK_FAMILIES = {"Noto Sans SC", "Noto Serif SC", "Noto Sans SC Black", "Noto Sans SC Light",
+                "PingFang SC", "Songti SC", "STSong", "Hiragino Sans GB", "Microsoft YaHei",
+                "SimHei"}
 TEXT_SLOT = {
     "tx1": MSO_THEME_COLOR.TEXT_1, "bg1": MSO_THEME_COLOR.BACKGROUND_1,
     "tx2": MSO_THEME_COLOR.TEXT_2, "bg2": MSO_THEME_COLOR.BACKGROUND_2,

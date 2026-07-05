@@ -1,0 +1,25 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+{# S04 Six Cells — 3×2,每格顶部 2px 墨线,细描边图标,punch 用 accent #}
+<div class="s-frame">
+  {% include "_head.html.j2" %}
+  <div class="s-grid">
+    {% for card in d.cards %}
+    <div class="s-cell">
+      <div data-ppt="rect" style="position:absolute;left:0;top:0;width:100%;height:2px;background:{{ colors['ink'] }};"></div>
+      <div data-ppt="text" class="s-cell-num">{{ '%02d' % loop.index }}</div>
+      <div data-ppt="icon" class="s-cell-ico">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">{{ icons[card.icon]|safe }}</svg>
+      </div>
+      <div data-ppt="text" class="s-cell-title">{{ card.title }}</div>
+      {% if card.subtitle %}<div data-ppt="text" class="s-cell-sub">{{ card.subtitle }}</div>{% endif %}
+      {% for ln in card.lines %}
+      <div data-ppt="text" class="s-cell-line {{ 'first' if loop.first else '' }}">{{ ln }}</div>
+      {% endfor %}
+      {% if card.punch %}<div data-ppt="text" class="s-cell-punch">{{ card.punch }}</div>{% endif %}
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% include "_foot.html.j2" %}
+{% endblock %}
