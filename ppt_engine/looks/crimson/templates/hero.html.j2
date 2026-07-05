@@ -1,0 +1,33 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+{# 图版页 —— 顶部全宽证据图版(酒红双色调) + 结论标题 + 事实条;报告式克制 #}
+<div class="ch-strip">
+  <div data-ppt="image" data-ppt-z="-20" data-src="{{ hero_img }}" style="position:absolute;inset:0;"></div>
+</div>
+<div data-ppt="rect" style="position:absolute;left:0;top:248px;width:100%;height:3px;background:{{ colors['accent'] }};"></div>
+<div class="ch-frame">
+  <div class="c-top" style="gap:14px;">
+    {% if d.eyebrow %}<div data-ppt="text" class="c-eyebrow">{{ d.eyebrow }}</div>{% endif %}
+    <div data-ppt="text" class="c-top-r">{{ '%02d / %02d'|format(page_no, page_total) if page_total else 'CRIMSON CONSULTING' }}</div>
+  </div>
+  <div class="ch-title-row">
+    {% for seg in d.title|marksplit %}
+    <div data-ppt="text" class="ch-title"{% if seg.mark %} style="color:{{ colors['accent'] }};"{% endif %}>{{ seg.text }}</div>
+    {% endfor %}
+  </div>
+  {% if d.subtitle %}<div data-ppt="text" class="ch-sub">{{ d.subtitle }}</div>{% endif %}
+  {% if d.facts %}
+  <div class="ch-facts">
+    {% for f in d.facts %}
+    <div class="ch-fact">
+      <div data-ppt="rect" class="ch-fact-rule" {% if loop.first %}style="background:{{ colors['accent'] }};height:2px;"{% endif %}></div>
+      <div data-ppt="text" class="ch-fact-val" {% if loop.first %}style="color:{{ colors['accent'] }};"{% endif %}>{{ f.value }}</div>
+      <div data-ppt="text" class="ch-fact-label">{{ f.label }}</div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>
+{% set foot_left = d.footer or deck_title %}
+{% include "_foot.html.j2" %}
+{% endblock %}

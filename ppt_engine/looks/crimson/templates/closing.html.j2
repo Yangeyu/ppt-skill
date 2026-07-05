@@ -1,0 +1,20 @@
+{% extends "base.html.j2" %}
+{% block bg %}{% endblock %}
+{% block frame %}
+{# 收尾 —— 墨色满屏 + 深红标点,宋体反白结论;与深红章节幕形成闭环 #}
+<div data-ppt="rect" data-ppt-z="-20" style="position:absolute;inset:0;background:{{ colors['bg'] }};"></div>
+<div data-ppt="rect" style="position:absolute;left:0;top:0;width:100%;height:8px;background:{{ colors['accent'] }};"></div>
+<div class="c-out-frame">
+  <div data-ppt="rect" style="width:56px;height:4px;background:{{ colors['accent'] }};margin-bottom:34px;"></div>
+  <div class="c-out-title-row">
+    {% for seg in d.title|marksplit %}
+    <div data-ppt="text" class="c-out-title" style="color:{{ colors['on-dark'] }};{% if seg.mark %}color:{{ colors['accent-on'] }};font-style:italic;{% endif %}">{{ seg.text }}</div>
+    {% endfor %}
+  </div>
+  {% if d.subtitle %}<div data-ppt="text" class="c-out-sub">{{ d.subtitle }}</div>{% endif %}
+  {% if d.contact %}<div data-ppt="text" class="c-out-contact">{{ d.contact }}</div>{% endif %}
+</div>
+<div data-ppt="rect" style="position:absolute;left:72px;right:72px;bottom:52px;height:1px;background:rgba(243,244,239,.22);"></div>
+<div data-ppt="text" style="position:absolute;left:72px;bottom:26px;font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:{{ colors['on-dark-muted'] }};">CRIMSON CONSULTING</div>
+<div data-ppt="text" style="position:absolute;right:72px;bottom:26px;font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:{{ colors['on-dark-muted'] }};">END OF REPORT</div>
+{% endblock %}

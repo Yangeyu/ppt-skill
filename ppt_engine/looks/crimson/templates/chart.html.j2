@@ -1,0 +1,19 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+{# EXHIBIT —— 栏头编号 + 原生图表(直接标注,强调序列深红) + takeaway 走 SO WHAT 条 #}
+<div class="c-frame">
+  {% include "_head.html.j2" %}
+  <div class="c-body" style="flex-direction:column;">
+    <div class="c-exh">
+      <div data-ppt="text" class="c-etag">EXHIBIT {{ '%02d'|format(page_no) if page_total else '01' }}</div>
+      <div data-ppt="text" class="c-top-r" style="margin-left:0;">UNIT AS LABELED · DIRECT ANNOTATION</div>
+    </div>
+    <div class="c-chart-area">
+      <div data-ppt="chart" data-chart='{{ chart_json|safe }}' class="c-chart-box"></div>
+    </div>
+  </div>
+  {% set sw_text = d.takeaway %}
+  {% include "_sowhat.html.j2" %}
+</div>
+{% include "_foot.html.j2" %}
+{% endblock %}

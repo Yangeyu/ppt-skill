@@ -66,7 +66,7 @@ class Engine:
                "page_no": 0, "page_total": 0, "deck_title": ""}
         if extra:
             ctx.update(extra)
-        if slide.kind == "chart":
+        if d.get("chart_type") and d.get("series"):   # chart 页与 exhibit 复合页都带原生图表
             ctx["chart_json"] = json.dumps({
                 "type": d["chart_type"],
                 "categories": d["categories"],

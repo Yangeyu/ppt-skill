@@ -1,0 +1,24 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+{# 横向时间线 —— 1px 墨轴 + 方形节点;最后一站深红点亮(结论所在) #}
+<div class="c-frame">
+  {% include "_head.html.j2" %}
+  <div class="c-body" style="align-items:center;">
+    <div class="c-tl">
+      <div data-ppt="rect" class="c-tl-axis"></div>
+      <div class="c-tl-row">
+        {% for m in d.milestones %}
+        <div class="c-tl-item">
+          <div data-ppt="text" class="c-tl-year" {% if loop.last %}style="color:{{ colors['accent'] }};"{% endif %}>{{ m.year }}</div>
+          <div data-ppt="rect" class="c-tl-node" {% if loop.last %}style="background:{{ colors['accent'] }};width:13px;height:13px;margin-top:18px;"{% endif %}></div>
+          <div data-ppt="text" class="c-tl-title">{{ m.title }}</div>
+          {% if m.desc %}<div data-ppt="text" class="c-tl-desc">{{ m.desc }}</div>{% endif %}
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  {% include "_sowhat.html.j2" %}
+</div>
+{% include "_foot.html.j2" %}
+{% endblock %}

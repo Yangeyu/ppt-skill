@@ -1,0 +1,22 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+<div class="c-frame">
+  {% include "_head.html.j2" %}
+  <div class="c-body">
+    <div class="c-vlist">
+      {% for b in d.bullets %}
+      <div class="c-vitem">
+        <div class="c-vrow">
+          <div data-ppt="text" class="c-vnum" {% if b.emphasis %}style="color:{{ colors['accent'] }};"{% endif %}>{{ '%02d' % loop.index }}</div>
+          {% if b.emphasis %}<div data-ppt="rect" class="c-vbar"></div>{% endif %}
+          <div data-ppt="text" class="c-vtext {{ 'em' if b.emphasis else '' }}">{{ b.text }}</div>
+        </div>
+        {% if not loop.last %}<div data-ppt="rect" class="c-vrule"></div>{% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% include "_sowhat.html.j2" %}
+</div>
+{% include "_foot.html.j2" %}
+{% endblock %}

@@ -65,6 +65,7 @@ class KpiData(BaseModel):
     eyebrow: str = Field(default="", max_length=24)
     title: str = Field(max_length=24)
     stats: list[Stat] = Field(min_length=2, max_length=4)
+    so_what: str = Field(default="", max_length=60)     # 咨询式结论条(look 可选渲染)
 
 
 class BulletsData(BaseModel):
@@ -72,6 +73,7 @@ class BulletsData(BaseModel):
     eyebrow: str = Field(default="", max_length=24)
     title: str = Field(max_length=24)
     bullets: list[Bullet] = Field(min_length=1, max_length=6)
+    so_what: str = Field(default="", max_length=60)
 
 
 class ChartData(BaseModel):
@@ -111,6 +113,7 @@ class TwoColData(BaseModel):
     title: str = Field(max_length=24)
     left: Column
     right: Column
+    so_what: str = Field(default="", max_length=60)
 
 
 class CompareData(BaseModel):
@@ -119,6 +122,7 @@ class CompareData(BaseModel):
     title: str = Field(max_length=24)
     left: Column
     right: Column
+    so_what: str = Field(default="", max_length=60)
 
 
 class Step(BaseModel):
@@ -132,6 +136,7 @@ class ProcessData(BaseModel):
     eyebrow: str = Field(default="", max_length=24)
     title: str = Field(max_length=24)
     steps: list[Step] = Field(min_length=2, max_length=5)
+    so_what: str = Field(default="", max_length=60)
 
 
 class IconCard(BaseModel):
@@ -150,6 +155,7 @@ class IconGridData(BaseModel):
     title: str = Field(max_length=24)
     subtitle: str = Field(default="", max_length=56)   # mono strapline under title
     cards: list[IconCard] = Field(min_length=2, max_length=6)
+    so_what: str = Field(default="", max_length=60)
 
 
 class Milestone(BaseModel):
@@ -164,6 +170,7 @@ class TimelineData(BaseModel):
     title: str = Field(max_length=24)
     subtitle: str = Field(default="", max_length=56)
     milestones: list[Milestone] = Field(min_length=2, max_length=5)
+    so_what: str = Field(default="", max_length=60)
 
 
 class TableData(BaseModel):
@@ -173,6 +180,7 @@ class TableData(BaseModel):
     subtitle: str = Field(default="", max_length=56)
     headers: list[str] = Field(min_length=2, max_length=5)
     rows: list[list[str]] = Field(min_length=1, max_length=8)
+    so_what: str = Field(default="", max_length=60)
 
 
 class Pillar(BaseModel):
@@ -187,6 +195,7 @@ class PillarsData(BaseModel):
     title: str = Field(max_length=24)
     subtitle: str = Field(default="", max_length=56)
     columns: list[Pillar] = Field(min_length=2, max_length=4)
+    so_what: str = Field(default="", max_length=60)
 
 
 class QuoteData(BaseModel):
@@ -200,6 +209,49 @@ class ClosingData(BaseModel):
     title: str = Field(default="谢谢", max_length=20)
     subtitle: str = Field(default="", max_length=48)
     contact: str = Field(default="", max_length=48)
+
+
+class SideBar(BaseModel):
+    """侧栏结构条:label + 数值(条宽按组内最大值归一)+ 右侧标注。em=主体条(上强调色)。"""
+    label: str = Field(max_length=16)
+    value: float
+    note: str = Field(default="", max_length=12)
+    em: bool = False
+
+
+class SideModule(BaseModel):
+    title: str = Field(max_length=24)
+    bars: list[SideBar] = Field(min_length=2, max_length=5)
+
+
+class InsightBox(BaseModel):
+    """编号洞察框(咨询版面的 ①② 解读区)。"""
+    title: str = Field(max_length=24)
+    points: list[str] = Field(min_length=1, max_length=3)   # 每条 ≤60 字
+
+
+class Implication(BaseModel):
+    """底部「对企业的意义」条目:图标 + 短题 + 一句话。"""
+    icon: str = "check-circle"
+    title: str = Field(max_length=14)
+    desc: str = Field(default="", max_length=40)
+
+
+class ExhibitData(BaseModel):
+    """复合证据版面(高密度咨询页):完整结论句大标题 + 主图表模块 +
+    侧栏结构条模块 + 编号洞察框 + 底部意义条 + 来源。SCR 叙事的一页式载体。"""
+    kind: Literal["exhibit"] = "exhibit"
+    eyebrow: str = Field(default="核心结论", max_length=24)
+    title: str = Field(max_length=72)                        # 结论句,允许两行 + **强调**
+    chart_title: str = Field(default="", max_length=30)
+    chart_type: Literal["column", "bar", "line"] = "column"
+    categories: list[str] = []
+    series: list[Series] = Field(default_factory=list, max_length=4)
+    chart_note: str = Field(default="", max_length=40)       # 图下标注(如 CAGR 框)
+    side: list[SideModule] = Field(default_factory=list, max_length=2)
+    insights: list[InsightBox] = Field(default_factory=list, max_length=2)
+    implications: list[Implication] = Field(default_factory=list, max_length=4)
+    source: str = Field(default="", max_length=60)
 
 
 class CustomData(BaseModel):
@@ -217,7 +269,7 @@ SlideData = Annotated[
     Union[CoverData, HeroData, SectionData, KpiData, BulletsData, ChartData,
           TocData, TwoColData, CompareData, ProcessData, IconGridData,
           TimelineData, TableData, PillarsData, QuoteData, ClosingData,
-          CustomData],
+          ExhibitData, CustomData],
     Field(discriminator="kind"),
 ]
 

@@ -1,0 +1,96 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+{# 复合证据版面(对标 CyberPPT 参考页):核心结论两行大标题 + 主图表模块 +
+   侧栏结构条模块 + ①② 编号洞察框 + 底部「对企业的意义」条 + 来源页脚 #}
+<div class="c-frame" style="padding:28px 56px 30px;">
+  <div class="c-top">
+    <div data-ppt="rect" class="c-badge" style="background:{{ colors['accent'] }};">
+      <div data-ppt="text" class="c-badge-t">{{ '%02d'|format(page_no) if page_total else '§' }}</div>
+    </div>
+    <div data-ppt="text" class="c-eyebrow">{{ d.eyebrow }}</div>
+    <div data-ppt="text" class="c-top-r">{{ deck_title }}</div>
+  </div>
+  <div class="cx-title-row">
+    {% for seg in d.title|marksplit %}
+    <div data-ppt="text" class="cx-title"{% if seg.mark %} style="color:{{ colors['accent'] }};"{% endif %}>{{ seg.text }}</div>
+    {% endfor %}
+  </div>
+  <div data-ppt="rect" style="width:120px;height:3px;background:{{ colors['accent'] }};margin-top:10px;"></div>
+
+  <div class="cx-body">
+    <div data-ppt="rect" class="cx-mod cx-chart-mod" style="background:{{ colors['bg-content'] }};border:1px solid {{ colors['hairline'] }};">
+      {% if d.chart_title %}<div data-ppt="text" class="cx-mod-h">{{ d.chart_title }}</div>{% endif %}
+      <div class="cx-chart-area">
+        <div data-ppt="chart" data-chart='{{ chart_json|safe }}' style="width:100%;height:100%;"></div>
+      </div>
+      {% if d.chart_note %}
+      <div data-ppt="rect" style="align-self:center;margin-bottom:12px;padding:5px 16px;border:1px dashed {{ colors['accent'] }};">
+        <div data-ppt="text" class="cx-note-t">{{ d.chart_note }}</div>
+      </div>
+      {% endif %}
+    </div>
+    {% if d.side %}
+    <div class="cx-side">
+      {% for mod in d.side %}
+      <div data-ppt="rect" class="cx-mod cx-side-mod" style="background:{{ colors['bg-content'] }};border:1px solid {{ colors['hairline'] }};">
+        <div data-ppt="text" class="cx-mod-h">{{ mod.title }}</div>
+        <div class="cx-bars">
+          {% set mx = mod.bars|map(attribute='value')|list|max %}
+          {% for b in mod.bars %}
+          <div class="cx-bar-row">
+            <div data-ppt="text" class="cx-bar-label" {% if b.em %}style="color:{{ colors['accent'] }};font-weight:700;"{% endif %}>{{ b.label }}</div>
+            <div class="cx-bar-track">
+              <div data-ppt="rect" style="position:absolute;left:0;top:0;height:100%;width:{{ (100 * b.value / mx)|round(1) }}%;background:{{ colors['accent'] if b.em else '#B9B7B0' }};"></div>
+            </div>
+            <div data-ppt="text" class="cx-bar-note" style="color:{{ colors['accent'] if b.em else colors['muted'] }};">{{ b.note }}</div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+
+  {% if d.insights %}
+  <div class="cx-insights">
+    {% for box in d.insights %}
+    <div data-ppt="rect" class="cx-ins" style="background:{{ colors['bg-content'] }};border:1px solid {{ colors['hairline'] }};">
+      <div class="cx-ins-head">
+        <div data-ppt="rect" class="cx-ins-no" style="background:{{ colors['accent'] }};">
+          <div data-ppt="text" class="cx-ins-no-t">{{ loop.index }}</div>
+        </div>
+        <div data-ppt="text" class="cx-ins-h">{{ box.title }}</div>
+      </div>
+      {% for pt in box.points %}
+      <div data-ppt="text" class="cx-ins-p">{{ pt|marksplit|map(attribute='text')|join('') }}</div>
+      {% endfor %}
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if d.implications %}
+  <div class="cx-imp">
+    <div data-ppt="rect" class="cx-imp-tab" style="background:{{ colors['accent'] }};">
+      <div data-ppt="text" class="cx-imp-tab-t">对企业的意义</div>
+    </div>
+    <div data-ppt="rect" class="cx-imp-cols" style="background:{{ colors['surface'] }};">
+      {% for im in d.implications %}
+      <div class="cx-imp-col">
+        <div data-ppt="icon" class="cx-imp-ico">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">{{ icons[im.icon]|safe }}</svg>
+        </div>
+        <div class="cx-imp-txt">
+          <div data-ppt="text" class="cx-imp-h">{{ im.title }}</div>
+          {% if im.desc %}<div data-ppt="text" class="cx-imp-d">{{ im.desc }}</div>{% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% set foot_left = d.source or deck_title %}
+{% include "_foot.html.j2" %}
+{% endblock %}

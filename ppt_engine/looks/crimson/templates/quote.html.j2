@@ -1,0 +1,15 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+{# 引言页 —— 左侧深红竖规 + 宋体引言(强调词深红),克制留白 #}
+<div data-ppt="rect" style="position:absolute;left:56px;top:96px;bottom:96px;width:4px;background:{{ colors['accent'] }};"></div>
+<div class="c-quote-frame">
+  <div data-ppt="text" style="font-family:var(--font-display);font-weight:700;font-size:90px;line-height:1;color:{{ colors['accent'] }};">&ldquo;</div>
+  <div class="c-quote-row" style="margin-top:6px;">
+    {% for seg in d.quote|marksplit %}
+    <div data-ppt="text" class="c-quote-text"{% if seg.mark %} style="color:{{ colors['accent'] }};"{% endif %}>{{ seg.text }}</div>
+    {% endfor %}
+  </div>
+  {% if d.attribution %}<div data-ppt="text" class="c-quote-attr">{{ d.attribution }}</div>{% endif %}
+</div>
+{% include "_foot.html.j2" %}
+{% endblock %}

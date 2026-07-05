@@ -1,0 +1,17 @@
+{# 咨询页首：深红页码徽章(T1) + 眉标 + 右侧 deck 名 → 结论句主标题(T2,宋体,可折行)
+   → 语境副标(T3) → 双线规(2px 墨 + 1px 发丝) #}
+<div class="c-top">
+  <div data-ppt="rect" class="c-badge" style="background:{{ colors['accent'] }};">
+    <div data-ppt="text" class="c-badge-t">{{ '%02d'|format(page_no) if page_total else '§' }}</div>
+  </div>
+  {% if d.eyebrow %}<div data-ppt="text" class="c-eyebrow">{{ d.eyebrow }}</div>{% endif %}
+  <div data-ppt="text" class="c-top-r">{{ deck_title }}</div>
+</div>
+<div class="c-title-row">
+  {% for seg in d.title|marksplit %}
+  <div data-ppt="text" class="c-title"{% if seg.mark %} style="color:{{ colors['accent'] }};"{% endif %}>{{ seg.text }}</div>
+  {% endfor %}
+</div>
+{% if d.subtitle is defined and d.subtitle %}<div data-ppt="text" class="c-sub">{{ d.subtitle }}</div>{% endif %}
+<div data-ppt="rect" class="c-rule-strong"></div>
+<div data-ppt="rect" class="c-rule-hair"></div>

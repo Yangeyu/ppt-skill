@@ -53,11 +53,17 @@ def art_direct_preview(topic: str, audience: str = "", tone: str = "",
 
 
 @mcp.tool()
-def generate_deck(topic: str, out_path: str, audience: str = "", tone: str = "",
+def generate_deck(topic: str, out_path: str = "", audience: str = "", tone: str = "",
                   seed_theme: str | None = None, n_slides: int = 10,
                   screenshot_dir: str | None = None, aesthetic: bool = False) -> dict:
     """端到端生成高颜值原生可编辑 .pptx。返回路径 + 评论官摘要。
-    out_path 为输出 .pptx 绝对路径；screenshot_dir 给定则同时出每页 PNG 预览。"""
+    out_path 缺省时按统一约定落 out/<topic-slug>/<slug>.pptx(+ preview/ 截图);
+    显式给出则原样使用,screenshot_dir 给定才出 PNG 预览。"""
+    if not out_path:
+        from ppt_engine.outdir import out_dir
+        dest = out_dir(topic)
+        out_path = str(dest / f"{dest.name}.pptx")
+        screenshot_dir = screenshot_dir or str(dest / "preview")
     r = generate(topic, out_path=out_path, audience=audience, tone=tone,
                  seed_theme=seed_theme, n_slides=n_slides,
                  screenshot_dir=screenshot_dir, aesthetic=aesthetic)

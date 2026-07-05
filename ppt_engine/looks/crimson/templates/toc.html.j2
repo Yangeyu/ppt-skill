@@ -1,0 +1,22 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+<div class="c-frame">
+  {% include "_head.html.j2" %}
+  <div class="c-body">
+    <div class="c-toc">
+      {% for it in d['items'] %}
+      <div class="c-toc-item">
+        <div class="c-toc-row">
+          <div data-ppt="text" class="c-toc-num">{{ '%02d' % loop.index }}</div>
+          <div data-ppt="text" class="c-toc-title">{{ it.title }}</div>
+          {% if it.desc %}<div data-ppt="text" class="c-toc-desc">{{ it.desc }}</div>{% endif %}
+          {% if it.pages %}<div data-ppt="text" class="c-toc-pages">{{ it.pages }}</div>{% endif %}
+        </div>
+        {% if not loop.last %}<div data-ppt="rect" class="c-toc-rule"></div>{% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% include "_foot.html.j2" %}
+{% endblock %}

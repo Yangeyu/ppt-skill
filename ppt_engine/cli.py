@@ -8,10 +8,12 @@ A single JSON result object is written to **stdout**; every human/progress log
 goes to **stderr**, so stdout stays cleanly machine-parseable by the caller.
 
 Usage:
-  python3 -m ppt_engine.cli --deck deck.json --out out.pptx [--shots dir] [--no-embed]
-  cat deck.json | python3 -m ppt_engine.cli --out out.pptx        # deck via stdin
+  python3 -m ppt_engine.cli --deck deck.json [--out out.pptx] [--shots dir] [--no-embed]
+  cat deck.json | python3 -m ppt_engine.cli                       # deck via stdin
   python3 -m ppt_engine.cli --describe riso   # look metadata for generators
                                               # (icons / constraints / agent fragment)
+
+--out 缺省时按统一约定落盘:out/<deck标题slug>/<slug>.pptx + preview/ 截图。
 """
 from __future__ import annotations
 import argparse
@@ -23,6 +25,7 @@ from pydantic import ValidationError
 
 from .build import Engine
 from .ir import Deck
+from .outdir import out_dir
 from .selfcheck import check_layout
 
 
@@ -60,7 +63,7 @@ def describe(look_id: str) -> int:
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(prog="ppt_engine.cli")
     ap.add_argument("--deck", help="path to Deck JSON (default: read stdin)")
-    ap.add_argument("--out", help="output .pptx path")
+    ap.add_argument("--out", help="output .pptx path (default: out/<title-slug>/<slug>.pptx)")
     ap.add_argument("--shots", default=None, help="dir for per-slide browser preview PNGs")
     ap.add_argument("--no-embed", action="store_true", help="skip font subsetting/embed")
     ap.add_argument("--describe", metavar="LOOK", help="print look metadata as JSON and exit")
@@ -68,8 +71,6 @@ def main(argv=None) -> int:
 
     if args.describe:
         return describe(args.describe)
-    if not args.out:
-        ap.error("--out is required (unless using --describe)")
 
     raw = Path(args.deck).read_text("utf-8") if args.deck else sys.stdin.read()
     try:
@@ -87,6 +88,11 @@ def main(argv=None) -> int:
         )
         _emit({"ok": False, "stage": "validate", "error": brief, "errors": errs})
         return 3
+
+    if not args.out:                      # 统一产物约定:out/<slug>/(pptx + preview/)
+        dest = out_dir(deck.meta.title)
+        args.out = str(dest / f"{dest.name}.pptx")
+        args.shots = args.shots or str(dest / "preview")
 
     _log(f"→ building '{deck.meta.title}' · theme={deck.theme} · {len(deck.slides)} slides")
     Path(args.out).resolve().parent.mkdir(parents=True, exist_ok=True)

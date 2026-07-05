@@ -1,0 +1,28 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+{# 双面板 —— 浅阶面板 + 栏头带：左深红栏头(焦点)、右墨色栏头;统一表面,禁白卡 #}
+<div class="c-frame">
+  {% include "_head.html.j2" %}
+  <div class="c-body">
+    <div class="c-cols">
+      {% for col, band in [(d.left, colors['accent']), (d.right, colors['ink'])] %}
+      <div data-ppt="rect" class="c-col-panel" style="background:{{ colors['surface'] }};">
+        <div data-ppt="rect" class="c-col-head" style="background:{{ band }};">
+          <div data-ppt="text" class="c-col-h">{{ col.heading }}</div>
+        </div>
+        <div class="c-col-points">
+          {% for pt in col.points %}
+          <div class="c-col-row">
+            <div data-ppt="text" class="c-col-num" style="color:{{ band }};">{{ '%02d'|format(loop.index) }}</div>
+            <div data-ppt="text" class="c-col-text">{{ pt }}</div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% include "_sowhat.html.j2" %}
+</div>
+{% include "_foot.html.j2" %}
+{% endblock %}

@@ -1,0 +1,17 @@
+{% if page_total %}
+{% set fl = foot_left|default(deck_title) %}
+{% set fm = foot_muted|default(colors['muted'], true) %}
+{% set fr = foot_rule|default(colors['hairline'], true) %}
+{% set fa = foot_accent|default(colors['accent'], true) %}
+<div class="c-foot">
+  <div data-ppt="rect" class="c-foot-rule" style="background:{{ fr }};"></div>
+  <div class="c-foot-row">
+    <div data-ppt="text" class="c-foot-t" style="color:{{ fm }};">{{ fl }}</div>
+    <div data-ppt="text" class="c-foot-t" style="color:{{ fm }};">CONFIDENTIAL · FOR INTERNAL USE</div>
+    <div class="c-foot-pg">
+      <div data-ppt="rect" style="width:6px;height:6px;background:{{ fa }};"></div>
+      <div data-ppt="text" class="c-foot-t" style="color:{{ fm }};font-weight:700;">{{ '%02d / %02d'|format(page_no, page_total) }}</div>
+    </div>
+  </div>
+</div>
+{% endif %}

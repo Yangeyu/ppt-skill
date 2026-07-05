@@ -1,0 +1,20 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+<div class="c-frame">
+  {% include "_head.html.j2" %}
+  <div class="c-body" style="align-items:center;">
+    <div class="c-steps">
+      {% for st in d.steps %}
+      <div class="c-step">
+        <div data-ppt="rect" class="c-step-rule" {% if loop.first %}style="background:{{ colors['accent'] }};"{% endif %}></div>
+        <div data-ppt="text" class="c-step-num" {% if loop.first %}style="color:{{ colors['accent'] }};"{% endif %}>{{ '%02d' % loop.index }}</div>
+        <div data-ppt="text" class="c-step-title">{{ st.title }}</div>
+        {% if st.desc %}<div data-ppt="text" class="c-step-desc">{{ st.desc }}</div>{% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% include "_sowhat.html.j2" %}
+</div>
+{% include "_foot.html.j2" %}
+{% endblock %}

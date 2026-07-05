@@ -1,0 +1,10 @@
+{# SO WHAT 结论条：深红标签块 + 浅阶面板正文 —— 咨询页的收底签名 #}
+{% set sw = sw_text|default(d.so_what if d.so_what is defined else '') %}
+{% if sw %}
+<div data-ppt="rect" class="c-sowhat" style="background:{{ colors['surface'] }};">
+  <div data-ppt="rect" class="c-sw-tab" style="background:{{ colors['accent'] }};">
+    <div data-ppt="text" class="c-sw-k">SO WHAT</div>
+  </div>
+  <div data-ppt="text" class="c-sw-text">{{ sw }}</div>
+</div>
+{% endif %}

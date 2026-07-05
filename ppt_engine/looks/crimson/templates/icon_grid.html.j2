@@ -1,0 +1,26 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+{# 证据格 3×2 —— 每格顶部发丝线 + 证据标签 E01,深红细描边图标,punch 收口 #}
+<div class="c-frame">
+  {% include "_head.html.j2" %}
+  <div class="c-grid">
+    {% for card in d.cards %}
+    <div class="c-cell">
+      <div data-ppt="rect" style="position:absolute;left:0;top:0;width:100%;height:1px;background:{{ colors['ink'] }};"></div>
+      <div data-ppt="text" class="c-etag" style="position:absolute;right:0;top:13px;">E{{ '%02d' % loop.index }}</div>
+      <div data-ppt="icon" class="c-cell-ico">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">{{ icons[card.icon]|safe }}</svg>
+      </div>
+      <div data-ppt="text" class="c-cell-title">{{ card.title }}</div>
+      {% if card.subtitle %}<div data-ppt="text" class="c-cell-sub">{{ card.subtitle }}</div>{% endif %}
+      {% for ln in card.lines %}
+      <div data-ppt="text" class="c-cell-line {{ 'first' if loop.first else '' }}">{{ ln }}</div>
+      {% endfor %}
+      {% if card.punch %}<div data-ppt="text" class="c-cell-punch">▸ {{ card.punch }}</div>{% endif %}
+    </div>
+    {% endfor %}
+  </div>
+  {% include "_sowhat.html.j2" %}
+</div>
+{% include "_foot.html.j2" %}
+{% endblock %}

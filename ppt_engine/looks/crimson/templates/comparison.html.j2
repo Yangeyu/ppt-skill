@@ -1,0 +1,31 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+{# 对开比较 —— 中线发丝分隔;右列为焦点侧(深红栏标),左列墨色中性 #}
+<div class="c-frame">
+  {% include "_head.html.j2" %}
+  <div class="c-body">
+    <div class="c-cmp">
+      <div class="c-cmp-div" data-ppt="rect"></div>
+      {% for col, mark in [(d.left, colors['muted']), (d.right, colors['accent'])] %}
+      <div class="c-cmp-col {{ 'a' if loop.first else 'b' }}">
+        <div style="display:flex;align-items:baseline;gap:10px;">
+          <div data-ppt="text" class="c-etag" style="color:{{ mark }};">E{{ '%02d' % loop.index }}</div>
+          <div data-ppt="text" class="c-cmp-h">{{ col.heading }}</div>
+        </div>
+        <div data-ppt="rect" class="c-cmp-bar" style="background:{{ mark }};"></div>
+        <div class="c-cmp-points">
+          {% for pt in col.points %}
+          <div class="c-cmp-row">
+            <div data-ppt="rect" class="c-cmp-mark" style="background:{{ mark }};"></div>
+            <div data-ppt="text" class="c-cmp-text">{{ pt }}</div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% include "_sowhat.html.j2" %}
+</div>
+{% include "_foot.html.j2" %}
+{% endblock %}

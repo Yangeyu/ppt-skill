@@ -1,0 +1,25 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+{# 封面 —— 纸底报告封面：顶部深红细带 + 宋体大标题(C0) + 底部深红座反白落款 #}
+<div data-ppt="rect" style="position:absolute;left:0;top:0;width:100%;height:8px;background:{{ colors['accent'] }};"></div>
+<div class="cc-frame">
+  <div class="c-top" style="margin-top:8px;">
+    <div data-ppt="text" class="c-eyebrow">{{ d.eyebrow or 'STRATEGY REPORT' }}</div>
+    <div data-ppt="text" class="c-top-r">CONFIDENTIAL · FOR INTERNAL USE</div>
+  </div>
+  <div style="flex:1 1 auto;display:flex;flex-direction:column;justify-content:center;">
+    <div data-ppt="rect" style="width:56px;height:4px;background:{{ colors['accent'] }};margin-bottom:30px;"></div>
+    <div class="cc-title-row">
+      {% for seg in d.title|marksplit %}
+      <div data-ppt="text" class="cc-title"{% if seg.mark %} style="color:{{ colors['accent'] }};"{% endif %}>{{ seg.text }}</div>
+      {% endfor %}
+    </div>
+    {% if d.subtitle %}<div data-ppt="text" class="cc-sub">{{ d.subtitle }}</div>{% endif %}
+  </div>
+</div>
+<div data-ppt="rect" data-ppt-z="-20" style="position:absolute;left:0;bottom:0;width:100%;height:96px;background:{{ colors['accent'] }};"></div>
+<div style="position:absolute;left:64px;right:64px;bottom:0;height:96px;display:flex;align-items:center;justify-content:space-between;">
+  <div data-ppt="text" style="font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:{{ colors['accent-on'] }};">{{ d.footer or '' }}</div>
+  <div data-ppt="text" style="font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.72);">{{ '%02d / %02d'|format(page_no, page_total) if page_total else 'CRIMSON CONSULTING' }}</div>
+</div>
+{% endblock %}

@@ -44,4 +44,10 @@ def inject_theme(prs, theme):
                     + "</a:fontScheme>")
         elements.replace(elements.find("a:fontScheme", NS), _el(font_xml))
 
+        # python-pptx 默认 theme 的 effectStyleLst 带 6 个 outerShdw,
+        # LibreOffice 会沿 shape 的 effectRef 给纯色矩形加投影(即使 spPr 是空
+        # effectLst)——所有 look 都是无阴影纪律,统一剥掉。
+        for shdw in root.findall(".//a:outerShdw", NS):
+            shdw.getparent().remove(shdw)
+
         part._blob = etree.tostring(root, xml_declaration=True, encoding="UTF-8", standalone=True)

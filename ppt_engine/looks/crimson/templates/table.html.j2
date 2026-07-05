@@ -1,0 +1,28 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+{# 证据表 —— 墨色表头带反白 + 发丝线行 + 隔行浅阶（统一表面系统，非白卡） #}
+<div class="c-frame">
+  {% include "_head.html.j2" %}
+  <div class="c-body">
+    <div class="c-table">
+      <div data-ppt="rect" class="c-thead" style="background:{{ colors['ink'] }};">
+        {% for h in d.headers %}
+        <div class="c-tcell"><div data-ppt="text" class="c-tcell-h">{{ h }}</div></div>
+        {% endfor %}
+      </div>
+      {% for row in d.rows %}
+      <div class="c-trow" {% if loop.index % 2 == 0 %}data-ppt="rect" style="background:{{ colors['surface'] }};"{% endif %}>
+        {% for cell in row %}
+        <div class="c-tcell">
+          <div data-ppt="text" class="c-tcell-t {{ 'lead-col' if loop.first else '' }}">{{ cell }}</div>
+        </div>
+        {% endfor %}
+      </div>
+      {% if not loop.last %}<div data-ppt="rect" class="c-trule"></div>{% endif %}
+      {% endfor %}
+    </div>
+  </div>
+  {% include "_sowhat.html.j2" %}
+</div>
+{% include "_foot.html.j2" %}
+{% endblock %}
