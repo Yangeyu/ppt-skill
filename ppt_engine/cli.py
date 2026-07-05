@@ -10,8 +10,13 @@ goes to **stderr**, so stdout stays cleanly machine-parseable by the caller.
 Usage:
   python3 -m ppt_engine.cli --deck deck.json [--out out.pptx] [--shots dir] [--no-embed]
   cat deck.json | python3 -m ppt_engine.cli                       # deck via stdin
-  python3 -m ppt_engine.cli --describe riso   # look metadata for generators
-                                              # (icons / constraints / agent fragment)
+  python3 -m ppt_engine.cli --contract crimson [--slides 15]
+      # 生成契约(kind 菜单+预算自动来自 ir.py schema + look guidance.md)。
+      # 这是唯一输出纯文本(而非 JSON)的模式:契约本身就是要拼进 prompt 的文档。
+  python3 -m ppt_engine.cli --deck deck.json --source material.md [--check-only]
+      # --source: 生成后追加事实评论官(数字溯源/闭合槽位)结果 fact_issues
+      # --check-only: 只做 IR 校验+事实复核不排版——给 agent 修复回路用的廉价档
+  python3 -m ppt_engine.cli --describe riso   # (旧)seed 主题元数据
 
 --out 缺省时按统一约定落盘:out/<deck标题slug>/<slug>.pptx + preview/ 截图。
 """
@@ -67,7 +72,35 @@ def main(argv=None) -> int:
     ap.add_argument("--shots", default=None, help="dir for per-slide browser preview PNGs")
     ap.add_argument("--no-embed", action="store_true", help="skip font subsetting/embed")
     ap.add_argument("--describe", metavar="LOOK", help="print look metadata as JSON and exit")
+    ap.add_argument("--contract", metavar="LOOK", help="print the generation contract (plain text) and exit")
+    ap.add_argument("--slides", type=int, default=14, help="target page count hint for --contract")
+    ap.add_argument("--source", help="path to source material; enables the facts critic")
+    ap.add_argument("--check-only", action="store_true",
+                    help="validate IR + facts/density critics only, skip layout/build")
+    ap.add_argument("--stage", choices=["factsheet", "outline", "deck"], default="deck",
+                    help="generation stage for --contract / --check-only (default: deck)")
+    ap.add_argument("--look", help="look id for stage checks (outline has no theme field)")
+    ap.add_argument("--factsheet", help="factsheet JSON path (for --check-only --stage outline)")
+    ap.add_argument("--render", action="store_true",
+                    help="also rasterize the real pptx via LibreOffice (vision review channel: "
+                         "browser shots miss native charts/hero art)")
     args = ap.parse_args(argv)
+
+    if args.contract:
+        from .contract import render_contract
+        from .looks import LOOKS
+        from .stages import FACTSHEET_CONTRACT, outline_contract
+        if args.contract not in LOOKS:
+            _emit({"ok": False, "stage": "contract",
+                   "error": f"unknown look '{args.contract}' (have: {', '.join(LOOKS)})"})
+            return 5
+        if args.stage == "factsheet":
+            print(FACTSHEET_CONTRACT)
+        elif args.stage == "outline":
+            print(outline_contract(args.contract, args.slides))
+        else:
+            print(render_contract(args.contract, args.slides))
+        return 0
 
     if args.describe:
         return describe(args.describe)
@@ -79,6 +112,28 @@ def main(argv=None) -> int:
         _emit({"ok": False, "stage": "parse", "error": f"invalid JSON: {e}"})
         return 2
 
+    # 阶段审核(两段式生成的 ①事实清单 / ②大纲):stdin 是阶段 JSON,不是 Deck IR
+    if args.check_only and args.stage != "deck":
+        from .stages import FactSheet, OutlinePlan, check_factsheet, check_outline
+        model = FactSheet if args.stage == "factsheet" else OutlinePlan
+        try:
+            model.model_validate(payload)
+        except ValidationError as e:
+            errs = json.loads(e.json())
+            _emit({"ok": False, "stage": f"validate-{args.stage}", "errors": errs})
+            return 3
+        if args.stage == "factsheet":
+            if not args.source:
+                _emit({"ok": False, "stage": "check", "error": "--stage factsheet 需要 --source"})
+                return 2
+            issues = check_factsheet(payload, Path(args.source).read_text("utf-8"))
+        else:
+            fs = json.loads(Path(args.factsheet).read_text("utf-8")) if args.factsheet else None
+            issues = check_outline(payload, args.look or "", args.slides, factsheet=fs)
+        _log(f"✓ check {args.stage} · {len(issues)} issue(s)")
+        _emit({"ok": True, "stage": f"check-{args.stage}", "issues": issues})
+        return 0
+
     try:
         deck = Deck.model_validate(payload)
     except ValidationError as e:
@@ -88,6 +143,24 @@ def main(argv=None) -> int:
         )
         _emit({"ok": False, "stage": "validate", "error": brief, "errors": errs})
         return 3
+
+    fact_issues = None
+    if args.source:
+        from .critic.facts import check_facts
+        source = Path(args.source).read_text("utf-8")
+        fact_issues = check_facts(payload, source)
+
+    from .critic.density import check_density
+    density_issues = check_density(payload, args.look or deck.theme)
+
+    if args.check_only:                   # 廉价修复档:不起浏览器,秒级往返
+        result = {"ok": True, "stage": "check", "kinds": [s.kind for s in deck.slides],
+                  "fact_issues": fact_issues if fact_issues is not None else [],
+                  "density_issues": density_issues}
+        _log(f"✓ check-only · {len(deck.slides)} slides · "
+             f"{len(result['fact_issues'])} fact · {len(density_issues)} density issue(s)")
+        _emit(result)
+        return 0
 
     if not args.out:                      # 统一产物约定:out/<slug>/(pptx + preview/)
         dest = out_dir(deck.meta.title)
@@ -114,8 +187,18 @@ def main(argv=None) -> int:
         "issues": issues,
         "shots": str(Path(args.shots).resolve()) if args.shots else None,
     }
+    if fact_issues is not None:
+        result["fact_issues"] = fact_issues
+    result["density_issues"] = density_issues
+    if args.render:
+        from .selfcheck import render_preview
+        rdir = str(Path(args.out).parent / "rendered")
+        files = render_preview(args.out, rdir)
+        result["rendered"] = rdir if files else None
     _log(f"✓ {result['slides']} slides · {result['prims']} prims · "
-         f"{len(issues)} layout issue(s)")
+         f"{len(issues)} layout issue(s)"
+         + (f" · {len(fact_issues)} fact issue(s)" if fact_issues is not None else "")
+         + f" · {len(density_issues)} density issue(s)")
     _emit(result)
     return 0
 

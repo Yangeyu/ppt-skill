@@ -9,14 +9,13 @@ from __future__ import annotations
 import re
 
 from . import llm
+from .contract import FACT_RULES, available_kinds, kind_menu, look_guidance
+from .looks import get_look
 from .spec import SpecLock
 from .ir import (Deck, DeckMeta, Slide, CustomData,
                  CoverData, SectionData, KpiData, Stat, BulletsData, Bullet,
                  ChartData, Series, TocData, TocItem, TwoColData, CompareData,
                  Column, ProcessData, Step, QuoteData, ClosingData)
-
-# 结构轨可用版式（给 LLM 的菜单）
-STRUCT_KINDS = "toc kpi bullets two_col comparison process chart quote closing".split()
 
 # 设计系统套件速查（创作轨提示词用）
 KIT_CHEAT = """可用 class（只能用这些；写不出离阶字号/离板色）：
@@ -43,6 +42,16 @@ def _trunc(s, n):
 
 
 def _build_struct(kind: str, c: dict):
+    """严格路径：直接过 SlideData 判别联合（覆盖全部 kind，含 exhibit 等新版式）；
+    校验失败再落回旧的截断兜底（只覆盖老 9 kind）。"""
+    try:
+        return Slide(data={"kind": kind, **c}).data
+    except Exception:
+        pass
+    return _build_struct_lenient(kind, c)
+
+
+def _build_struct_lenient(kind: str, c: dict):
     try:
         if kind == "toc":
             return TocData(eyebrow=_trunc(c.get("eyebrow", ""), 24), title=_trunc(c.get("title", "目录"), 24),
@@ -101,22 +110,23 @@ def _write_html(spec: SpecLock, brief: str, role: str, dark: bool) -> str:
 
 
 # ---- 大纲 ------------------------------------------------------------------
-_OUTLINE_SYS = """你是演示文稿叙事策划。把主题拆成 N 页有节奏的 deck，输出 JSON：{"slides":[ ... ]}。
-每页二选一：
-A) 结构页(承载信息) {"track":"structured","kind":"<菜单之一>","content":{...该版式字段...}}
-   菜单与字段:
-   - toc {eyebrow,title,items:[字符串]}              # 目录,≤8项
-   - kpi {eyebrow,title,stats:[{value≤8字,label≤16字,delta,delta_dir:up|down|flat}]}  # 2-4个
-   - bullets {eyebrow,title,bullets:[{text≤80字,emphasis}]}  # ≤6条
-   - two_col {eyebrow,title,left:{heading,points:[≤60字]},right:{...}}
-   - comparison {eyebrow,title,left:{heading,points},right:{heading,points}}
-   - process {eyebrow,title,steps:[{title≤16字,desc≤48字}]}  # 2-5步
-   - chart {eyebrow,title,chart_type:column|bar|line,categories:[],series:[{name,values:[数]}],takeaway}
-   - quote {quote≤80字,attribution}
-   - closing {title,subtitle,contact}
-B) 创作页(强表现力,用于封面/章节/金句/主视觉) {"track":"creative","role":"cover|section|statement","brief":"这页要表达什么+关键文案","dark":true/false}
-规则：第1页必须是 creative cover；含 1-2 个 creative section 做章节过渡；最后一页 closing 或 creative statement。
-其余按内容选合适结构版式。标题/正文用主题语言，简洁有信息量。只输出 JSON。"""
+def _outline_sys(look_id: str) -> str:
+    """大纲提示词 = 契约的结构菜单 + 事实纪律 + look 引导段(单一来源,勿手写菜单)。"""
+    guidance = look_guidance(look_id)
+    return (
+        '你是演示文稿叙事策划。把主题拆成 N 页有节奏的 deck，输出 JSON：{"slides":[ ... ]}。\n'
+        "每页二选一：\n"
+        'A) 结构页(承载信息) {"track":"structured","kind":"<菜单之一>","content":{...该版式字段...}}\n'
+        "   菜单与字段——**字数上限是硬约束**,标 ? 的字段可省略:\n"
+        f"{kind_menu(look_id)}\n"
+        'B) 创作页(强表现力,用于封面/章节/金句/主视觉) {"track":"creative","role":"cover|section|statement",'
+        '"brief":"这页要表达什么+关键文案","dark":true/false}\n'
+        "规则：第1页必须是 creative cover；含 1-2 个 creative section 做章节过渡；"
+        "最后一页 closing 或 creative statement。其余按内容选合适结构版式。\n\n"
+        f"{FACT_RULES}\n\n"
+        + (f"{guidance}\n\n" if guidance else "")
+        + "只输出 JSON。"
+    )
 
 
 def _fallback_outline(topic: str, n: int) -> list[dict]:
@@ -131,6 +141,8 @@ def _fallback_outline(topic: str, n: int) -> list[dict]:
 
 def plan_deck(topic: str, spec: SpecLock, *, n_slides: int = 10, audience: str = "",
               source: str = "", use_llm: bool | None = None) -> Deck:
+    look_id = get_look(spec).spec.id
+    struct_kinds = set(available_kinds(look_id))
     want = llm.available() if use_llm is None else use_llm
     items = None
     if want and llm.available():
@@ -138,7 +150,7 @@ def plan_deck(topic: str, spec: SpecLock, *, n_slides: int = 10, audience: str =
             usr = f"主题：{topic}\n受众：{audience or '通用'}\n页数：约 {n_slides} 页"
             if source:
                 usr += f"\n素材：\n{source[:6000]}"
-            data = llm.chat_json(_OUTLINE_SYS, usr, temperature=0.6, max_tokens=4096)
+            data = llm.chat_json(_outline_sys(look_id), usr, temperature=0.6, max_tokens=8000)
             items = data.get("slides") or []
         except Exception:
             items = None
@@ -156,7 +168,7 @@ def plan_deck(topic: str, spec: SpecLock, *, n_slides: int = 10, audience: str =
             slides.append(Slide(data=CustomData(html=html, role=it.get("role", "hero"), dark=bool(it.get("dark")))))
         else:
             kind = it.get("kind", "bullets")
-            if kind not in STRUCT_KINDS:
+            if kind not in struct_kinds:
                 kind = "bullets"
             data = _build_struct(kind, it.get("content", {}))
             if data is not None:

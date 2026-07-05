@@ -10,6 +10,18 @@ python demo_v03.py "独立书店与 zine 文化指南"
 
 > 设计文档见 [`docs/DESIGN.md`](docs/DESIGN.md)（架构 v0.3，15 节）与 [`docs/QUALITY.md`](docs/QUALITY.md)（可执行的高颜值 rubric）。
 
+## 组织形态:skill + 引擎 + 评论官
+
+- **skill 管"怎么想"**:[`skill/SKILL.md`](skill/SKILL.md) 引导任何 agent 用本工具——
+  第一步永远是 `python -m ppt_engine.cli --contract <look>` 现场取**生成契约**
+  (版式菜单+字数预算从 `ir.py` schema 自动生成;叙事/组织/数据表现纪律来自各
+  look 包第四段 `guidance.md`——每个 look 是一种报告哲学,不只是一种配色)。
+- **引擎管"怎么排"**:agent 只产语义 IR,几何由浏览器算,导出原生可编辑 pptx。
+- **评论官管"对不对"**:`--check-only --source` 秒级返回 IR 校验错误 + 事实复核
+  (数字溯源/闭合槽位/结构数量),agent 回喂自修;prompt 说服不了的,机器把关。
+
+外部 agent 消费者示例:`mastra/`(deckGenerator,`pnpm generate`)。
+
 ---
 
 ## 它和别的方案有什么不同

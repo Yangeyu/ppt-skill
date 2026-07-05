@@ -12,8 +12,15 @@ v0.3 七段管线里的**美学评论官（识图）**此前因 DashScope 账号
 |---|---|---|---|
 | `visionCritic` | 识图美学评论官，读页面截图打分（hierarchy/balance/design/boldness/fit）+ 改进建议 | ⑥ | 图片 + 意图 |
 | `artDirector` | 艺术总监，为主题现场生成设计语言（配色/字阶/字体/母题/图像处理） | ① | 主题文本 |
+| `deckGenerator` | Deck 生成官：素材原文 + 生成契约 → 整份 Deck IR；契约由驱动运行时调 `cli --contract <look>` 现场获取（单一来源），复核回路 = `cli --check-only`（IR 校验 + 事实评论官）回喂自修 | ④ | 素材 + 契约 |
 
 评分维度对齐 `../docs/QUALITY.md` 页面层 rubric。
+
+```bash
+# 真 agent e2e:素材 → deckGenerator 自产 IR → 复核自修 → 原生 pptx
+pnpm generate ../demos/data/isdin_report_full.md crimson 15
+# 产物: ../out/<素材名>_crimson_mastra/(agent_deck.json 审计 + pptx + preview/)
+```
 
 ## 用法
 

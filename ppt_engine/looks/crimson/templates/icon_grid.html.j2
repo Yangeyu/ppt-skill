@@ -3,7 +3,7 @@
 {# 证据格 3×2 —— 每格顶部发丝线 + 证据标签 E01,深红细描边图标,punch 收口 #}
 <div class="c-frame">
   {% include "_head.html.j2" %}
-  <div class="c-grid">
+  <div class="c-grid" style="grid-template-rows:repeat({{ 1 if d.cards|length <= 3 else 2 }},1fr);grid-template-columns:repeat({{ d.cards|length if d.cards|length <= 3 else 3 }},1fr);">
     {% for card in d.cards %}
     <div class="c-cell">
       <div data-ppt="rect" style="position:absolute;left:0;top:0;width:100%;height:1px;background:{{ colors['ink'] }};"></div>

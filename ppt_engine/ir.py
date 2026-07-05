@@ -227,7 +227,7 @@ class SideModule(BaseModel):
 class InsightBox(BaseModel):
     """编号洞察框(咨询版面的 ①② 解读区)。"""
     title: str = Field(max_length=24)
-    points: list[str] = Field(min_length=1, max_length=3)   # 每条 ≤60 字
+    points: list[Point] = Field(min_length=1, max_length=3)
 
 
 class Implication(BaseModel):
