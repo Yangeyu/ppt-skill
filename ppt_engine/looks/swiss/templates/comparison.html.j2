@@ -1,0 +1,31 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+{% set sides = [
+  (d.left,  {'bg': colors['accent'], 'fg': colors['on-accent'], 'muted': colors['on-accent-muted'], 'mark': colors['on-accent']}),
+  (d.right, {'bg': colors['grey-1'], 'fg': colors['ink'],       'muted': colors['muted'],           'mark': colors['accent']})
+] %}
+<div class="s-frame">
+  {% include "_head.html.j2" %}
+  <div class="s-body">
+    <div class="s-cmp">
+      {% for col, c in sides %}
+      <div class="s-cmp-cell">
+        <div data-ppt="rect" class="s-cmp-card" style="background:{{ c.bg }};">
+          <div data-ppt="text" class="s-cmp-h" style="color:{{ c.fg }};">{{ col.heading }}</div>
+          <div data-ppt="rect" class="s-cmp-rule" style="background:{{ c.mark }};"></div>
+          <div class="s-cmp-points">
+            {% for pt in col.points %}
+            <div class="s-cmp-row">
+              <div data-ppt="rect" class="s-cmp-mark" style="background:{{ c.mark }};"></div>
+              <div data-ppt="text" class="s-cmp-text" style="color:{{ c.fg }};">{{ pt }}</div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% include "_foot.html.j2" %}
+</div>
+{% endblock %}

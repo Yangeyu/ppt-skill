@@ -1,0 +1,19 @@
+{% extends "base.html.j2" %}
+{% block bg %}{% endblock %}
+{% block frame %}
+<!-- S09 Closing Manifesto: left IKB field, right paper takeaway -->
+<div data-ppt="rect" data-ppt-z="-20" style="position:absolute;inset:0;background:{{ colors['bg-content'] }};"></div>
+<div data-ppt="rect" data-ppt-z="-10" style="position:absolute;left:0;top:0;width:704px;height:720px;background:{{ colors['accent'] }};"></div>
+<div data-ppt="rect" style="position:absolute;left:64px;top:56px;width:9px;height:9px;background:{{ colors['on-accent'] }};"></div>
+<div data-ppt="text" style="position:absolute;left:86px;top:52px;font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:{{ colors['on-accent-muted'] }};">CLOSING</div>
+<div data-ppt="text" style="position:absolute;left:64px;bottom:120px;font-family:var(--font-display);font-weight:400;font-size:88px;line-height:1;letter-spacing:-2px;color:{{ colors['on-accent'] }};">{{ d.title }}</div>
+<div data-ppt="rect" style="position:absolute;left:64px;bottom:88px;width:64px;height:3px;background:{{ colors['on-accent'] }};"></div>
+<!-- right column -->
+<div style="position:absolute;left:768px;right:64px;top:0;height:720px;display:flex;flex-direction:column;justify-content:center;">
+  <div data-ppt="rect" style="width:100%;height:2px;background:{{ colors['ink'] }};"></div>
+  {% if d.subtitle %}<div data-ppt="text" style="font-family:var(--font-body);font-size:17px;line-height:1.65;color:{{ colors['ink'] }};margin-top:26px;white-space:normal;">{{ d.subtitle }}</div>{% endif %}
+  {% if d.contact %}<div data-ppt="text" style="font-family:var(--font-mono);font-size:12px;letter-spacing:.12em;color:{{ colors['muted'] }};margin-top:30px;">{{ d.contact }}</div>{% endif %}
+  <div data-ppt="rect" style="width:100%;height:1px;background:{{ colors['hairline'] }};margin-top:32px;"></div>
+  <div data-ppt="text" style="font-family:var(--font-mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:{{ colors['muted'] }};margin-top:14px;">SWISS INTERNATIONAL STYLE · IKB #002FA7</div>
+</div>
+{% endblock %}

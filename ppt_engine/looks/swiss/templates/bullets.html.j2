@@ -1,0 +1,18 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+<div class="s-frame">
+  {% include "_head.html.j2" %}
+  <div class="s-body">
+    <div class="s-vlist">
+      {% for b in d.bullets %}
+      <div class="s-vrow">
+        {% if not loop.first %}<div data-ppt="rect" class="s-vhair"></div>{% endif %}
+        <div data-ppt="text" class="s-vnum">{{ '%02d' % loop.index }}</div>
+        <div data-ppt="text" class="s-vtext {{ 'em' if b.emphasis else '' }}">{{ b.text }}</div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% include "_foot.html.j2" %}
+</div>
+{% endblock %}

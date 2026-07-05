@@ -1,0 +1,32 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+{% set n = d.cards|length %}
+<div class="s-frame">
+  {% include "_head.html.j2" %}
+  <div class="s-grid" {% if n <= 4 %}style="grid-template-columns:repeat({{ [n, 2]|max }}, 1fr);grid-template-rows:repeat({{ 1 if n <= 3 else 2 }}, 1fr);"{% endif %}>
+    {% for card in d.cards %}
+    {# S16 discipline: grey cells, exactly ONE accent cell (the last) #}
+    {% set on_accent = loop.last %}
+    {% set fg = colors['on-accent'] if on_accent else colors['ink'] %}
+    {% set mut = colors['on-accent-muted'] if on_accent else colors['muted'] %}
+    <div class="s-cell">
+      <div data-ppt="rect" class="s-card" style="background:{{ colors['accent'] if on_accent else colors['grey-1'] }};">
+        <div data-ppt="icon" class="s-card-ico" style="color:{{ fg }};">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">{{ icons[card.icon]|safe }}</svg>
+        </div>
+        <div data-ppt="text" class="s-card-num" style="color:{{ mut }};">{{ '%02d' % loop.index }}</div>
+        <div class="s-card-meat">
+          <div data-ppt="text" class="s-card-title" style="color:{{ fg }};">{{ card.title }}</div>
+          {% if card.subtitle %}<div data-ppt="text" class="s-card-sub" style="color:{{ mut }};">{{ card.subtitle }}</div>{% endif %}
+          {% for ln in card.lines %}
+          <div data-ppt="text" class="s-line {{ 'first' if loop.first else '' }}" style="color:{{ fg }};">{{ ln }}</div>
+          {% endfor %}
+          {% if card.punch %}<div data-ppt="text" class="s-card-punch" style="color:{{ colors['on-accent'] if on_accent else colors['accent'] }};">{{ card.punch }}</div>{% endif %}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% include "_foot.html.j2" %}
+</div>
+{% endblock %}

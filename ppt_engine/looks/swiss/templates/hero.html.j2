@@ -1,0 +1,32 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+<!-- S22 Image Hero: top 60% full-bleed image strip, bottom 40% type + fact columns -->
+<div data-ppt="image" data-ppt-z="-20" data-src="{{ hero_img }}" style="position:absolute;left:0;top:0;width:1280px;height:412px;"></div>
+<!-- title plate over the image, top-left -->
+<div style="position:absolute;left:64px;top:52px;">
+  <div data-ppt="rect" data-ppt-z="1" style="position:absolute;left:-22px;top:-16px;right:-24px;bottom:-18px;background:{{ colors['bg-content'] }};"></div>
+  {% if d.eyebrow %}<div data-ppt="text" data-ppt-z="2" style="position:relative;font-family:var(--font-mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:{{ colors['accent'] }};">{{ d.eyebrow }}</div>{% endif %}
+  <div data-ppt="text" data-ppt-z="2" style="position:relative;font-family:var(--font-display);font-weight:400;font-size:44px;line-height:1.04;letter-spacing:-1px;color:{{ colors['ink'] }};margin-top:8px;">{{ d.title }}</div>
+</div>
+<!-- bottom zone -->
+<div data-ppt="rect" style="position:absolute;left:64px;right:64px;top:448px;height:2px;background:{{ colors['ink'] }};"></div>
+<div style="position:absolute;left:64px;top:474px;width:430px;">
+  {% if d.subtitle %}<div data-ppt="text" style="font-family:var(--font-body);font-size:15.5px;line-height:1.6;color:{{ colors['secondary'] }};white-space:normal;">{{ d.subtitle }}</div>{% endif %}
+</div>
+{% if d.facts %}
+<div style="position:absolute;left:560px;right:64px;top:470px;display:flex;gap:36px;">
+  {% for f in d.facts %}
+  <div style="flex:1 1 0;">
+    <div data-ppt="rect" style="width:100%;height:1px;background:{{ colors['grey-2'] }};"></div>
+    <div data-ppt="text" style="font-family:var(--font-display);font-weight:400;font-size:46px;line-height:1;letter-spacing:-1px;color:{{ colors['accent'] if loop.last else colors['ink'] }};margin-top:16px;">{{ f.value }}</div>
+    <div data-ppt="text" style="font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:{{ colors['muted'] }};margin-top:10px;">{{ f.label }}</div>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+<div data-ppt="rect" class="s-foot-rule"></div>
+<div class="s-foot">
+  {% if d.footer %}<div data-ppt="text" class="s-foot-t">{{ d.footer }}</div>{% else %}<div data-ppt="text" class="s-foot-t">SWISS INTERNATIONAL STYLE</div>{% endif %}
+  <div data-ppt="text" class="s-foot-t">IMAGE HERO · 21:9</div>
+</div>
+{% endblock %}

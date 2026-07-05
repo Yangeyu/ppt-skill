@@ -1,0 +1,22 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+<div class="s-frame">
+  {% include "_head.html.j2" %}
+  <div class="s-body" style="align-items:center;">
+    <div class="s-chart-wrap">
+      <div class="s-chart-area">
+        <div data-ppt="chart" data-chart='{{ chart_json|safe }}' class="s-chart-box"></div>
+      </div>
+      {% if d.takeaway %}
+      <div class="s-take">
+        <div data-ppt="rect" class="s-take-block" style="background:{{ colors['accent'] }};">
+          <div data-ppt="text" class="s-take-k" style="color:{{ colors['on-accent-muted'] }};">TAKEAWAY</div>
+          <div data-ppt="text" class="s-take-text" style="color:{{ colors['on-accent'] }};">{{ d.takeaway }}</div>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+  {% include "_foot.html.j2" %}
+</div>
+{% endblock %}

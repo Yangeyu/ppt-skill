@@ -1,0 +1,19 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+<div class="s-frame">
+  {% include "_head.html.j2" %}
+  <div class="s-body">
+    <div class="s-ledger">
+      {% for s in d.stats %}
+      <div class="s-led-row">
+        {% if not loop.first %}<div data-ppt="rect" class="s-led-hair"></div>{% endif %}
+        <div data-ppt="text" class="s-led-val" style="color:{{ colors['accent'] if loop.first else colors['ink'] }};">{{ s.value }}</div>
+        <div data-ppt="text" class="s-led-label">{{ s.label }}</div>
+        {% if s.delta %}<div data-ppt="text" class="s-led-delta" style="color:{{ colors['pos'] if s.delta_dir == 'up' else (colors['neg'] if s.delta_dir == 'down' else colors['muted']) }};">{{ s.delta }}</div>{% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% include "_foot.html.j2" %}
+</div>
+{% endblock %}

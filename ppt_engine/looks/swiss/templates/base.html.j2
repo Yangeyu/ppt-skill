@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<style>
+{% if fonts %}{% for fam in fonts.families %}
+@font-face { font-family: "{{ fam.typeface }}"; font-weight: 400; font-style: normal;
+  src: url(data:font/ttf;base64,{{ fam.regular_b64 }}) format("truetype"); }
+@font-face { font-family: "{{ fam.typeface }}"; font-weight: 700; font-style: normal;
+  src: url(data:font/ttf;base64,{{ fam.bold_b64 }}) format("truetype"); }
+{% endfor %}{% endif %}
+{{ css_vars|safe }}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+.slide {
+  width: 1280px; height: 720px; position: relative; overflow: hidden;
+  background: var(--bg-content); color: var(--ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased; text-rendering: geometricPrecision;
+}
+[data-ppt] { box-sizing: border-box; }
+/* swiss text is single-line by design — keep it from re-wrapping in renderers
+   whose substitute metrics differ from the browser measurement */
+[data-ppt="text"] { margin: 0; padding: 0; white-space: nowrap; }
+
+/* ---- shared content frame ---- */
+.s-frame { position: absolute; inset: 0; padding: 48px 64px 44px; display: flex; flex-direction: column; }
+.s-head { position: relative; flex: 0 0 auto; }
+.s-head-row { display: flex; justify-content: space-between; align-items: baseline; }
+.s-kicker { font-family: var(--font-mono); font-size: 11px; font-weight: 400; letter-spacing: .18em;
+            text-transform: uppercase; color: var(--accent); }
+.s-mark { font-family: var(--font-mono); font-size: 10.5px; font-weight: 400; letter-spacing: .16em;
+          text-transform: uppercase; color: var(--muted); }
+.s-title { font-family: var(--font-display); font-weight: 400; font-size: 40px; line-height: 1.06;
+           letter-spacing: -.5px; color: var(--ink); margin-top: 12px; }
+.s-sub { font-family: var(--font-body); font-size: 14px; color: var(--secondary); margin-top: 8px; }
+.s-rule-wrap { position: relative; margin-top: 18px; }
+.s-rule { width: 100%; height: 1px; background: var(--ink); }
+.s-tick { position: absolute; left: 0; top: -1px; width: 48px; height: 3px; background: var(--accent); }
+
+/* ---- footer chrome ---- */
+.s-foot-rule { position: absolute; left: 64px; right: 64px; bottom: 42px; height: 1px; background: var(--hairline); }
+.s-foot { position: absolute; left: 64px; right: 64px; bottom: 20px; display: flex;
+          justify-content: space-between; align-items: baseline; }
+.s-foot-t { font-family: var(--font-mono); font-size: 9.5px; font-weight: 400; letter-spacing: .14em;
+            text-transform: uppercase; color: var(--muted); }
+
+/* ---- shared body ---- */
+.s-body { flex: 1 1 auto; margin-top: 26px; margin-bottom: 34px; display: flex; min-height: 0; }
+
+/* ===== toc ===== */
+.s-toc { width: 100%; display: flex; flex-direction: column; justify-content: space-between; }
+.s-toc-item { flex: 1 1 0; display: flex; flex-direction: column; justify-content: center; position: relative; }
+.s-toc-hair { position: absolute; left: 0; right: 0; top: 0; height: 1px; background: var(--hairline); }
+.s-toc-row { display: flex; align-items: baseline; gap: 28px; }
+.s-toc-num { font-family: var(--font-mono); font-size: 13px; color: var(--accent); letter-spacing: .1em; }
+.s-toc-title { font-family: var(--font-display); font-weight: 400; font-size: 25px; letter-spacing: -.3px; color: var(--ink); }
+.s-toc-desc { font-family: var(--font-body); font-size: 13px; color: var(--muted); align-self: center; }
+.s-toc-pages { margin-left: auto; font-family: var(--font-mono); font-size: 11px; letter-spacing: .12em;
+               color: var(--secondary); align-self: center; }
+
+/* ===== section (statement) ===== */
+.s-sec-frame { position: absolute; inset: 0; padding: 64px; display: flex; flex-direction: column; justify-content: center; }
+.s-sec-ghost { position: absolute; right: 48px; bottom: -56px; font-family: var(--font-display); font-weight: 400;
+               font-size: 340px; line-height: .8; letter-spacing: -.04em; color: var(--grey-2); }
+.s-sec-kick { font-family: var(--font-mono); font-size: 13px; letter-spacing: .2em;
+              text-transform: uppercase; color: var(--accent); }
+.s-sec-title { font-family: var(--font-display); font-weight: 400; font-size: 72px; line-height: 1.02;
+               letter-spacing: -1.5px; color: var(--ink); margin-top: 22px; }
+.s-sec-rule { width: 64px; height: 3px; background: var(--accent); margin-top: 30px; }
+.s-sec-sub { font-family: var(--font-body); font-size: 16px; color: var(--secondary); margin-top: 22px; max-width: 680px; }
+
+/* ===== kpi ledger (stacked rows, hairline separated) ===== */
+.s-ledger { width: 100%; display: flex; flex-direction: column; justify-content: space-between; }
+.s-led-row { flex: 1 1 0; position: relative; display: flex; align-items: center; gap: 36px; }
+.s-led-hair { position: absolute; left: 0; right: 0; top: 0; height: 1px; background: var(--hairline); }
+.s-led-val { font-family: var(--font-display); font-weight: 400; font-size: 62px; line-height: .95;
+             letter-spacing: -1.5px; color: var(--ink); min-width: 320px; }
+.s-led-label { font-family: var(--font-body); font-size: 16px; color: var(--secondary); }
+.s-led-delta { margin-left: auto; font-family: var(--font-mono); font-size: 12px; letter-spacing: .08em; }
+
+/* ===== bullets (numbered index rows) ===== */
+.s-vlist { width: 100%; display: flex; flex-direction: column; justify-content: space-between; }
+.s-vrow { flex: 1 1 0; position: relative; display: flex; align-items: center; gap: 30px; }
+.s-vhair { position: absolute; left: 0; right: 0; top: 0; height: 1px; background: var(--hairline); }
+.s-vnum { font-family: var(--font-mono); font-size: 13px; color: var(--accent); letter-spacing: .1em; flex: 0 0 auto; }
+.s-vtext { font-family: var(--font-body); font-size: 19px; line-height: 1.5; color: var(--ink); }
+.s-vtext.em { font-weight: 700; }
+
+/* ===== process (horizontal axis, square nodes) ===== */
+.s-proc { position: relative; width: 100%; }
+.s-proc-axis { position: absolute; left: 0; right: 0; top: 96px; height: 1px; background: var(--ink); }
+.s-proc-row { display: flex; gap: 24px; }
+.s-proc-item { flex: 1 1 0; display: flex; flex-direction: column; align-items: flex-start; }
+.s-proc-num { font-family: var(--font-mono); font-size: 12px; letter-spacing: .12em; color: var(--muted); }
+.s-proc-node { width: 9px; height: 9px; background: var(--accent); margin-top: 68px; transform: translateY(5px); }
+.s-proc-title { font-family: var(--font-display); font-weight: 400; font-size: 22px; letter-spacing: -.3px;
+                color: var(--ink); margin-top: 26px; }
+.s-proc-desc { font-family: var(--font-body); font-size: 13px; line-height: 1.5; color: var(--secondary); margin-top: 10px; }
+
+/* ===== two_col (duo halves, centre hairline) ===== */
+.s-cols { width: 100%; display: flex; position: relative; }
+.s-cols-vrule { position: absolute; left: 50%; top: 0; bottom: 0; width: 1px; background: var(--hairline); }
+.s-col { flex: 1 1 0; display: flex; flex-direction: column; }
+.s-col:first-child { padding-right: 44px; }
+.s-col:last-child { padding-left: 44px; }
+.s-col-rule { width: 100%; height: 2px; background: var(--ink); }
+.s-col-h { font-family: var(--font-display); font-weight: 400; font-size: 27px; letter-spacing: -.4px; margin-top: 16px; }
+.s-col-points { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: space-evenly; margin-top: 8px; }
+.s-col-row { display: flex; align-items: flex-start; gap: 16px; }
+.s-col-mark { width: 8px; height: 8px; margin-top: 9px; flex: 0 0 auto; }
+.s-col-text { font-family: var(--font-body); font-size: 16px; line-height: 1.5; color: var(--ink); }
+
+/* ===== comparison (accent panel vs grey panel) ===== */
+.s-cmp { width: 100%; display: flex; gap: 20px; }
+.s-cmp-cell { flex: 1 1 0; position: relative; }
+.s-cmp-card { position: absolute; inset: 0; padding: 30px 32px 28px; display: flex; flex-direction: column; }
+.s-cmp-h { font-family: var(--font-display); font-weight: 400; font-size: 27px; letter-spacing: -.4px; }
+.s-cmp-rule { width: 40px; height: 2px; margin: 16px 0 6px; }
+.s-cmp-points { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: space-evenly; }
+.s-cmp-row { display: flex; align-items: flex-start; gap: 14px; }
+.s-cmp-mark { width: 8px; height: 8px; margin-top: 8px; flex: 0 0 auto; }
+.s-cmp-text { font-family: var(--font-body); font-size: 15.5px; line-height: 1.5; }
+
+/* ===== icon grid (cells, one accent card) ===== */
+.s-grid { flex: 1 1 auto; display: grid; grid-template-columns: repeat(3, 1fr);
+          grid-template-rows: repeat(2, 1fr); gap: 14px; margin-top: 24px; margin-bottom: 34px; }
+.s-cell { position: relative; }
+.s-card { position: absolute; inset: 0; padding: 16px 18px 14px; display: flex; flex-direction: column; }
+.s-card-ico { width: 30px; height: 30px; }
+.s-card-num { position: absolute; right: 14px; top: 12px; font-family: var(--font-mono); font-size: 11px;
+              letter-spacing: .12em; }
+.s-card-meat { margin-top: auto; }
+.s-card-title { font-family: var(--font-display); font-weight: 400; font-size: 20px; letter-spacing: -.2px; }
+.s-card-sub { font-family: var(--font-mono); font-size: 9px; letter-spacing: .08em; text-transform: uppercase; margin-top: 5px; }
+.s-line { font-family: var(--font-body); font-size: 12.5px; line-height: 1.4; margin-top: 3px; }
+.s-line.first { margin-top: 10px; }
+.s-card-punch { font-family: var(--font-body); font-weight: 700; font-size: 12.5px; margin-top: 8px; }
+
+/* ===== timeline (years on hairline axis) ===== */
+.s-tl { position: relative; width: 100%; }
+.s-tl-axis { position: absolute; left: 0; right: 0; top: 92px; height: 1px; background: var(--ink); }
+.s-tl-row { display: flex; gap: 24px; }
+.s-tl-item { flex: 1 1 0; display: flex; flex-direction: column; align-items: flex-start; }
+.s-tl-year { font-family: var(--font-display); font-weight: 400; font-size: 34px; letter-spacing: -.5px; line-height: 1; }
+.s-tl-node { width: 9px; height: 9px; background: var(--ink); margin-top: 44px; transform: translateY(4px); }
+.s-tl-title { font-family: var(--font-body); font-weight: 700; font-size: 15px; color: var(--ink); margin-top: 24px; }
+.s-tl-desc { font-family: var(--font-body); font-size: 12.5px; line-height: 1.5; color: var(--secondary); margin-top: 8px; }
+
+/* ===== table (horizontal rules only) ===== */
+.s-table { width: 100%; display: flex; flex-direction: column; justify-content: center; }
+.s-trow { display: flex; position: relative; }
+.s-trow-hair { position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: var(--hairline); }
+.s-trow-top { position: absolute; left: 0; right: 0; top: 0; height: 2px; background: var(--ink); }
+.s-tcell { flex: 1 1 0; padding: 13px 18px 13px 0; display: flex; align-items: center; min-height: 46px; }
+.s-tcell-t { font-family: var(--font-body); font-size: 13.5px; line-height: 1.4; color: var(--ink); }
+.s-tcell.h .s-tcell-t { font-family: var(--font-mono); font-size: 11px; font-weight: 700;
+                        letter-spacing: .1em; text-transform: uppercase; color: var(--ink); }
+
+/* ===== pillars (columns with top rules + ghost numerals) ===== */
+.s-pillars { width: 100%; display: flex; gap: 44px; }
+.s-pillar { flex: 1 1 0; display: flex; flex-direction: column; }
+.s-pillar-rule { width: 100%; height: 2px; }
+.s-pillar-tag { font-family: var(--font-mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase;
+                color: var(--muted); margin-top: 14px; }
+.s-pillar-h { font-family: var(--font-display); font-weight: 400; font-size: 25px; letter-spacing: -.3px;
+              color: var(--ink); margin-top: 8px; }
+.s-pillar-points { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: space-evenly; margin-top: 6px; }
+.s-pillar-row { display: flex; align-items: flex-start; gap: 13px; }
+.s-pillar-mark { width: 7px; height: 7px; margin-top: 8px; flex: 0 0 auto; }
+.s-pillar-text { font-family: var(--font-body); font-size: 14.5px; line-height: 1.5; color: var(--ink); }
+.s-pillar-num { font-family: var(--font-display); font-weight: 400; font-size: 52px; line-height: 1;
+                letter-spacing: -1px; margin-top: 14px; }
+
+/* ===== chart ===== */
+.s-chart-wrap { width: 100%; display: flex; gap: 44px; align-items: center; }
+.s-chart-area { flex: 1 1 0; height: 360px; }
+.s-chart-box { width: 100%; height: 100%; }
+.s-take { flex: 0 0 292px; position: relative; }
+.s-take-block { position: relative; padding: 26px 26px 24px; }
+.s-take-k { font-family: var(--font-mono); font-size: 10px; letter-spacing: .18em; text-transform: uppercase; }
+.s-take-text { font-family: var(--font-body); font-weight: 700; font-size: 17px; line-height: 1.5; margin-top: 14px; }
+
+/* ===== quote ===== */
+.s-quote-frame { position: absolute; inset: 0; padding: 80px 96px; display: flex; flex-direction: column; justify-content: center; }
+.s-quote-mark { font-family: var(--font-display); font-weight: 400; font-size: 150px; line-height: .5;
+                height: 70px; color: var(--accent); }
+.s-quote-text { font-family: var(--font-display); font-weight: 400; font-size: 44px; line-height: 1.28;
+                letter-spacing: -.5px; max-width: 1020px; margin-top: 14px; }
+.s-quote-rule { width: 64px; height: 3px; background: var(--accent); margin: 34px 0 20px; }
+.s-quote-attr { font-family: var(--font-mono); font-size: 13px; letter-spacing: .14em; text-transform: uppercase;
+                color: var(--muted); }
+
+/* airy layouts read as dead paper below — optically center them */
+.s-proc, .s-tl, .s-table { margin-top: auto; margin-bottom: auto; }
+
+/* body text that may run long must wrap (overrides the single-line default) */
+.s-vtext, .s-col-text, .s-cmp-text, .s-proc-desc, .s-take-text, .s-tcell-t,
+.s-pillar-text, .s-quote-text, .s-sec-sub, .s-tl-desc, .s-sub { white-space: normal; }
+/* wrapping body text inside flex rows must fill + be allowed to shrink */
+.s-vtext, .s-col-text, .s-cmp-text, .s-pillar-text, .s-tcell-t { flex: 1 1 auto; min-width: 0; }
+</style>
+</head>
+<body class="slide {% block klass %}{% endblock %}">
+{% block bg %}<div data-ppt="rect" data-ppt-z="-30" style="position:absolute;inset:0;background:var(--bg-content);"></div>{% endblock %}
+{% block frame %}{% endblock %}
+</body>
+</html>

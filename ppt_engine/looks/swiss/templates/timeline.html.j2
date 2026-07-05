@@ -1,0 +1,22 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+<div class="s-frame">
+  {% include "_head.html.j2" %}
+  <div class="s-body" style="align-items:center;">
+    <div class="s-tl">
+      <div data-ppt="rect" class="s-tl-axis"></div>
+      <div class="s-tl-row">
+        {% for m in d.milestones %}
+        <div class="s-tl-item">
+          <div data-ppt="text" class="s-tl-year" style="color:{{ colors['accent'] if loop.last else colors['ink'] }};">{{ m.year }}</div>
+          <div data-ppt="rect" class="s-tl-node" style="background:{{ colors['accent'] if loop.last else colors['ink'] }};"></div>
+          <div data-ppt="text" class="s-tl-title">{{ m.title }}</div>
+          {% if m.desc %}<div data-ppt="text" class="s-tl-desc">{{ m.desc }}</div>{% endif %}
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  {% include "_foot.html.j2" %}
+</div>
+{% endblock %}

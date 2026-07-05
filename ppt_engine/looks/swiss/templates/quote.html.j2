@@ -1,0 +1,15 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+<div class="s-quote-frame">
+  <div data-ppt="text" class="s-quote-mark">“</div>
+  <div data-ppt="text" class="s-quote-text" style="color:{{ colors['ink'] }};">{{ d.quote }}</div>
+  <div data-ppt="rect" class="s-quote-rule"></div>
+  {% if d.attribution %}<div data-ppt="text" class="s-quote-attr">{{ d.attribution }}</div>{% endif %}
+</div>
+<div data-ppt="rect" style="position:absolute;left:64px;top:56px;width:9px;height:9px;background:{{ colors['accent'] }};"></div>
+<div data-ppt="rect" class="s-foot-rule"></div>
+<div class="s-foot">
+  <div data-ppt="text" class="s-foot-t">QUOTE</div>
+  <div data-ppt="text" class="s-foot-t">SWISS INTERNATIONAL STYLE</div>
+</div>
+{% endblock %}

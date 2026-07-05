@@ -1,0 +1,28 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+<div class="s-frame">
+  {% include "_head.html.j2" %}
+  <div class="s-body">
+    <div class="s-pillars">
+      {% for col in d.columns %}
+      {% set accent = loop.last %}
+      <div class="s-pillar">
+        <div data-ppt="rect" class="s-pillar-rule" style="background:{{ colors['accent'] if accent else colors['ink'] }};"></div>
+        {% if col.tag %}<div data-ppt="text" class="s-pillar-tag">{{ col.tag }}</div>{% endif %}
+        <div data-ppt="text" class="s-pillar-h">{{ col.heading }}</div>
+        <div class="s-pillar-points">
+          {% for pt in col.points %}
+          <div class="s-pillar-row">
+            <div data-ppt="rect" class="s-pillar-mark" style="background:{{ colors['accent'] if accent else colors['ink'] }};"></div>
+            <div data-ppt="text" class="s-pillar-text">{{ pt }}</div>
+          </div>
+          {% endfor %}
+        </div>
+        <div data-ppt="text" class="s-pillar-num" style="color:{{ colors['accent'] if accent else colors['grey-2'] }};">{{ '%02d' % loop.index }}</div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% include "_foot.html.j2" %}
+</div>
+{% endblock %}

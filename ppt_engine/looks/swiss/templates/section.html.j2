@@ -1,0 +1,18 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+{% if d.number %}<div data-ppt="text" data-ppt-deco data-ppt-z="-5" class="s-sec-ghost">{{ d.number }}</div>{% endif %}
+<div class="s-sec-frame">
+  {% if d.number %}<div data-ppt="text" class="s-sec-kick">SECTION {{ d.number }}</div>{% endif %}
+  <div data-ppt="text" class="s-sec-title">{{ d.title }}</div>
+  <div data-ppt="rect" class="s-sec-rule"></div>
+  {% if d.subtitle %}<div data-ppt="text" class="s-sec-sub">{{ d.subtitle }}</div>{% endif %}
+</div>
+<!-- graphic punctuation: one filled accent square on the grid -->
+<div data-ppt="rect" style="position:absolute;left:64px;top:56px;width:9px;height:9px;background:{{ colors['accent'] }};"></div>
+<div data-ppt="text" style="position:absolute;right:64px;top:52px;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:{{ colors['muted'] }};">SWISS · GRID 16</div>
+<div data-ppt="rect" class="s-foot-rule"></div>
+<div class="s-foot">
+  <div data-ppt="text" class="s-foot-t">SECTION {{ d.number or '—' }}</div>
+  <div data-ppt="text" class="s-foot-t">STATEMENT PAGE</div>
+</div>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends "base.html.j2" %}
+{% block bg %}{% endblock %}
+{% block frame %}
+<div data-ppt="rect" data-ppt-z="-20" style="position:absolute;inset:0;background:{{ colors['accent'] }};"></div>
+<!-- chrome: mono kicker row -->
+<div data-ppt="rect" style="position:absolute;left:64px;top:56px;width:9px;height:9px;background:{{ colors['on-accent'] }};"></div>
+{% if d.eyebrow %}<div data-ppt="text" style="position:absolute;left:86px;top:52px;font-family:var(--font-mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:{{ colors['on-accent'] }};">{{ d.eyebrow }}</div>{% endif %}
+<div data-ppt="text" style="position:absolute;right:64px;top:52px;font-family:var(--font-mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:{{ colors['on-accent-muted'] }};">SWISS INTERNATIONAL STYLE</div>
+<!-- S21-style metric strokes, top-right quadrant -->
+{% for hgt in [64, 128, 40, 168, 88, 216, 56, 140, 104] %}
+<div data-ppt="rect" data-ppt-deco style="position:absolute;right:{{ 64 + (8 - loop.index0) * 26 }}px;top:{{ 150 }}px;width:1px;height:{{ hgt }}px;background:{{ colors['on-accent-muted'] }};"></div>
+{% endfor %}
+<!-- title block, bottom-left -->
+<div style="position:absolute;left:64px;right:64px;bottom:158px;">
+  <div data-ppt="text" style="font-family:var(--font-display);font-weight:400;font-size:84px;line-height:1.02;letter-spacing:-2px;color:{{ colors['on-accent'] }};">{{ d.title }}</div>
+  {% if d.subtitle %}<div data-ppt="text" style="font-family:var(--font-body);font-size:18px;line-height:1.5;color:{{ colors['on-accent-muted'] }};margin-top:24px;max-width:760px;white-space:normal;">{{ d.subtitle }}</div>{% endif %}
+</div>
+<div data-ppt="rect" style="position:absolute;left:64px;right:64px;bottom:96px;height:1px;background:{{ colors['on-accent-muted'] }};"></div>
+<div style="position:absolute;left:64px;right:64px;bottom:56px;display:flex;justify-content:space-between;">
+  {% if d.footer %}<div data-ppt="text" style="font-family:var(--font-mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:{{ colors['on-accent'] }};">{{ d.footer }}</div>{% else %}<div></div>{% endif %}
+  <div data-ppt="text" style="font-family:var(--font-mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:{{ colors['on-accent-muted'] }};">IKB #002FA7</div>
+</div>
+{% endblock %}

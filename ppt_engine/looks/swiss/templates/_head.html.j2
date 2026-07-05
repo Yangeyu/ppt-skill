@@ -1,0 +1,12 @@
+<div class="s-head">
+  <div class="s-head-row">
+    {% if d.eyebrow %}<div data-ppt="text" class="s-kicker">{{ d.eyebrow }}</div>{% else %}<div></div>{% endif %}
+    <div data-ppt="text" class="s-mark">SWISS · GRID 16</div>
+  </div>
+  <div data-ppt="text" class="s-title">{{ d.title }}</div>
+  {% if d.subtitle is defined and d.subtitle %}<div data-ppt="text" class="s-sub">{{ d.subtitle }}</div>{% endif %}
+  <div class="s-rule-wrap">
+    <div data-ppt="rect" class="s-rule"></div>
+    <div data-ppt="rect" class="s-tick"></div>
+  </div>
+</div>

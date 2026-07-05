@@ -1,0 +1,26 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+<div class="s-frame">
+  {% include "_head.html.j2" %}
+  <div class="s-body">
+    <div class="s-table">
+      <div class="s-trow h">
+        <div data-ppt="rect" class="s-trow-top"></div>
+        {% for h in d.headers %}
+        <div class="s-tcell h"><div data-ppt="text" class="s-tcell-t">{{ h }}</div></div>
+        {% endfor %}
+        <div data-ppt="rect" class="s-trow-hair" style="background:{{ colors['ink'] }};"></div>
+      </div>
+      {% for row in d.rows %}
+      <div class="s-trow">
+        {% for cell in row %}
+        <div class="s-tcell"><div data-ppt="text" class="s-tcell-t">{{ cell }}</div></div>
+        {% endfor %}
+        <div data-ppt="rect" class="s-trow-hair"></div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% include "_foot.html.j2" %}
+</div>
+{% endblock %}

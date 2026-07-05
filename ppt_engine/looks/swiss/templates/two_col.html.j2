@@ -1,0 +1,26 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+<div class="s-frame">
+  {% include "_head.html.j2" %}
+  <div class="s-body">
+    <div class="s-cols">
+      <div data-ppt="rect" class="s-cols-vrule"></div>
+      {% for col, accent in [(d.left, colors['accent']), (d.right, colors['ink'])] %}
+      <div class="s-col">
+        <div data-ppt="rect" class="s-col-rule" style="background:{{ accent }};"></div>
+        <div data-ppt="text" class="s-col-h" style="color:{{ colors['ink'] }};">{{ col.heading }}</div>
+        <div class="s-col-points">
+          {% for pt in col.points %}
+          <div class="s-col-row">
+            <div data-ppt="rect" class="s-col-mark" style="background:{{ accent }};"></div>
+            <div data-ppt="text" class="s-col-text">{{ pt }}</div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% include "_foot.html.j2" %}
+</div>
+{% endblock %}

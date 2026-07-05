@@ -44,4 +44,10 @@ def inject_theme(prs, theme):
                     + "</a:fontScheme>")
         elements.replace(elements.find("a:fontScheme", NS), _el(font_xml))
 
+        # the stock theme's effectStyleLst ships outer shadows; LibreOffice applies
+        # them via each shape's effectRef even when spPr carries an empty effectLst.
+        # our looks are flat by contract — strip every theme-level shadow.
+        for shdw in root.findall(".//a:outerShdw", NS):
+            shdw.getparent().remove(shdw)
+
         part._blob = etree.tostring(root, xml_declaration=True, encoding="UTF-8", standalone=True)
