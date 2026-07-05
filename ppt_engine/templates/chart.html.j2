@@ -1,0 +1,68 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+<div class="frame">
+  <div class="head">
+    {% if d.eyebrow %}<div data-ppt="text" class="kicker">{{ d.eyebrow }}</div>{% endif %}
+    <div data-ppt="text" class="h-title">{{ d.title }}</div>
+  </div>
+  <div data-ppt="rect" class="head-rule"></div>
+  <div class="body chart-body">
+    <div class="chart-wrap">
+      <div class="chart-area">
+        <div data-ppt="chart" data-chart='{{ chart_json|safe }}' class="chart-box"></div>
+      </div>
+      {% if d.takeaway %}
+      <div class="takeaway">
+        <div data-ppt="rect" class="takeaway-bar"></div>
+        <div data-ppt="text" class="takeaway-text">{{ d.takeaway }}</div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{# 预览图（仅供浏览器/截图/美学评论官）：pptx 仍由 render 放原生可编辑图表对象。 #}
+<script>
+(function () {
+  var box = document.querySelector('[data-ppt="chart"]');
+  if (!box) return;
+  var d; try { d = JSON.parse(box.getAttribute('data-chart')); } catch (e) { return; }
+  var W = box.clientWidth || 640, H = box.clientHeight || 360;
+  var cs = getComputedStyle(document.documentElement);
+  var V = function (n) { return cs.getPropertyValue(n).trim() || '#888'; };
+  var pal = [V('--primary'), V('--primary-2')], ink = V('--ink'), muted = V('--muted'), hair = V('--hairline');
+  var cats = d.categories || [], series = d.series || [];
+  var all = []; series.forEach(function (s) { (s.values || []).forEach(function (v) { all.push(+v); }); });
+  var max = Math.max.apply(null, all.concat([1])) * 1.15, gmax = Math.max.apply(null, all.concat([1]));
+  var padL = 16, padR = 12, padT = 16, padB = 34, iw = W - padL - padR, ih = H - padT - padB;
+  var ns = 'http://www.w3.org/2000/svg';
+  var svg = document.createElementNS(ns, 'svg'); svg.setAttribute('width', W); svg.setAttribute('height', H);
+  function add(tag, attr, txt) { var e = document.createElementNS(ns, tag); for (var k in attr) e.setAttribute(k, attr[k]); if (txt != null) e.textContent = txt; svg.appendChild(e); return e; }
+  add('line', { x1: padL, y1: padT + ih, x2: W - padR, y2: padT + ih, stroke: hair, 'stroke-width': 1 });
+  var type = d.type || 'column';
+  if (type === 'line') {
+    series.forEach(function (s, si) {
+      var pts = (s.values || []).map(function (v, i) {
+        var x = padL + iw * (cats.length > 1 ? i / (cats.length - 1) : .5);
+        return x + ',' + (padT + ih - ih * (+v / max)); }).join(' ');
+      add('polyline', { points: pts, fill: 'none', stroke: pal[si % 2], 'stroke-width': 3 });
+      (s.values || []).forEach(function (v, i) {
+        var x = padL + iw * (cats.length > 1 ? i / (cats.length - 1) : .5);
+        add('circle', { cx: x, cy: padT + ih - ih * (+v / max), r: 4, fill: pal[si % 2] }); });
+    });
+  } else {
+    var n = cats.length || 1, gw = iw / n, bw = Math.min(gw * 0.52, 60);
+    (series[0] ? series[0].values : []).forEach(function (v, i) {
+      var bh = ih * (+v / max), x = padL + gw * i + (gw - bw) / 2, y = padT + ih - bh;
+      add('rect', { x: x, y: y, width: bw, height: bh, fill: (+v === gmax ? pal[0] : pal[1]), rx: 1 });
+      add('text', { x: x + bw / 2, y: y - 6, 'text-anchor': 'middle', 'font-size': 13, 'font-weight': 700, fill: ink }, '' + v);
+    });
+  }
+  var n2 = cats.length || 1, gw2 = iw / n2;
+  cats.forEach(function (c, i) {
+    var x = (type === 'line') ? padL + iw * (cats.length > 1 ? i / (cats.length - 1) : .5) : padL + gw2 * i + gw2 / 2;
+    add('text', { x: x, y: H - 12, 'text-anchor': 'middle', 'font-size': 12, fill: muted }, c);
+  });
+  box.appendChild(svg);
+})();
+</script>
+{% endblock %}

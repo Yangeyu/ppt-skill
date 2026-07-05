@@ -1,0 +1,24 @@
+{
+  "name": "ppt-mastra",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "ppt-tool 的 Mastra 模块：用 alibaba-cn/qwen3.7-plus 做识图/美学评论官与艺术总监",
+  "scripts": {
+    "dev": "mastra dev",
+    "build": "mastra build",
+    "vision": "tsx src/vision.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@mastra/core": "latest",
+    "@mastra/loggers": "latest",
+    "zod": "^3.25.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "mastra": "latest",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  }
+}

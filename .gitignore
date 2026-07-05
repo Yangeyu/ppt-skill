@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+# generated decks (regenerate with: python3 demo_v03.py)
+*.pptx
+preview/
+# env / build / outputs
+.venv/
+*.egg-info/
+out_v03/
+shots/
+out/

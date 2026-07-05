@@ -1,0 +1,71 @@
+{# 设计系统套件（创作轨 base）——通用骨架 ⊕ 生成令牌值（css_vars）。
+   LLM 只用下列 .t-*/.c-*/.bg-* class 与 var(--*)，叶子带 data-ppt，几何由浏览器算。 #}
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<style>
+{% if fonts %}{% for fam in fonts.families %}
+@font-face { font-family: "{{ fam.typeface }}"; font-weight: 400; font-style: normal;
+  src: url(data:font/ttf;base64,{{ fam.regular_b64 }}) format("truetype"); }
+@font-face { font-family: "{{ fam.typeface }}"; font-weight: 700; font-style: normal;
+  src: url(data:font/ttf;base64,{{ fam.bold_b64 }}) format("truetype"); }
+{% endfor %}{% endif %}
+{{ css_vars|safe }}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+.canvas { width: 1280px; height: 720px; position: relative; overflow: hidden;
+  background: var(--bg-content); color: var(--ink); font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased; text-rendering: geometricPrecision; }
+.canvas.dark { background: var(--bg); color: var(--on-dark); }
+[data-ppt] { box-sizing: border-box; }
+[data-ppt="text"] { margin: 0; padding: 0; }
+
+/* ---- 安全区容器（可选；全出血就不用） ---- */
+.frame { position: absolute; inset: 0; padding: var(--margin) var(--margin); }
+
+/* ---- 字阶（只此六档；写不出离阶字号） ---- */
+/* hero 大字默认不折行：真太长则溢出，由结构评论官 PG-GM-1 抓，而非静默折行错位 */
+.t-display { font-size: var(--type-display); line-height: 1.02; letter-spacing: -.01em; white-space: nowrap; }
+.t-h1 { font-size: var(--type-h1); line-height: 1.1; }
+.t-h2 { font-size: var(--type-h2); line-height: 1.2; }
+.t-body { font-size: var(--type-body); line-height: 1.55; }
+.t-caption { font-size: var(--type-caption); line-height: 1.4; }
+.t-micro { font-size: var(--type-micro); line-height: 1.3; letter-spacing: .16em; }
+
+/* ---- 字族 / 字重 / 修饰 ---- */
+.f-serif { font-family: var(--font-serif); }
+.f-sans  { font-family: var(--font-sans); }
+.w-regular { font-weight: 400; } .w-bold { font-weight: 700; } .w-black { font-weight: 900; }
+.upper { text-transform: uppercase; }
+.tight { letter-spacing: -.02em; } .wide { letter-spacing: .2em; }
+.nowrap { white-space: nowrap; } .wrap { white-space: normal; }
+
+/* ---- 文字颜色（只此令牌；写不出离板色） ---- */
+.c-ink { color: var(--ink); } .c-muted { color: var(--muted); }
+.c-primary { color: var(--primary); } .c-primary-2 { color: var(--primary-2); }
+.c-on-dark { color: var(--on-dark); } .c-on-dark-muted { color: var(--on-dark-muted); }
+.c-paper { color: var(--bg-content); }
+
+/* ---- 背景 / 形状色 ---- */
+.bg-paper { background: var(--bg-content); } .bg-ink { background: var(--bg); }
+.bg-surface { background: var(--surface); } .bg-primary { background: var(--primary); }
+.bg-primary-2 { background: var(--primary-2); }
+
+/* ---- 排布原语 ---- */
+.abs { position: absolute; }
+.flex { display: flex; } .col { flex-direction: column; }
+.center { align-items: center; justify-content: center; }
+.between { justify-content: space-between; } .items-center { align-items: center; }
+.grid { display: grid; gap: 24px; }
+.rule { background: var(--hairline); } .bar { background: var(--primary); }
+.img { object-fit: cover; filter: var(--img-filter, none); }
+</style>
+</head>
+<body>
+<div class="canvas {{ 'dark' if d.dark else '' }}">
+{{ d.html|safe }}
+</div>
+</body>
+</html>

@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ppt-engine"
+version = "0.3.0"
+description = "高颜值 AI PPT 生成引擎 — 浏览器排版 + 按主题现场生成视觉身份 + 递归评论官（v0.3）"
+requires-python = ">=3.10"
+dependencies = [
+    "python-pptx>=0.6.23",
+    "pydantic>=2.5",
+    "jinja2>=3.1",
+    "playwright>=1.40",
+    "fonttools>=4.40",
+    "pillow>=10.0",
+    "lxml>=4.9",
+]
+
+[project.optional-dependencies]
+llm = ["openai>=1.30", "socksio>=1.0"]   # 艺术总监 / 美学评论官（OpenAI 兼容端点，含 DashScope；socks 代理）
+mcp = ["mcp>=1.2"]
+dev = ["pytest>=7.4"]
+
+[project.scripts]
+ppt-mcp = "ppt_mcp.server:main"
+
+[tool.setuptools.packages.find]
+include = ["ppt_engine*", "ppt_mcp*"]
