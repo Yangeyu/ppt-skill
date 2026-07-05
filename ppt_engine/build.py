@@ -1,19 +1,26 @@
 """Orchestrator: IR -> archetype HTML -> browser layout/measure -> native pptx.
-Optionally writes a PNG per slide (the faithful design preview)."""
+Optionally writes a PNG per slide (the faithful design preview).
+
+Templates resolve through the look package first (looks/<id>/templates/), then
+the shared templates/ dir (创作轨 custom 等公共原型). Hero image discipline —
+t2i style suffix / re-ink post-pass / procedural fallback — lives in the look
+package too; the engine never special-cases a look."""
 from __future__ import annotations
 import json
+import shutil
 import tempfile
 from pathlib import Path
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from playwright.sync_api import sync_playwright
-from .theme import THEMES
 from .spec import SpecLock, resolve_spec
+from .looks import get_look
 from .ir import Deck
 from .icons import ICONS
 from .measure import MEASURE_JS
 from .render import render_deck
 from .fonts import prepare_fonts
 from .embed_fonts import embed_fonts
+from . import genimage
 from .units import CANVAS_W_PX, CANVAS_H_PX
 
 TPL_DIR = Path(__file__).parent / "templates"
@@ -21,15 +28,23 @@ TPL_DIR = Path(__file__).parent / "templates"
 
 class Engine:
     def __init__(self):
-        self.env = Environment(
-            loader=FileSystemLoader(str(TPL_DIR)),
-            autoescape=select_autoescape(["html", "j2"]),
-        )
+        self._envs = {}
 
-    def _context(self, slide, theme, fonts=None):
+    def _env_for(self, template_dir: str):
+        if template_dir not in self._envs:
+            dirs = [template_dir, str(TPL_DIR)] if template_dir else [str(TPL_DIR)]
+            self._envs[template_dir] = Environment(
+                loader=FileSystemLoader(dirs),
+                autoescape=select_autoescape(["html", "j2"]),
+            )
+        return self._envs[template_dir]
+
+    def _context(self, slide, theme, look, fonts=None, extra=None):
         d = slide.data.model_dump()
-        ctx = {"d": d, "css_vars": theme.css_vars(), "colors": theme.colors,
-               "icons": ICONS, "fonts": fonts}
+        ctx = {"d": d, "css_vars": theme.css_vars(), "colors": theme.render_colors(),
+               "icons": look.icons or ICONS, "fonts": fonts}
+        if extra:
+            ctx.update(extra)
         if slide.kind == "chart":
             ctx["chart_json"] = json.dumps({
                 "type": d["chart_type"],
@@ -38,16 +53,39 @@ class Engine:
             }, ensure_ascii=False)
         return ctx
 
-    def html_for(self, slide, theme, fonts=None):
-        tpl = self.env.get_template(f"{slide.kind}.html.j2")
-        return tpl.render(**self._context(slide, theme, fonts))
+    def html_for(self, slide, theme, fonts=None, extra=None, look=None):
+        look = look or get_look(theme)
+        env = self._env_for(look.template_dir)
+        tpl = env.get_template(f"{slide.kind}.html.j2")
+        return tpl.render(**self._context(slide, theme, look, fonts, extra))
+
+    def _hero_image(self, slide, theme, look, asset_dir: Path, idx: int) -> str:
+        """The look-owned image pipeline: prompt -> t2i (+style suffix) ->
+        re-ink post-pass; else source image re-inked; else procedural fallback."""
+        out = str(asset_dir / f"hero_{idx}.png")
+        src = getattr(slide.data, "src", "")
+        prompt = getattr(slide.data, "prompt", "")
+        if prompt and not src:
+            src = genimage.generate(prompt, str(asset_dir / f"hero_{idx}_raw.png"),
+                                    style_suffix=look.image_style_suffix) or ""
+        if src:
+            if look.image_postprocess:
+                look.image_postprocess(src, theme, out)
+            else:
+                shutil.copyfile(src, out)
+            return out
+        if look.image_fallback:
+            look.image_fallback(getattr(slide.data, "art", "sun"), theme, out)
+            return out
+        return ""
 
     def build(self, deck: Deck, out_path: str, screenshot_dir: str | None = None,
               embed: bool = True, spec: SpecLock | None = None):
         # v0.3: 排版/渲染统一吃一份 SpecLock（与 theme.Theme 接口兼容）。
-        # 优先用显式 spec；否则按 deck.theme 解析（seed/兜底）。
+        # 优先用显式 spec；否则按 deck.theme 解析（look / seed / 兜底）。
         theme = spec if spec is not None else resolve_spec(deck.theme)
-        fonts = prepare_fonts(deck, theme.families()) if embed else None
+        look = get_look(theme)
+        fonts = prepare_fonts(deck, theme.embed_list()) if embed else None
         asset_dir = Path(tempfile.mkdtemp(prefix="ppt_assets_"))
         slides_prims = []
         with sync_playwright() as pw:
@@ -60,7 +98,11 @@ class Engine:
                 device_scale_factor=2,
             )
             for idx, slide in enumerate(deck.slides):
-                page.set_content(self.html_for(slide, theme, fonts), wait_until="load")
+                extra = {}
+                if slide.kind == "hero":
+                    extra["hero_img"] = self._hero_image(slide, theme, look, asset_dir, idx)
+                page.set_content(self.html_for(slide, theme, fonts, extra, look),
+                                 wait_until="load")
                 page.evaluate("async () => { await document.fonts.ready; }")
                 prims = page.evaluate(MEASURE_JS)
                 # asset pipeline: rasterize each icon element to a transparent PNG

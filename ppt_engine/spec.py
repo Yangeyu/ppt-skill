@@ -91,14 +91,36 @@ class SpecLock(BaseModel):
     rules: list[str] = []
     rationale: str = ""
     embed_families: list[str] = []         # 需嵌入 pptx 的字族（默认 = families()）
+    look: str = ""                         # 所属 look 包 id（"" = 无包身份，走默认结构库）
+    font_vars: dict[str, str] = {}         # look 自定义字体 CSS 变量（font-display/font-mono/…）
 
     # ---- 向后兼容 theme.Theme 的接口 ----------------------------------
+    def render_colors(self) -> dict[str, str]:
+        """结构库（riso 版式）用到的扩展词汇补齐——身份可换、结构统一的关键：
+        任何 SpecLock（seed / 现场生成）都能渲染 look 结构库而不出未定义变量。"""
+        c = self.colors
+        aliases = {
+            "blue": c.get("primary"), "pink": c.get("primary-2"),
+            "mustard": "#" + self.chart_palette[2] if len(self.chart_palette) > 2 else c.get("primary-2"),
+            "black": c.get("ink"), "paper-2": c.get("surface"),
+            "on-paper-muted": c.get("muted"),
+        }
+        return {**aliases, **c}
+
     def css_vars(self) -> str:
         """注入设计系统套件 :root —— 颜色 + 字体 + 字阶 + 网格。"""
-        rows = [f"--{k}: {v};" for k, v in self.colors.items()]
-        rows.append(f'--font-serif: "{self.display_font}", "Songti SC", "STSong", serif;')
-        rows.append(f'--font-sans: "{self.body_font}", "PingFang SC", '
-                    '"Hiragino Sans GB", system-ui, sans-serif;')
+        rows = [f"--{k}: {v};" for k, v in self.render_colors().items()]
+        fv = {
+            "font-serif": f'"{self.display_font}", "Songti SC", "STSong", serif',
+            "font-sans": f'"{self.body_font}", "PingFang SC", '
+                         '"Hiragino Sans GB", system-ui, sans-serif',
+            # look 结构库的角色变量（look 可在 font_vars 覆盖）
+            "font-display": f'"{self.display_font}", "PingFang SC", sans-serif',
+            "font-body": f'"{self.body_font}", "PingFang SC", sans-serif',
+            "font-mono": '"Space Mono", "Noto Sans SC", monospace',
+            **self.font_vars,
+        }
+        rows += [f"--{k}: {v};" for k, v in fv.items()]
         for role, px in self.type_scale.sizes().items():
             rows.append(f"--type-{role}: {px}px;")
         rows.append(f"--grid-cols: {self.grid.cols};")
@@ -138,11 +160,16 @@ class SpecLock(BaseModel):
     def allowed_hex(self) -> set[str]:
         """全部合规颜色（大写无#）——页面评论官用来判定 颜色 ∈ 令牌集。"""
         out = set()
-        for v in self.colors.values():
+        for v in self.render_colors().values():
             if isinstance(v, str) and v.startswith("#"):
                 out.add(v.lstrip("#").upper())
         out |= {h.upper() for h in self.chart_palette}
         return out
+
+    def embed_list(self) -> list[str]:
+        """要嵌进 pptx 的全部字族。look 可带附加字面（如 Anton×思源黑 中西配对），
+        它们不占 families() 的角色数（ID-FT-1 管的是角色，不是文件数）。"""
+        return list(dict.fromkeys(self.embed_families)) if self.embed_families else self.families()
 
     def allowed_sizes(self) -> list[int]:
         return self.type_scale.all_px()
@@ -152,7 +179,13 @@ class SpecLock(BaseModel):
     def from_seed(cls, theme_id: str = "editorial", *, scale: TypeScale | None = None,
                   image: ImageTreatment | None = None, motifs: list[Motif] | None = None,
                   rules: list[str] | None = None, rationale: str = "") -> "SpecLock":
-        """从预置主题确定性派生一份 SpecLock（兜底 / 测试 / freedom 的起点）。"""
+        """从预置主题/look 包确定性派生一份 SpecLock（兜底 / 测试 / freedom 的起点）。"""
+        from .looks import LOOKS   # 懒导入防环（looks → spec）
+        if theme_id in LOOKS:
+            base = LOOKS[theme_id].spec
+            return base.model_copy(update={
+                k: v for k, v in {"type_scale": scale, "image": image, "motifs": motifs,
+                                  "rules": rules, "rationale": rationale}.items() if v})
         t = THEMES[theme_id]
         return cls(
             id=t.id, name=t.name, colors=legibilize(dict(t.colors)),
@@ -166,11 +199,15 @@ class SpecLock(BaseModel):
 
 
 def resolve_spec(spec) -> "SpecLock":
-    """接受 SpecLock / theme-id 字符串，统一返回 SpecLock。"""
+    """接受 SpecLock / look-id / theme-id 字符串，统一返回 SpecLock。
+    未知 id 兜底到默认 look（当前唯一已优化的结构库）。"""
     if isinstance(spec, SpecLock):
         return spec
     if isinstance(spec, str):
-        return SpecLock.from_seed(spec if spec in THEMES else "editorial")
+        from .looks import LOOKS, DEFAULT_LOOK
+        if spec in LOOKS or spec in THEMES:
+            return SpecLock.from_seed(spec)
+        return SpecLock.from_seed(DEFAULT_LOOK)
     raise TypeError(f"resolve_spec 不支持 {type(spec)}")
 
 

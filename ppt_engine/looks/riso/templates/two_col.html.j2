@@ -1,0 +1,32 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+<div class="r-frame">
+  {% include "_head.html.j2" %}
+  <div class="r-body">
+    <div class="r-cols">
+      {% for col, accent, side in [(d.left, colors['blue'], 'A-SIDE'),
+                                   (d.right, colors['pink'], 'B-SIDE')] %}
+      <div class="r-col">
+        <div data-ppt="rect" data-ppt-deco class="r-col-shadow" style="background:{{ accent }};"></div>
+        <div data-ppt="rect" class="r-col-panel">
+          <div data-ppt="text" class="r-col-h" style="color:{{ accent }};">{{ col.heading }}</div>
+          <div data-ppt="rect" class="r-col-rule" style="background:{{ accent }};"></div>
+          <div class="r-col-points">
+            {% for pt in col.points %}
+            <div class="r-col-row">
+              <div data-ppt="text" class="r-col-num" style="color:{{ accent }};">{{ "%02d"|format(loop.index) }}</div>
+              <div data-ppt="text" class="r-col-text">{{ pt }}</div>
+            </div>
+            {% endfor %}
+          </div>
+          <div data-ppt="text" class="r-col-foot">{{ side }} · {{ col.points|length }} PLAYS</div>
+        </div>
+      </div>
+      {% endfor %}
+      <div data-ppt="rect" data-ppt-z="5" class="r-cols-badge" style="background:{{ colors['mustard'] }};">
+        <div data-ppt="text" data-ppt-z="6" class="r-cols-badge-t">×</div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

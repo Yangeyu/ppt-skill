@@ -87,7 +87,7 @@ def critique_structure(slides_prims, spec: SpecLock, *, strict_scale: list[bool]
     out: list[StructuralIssue] = []
     allowed_hex = spec.allowed_hex()
     allowed_sizes = set(spec.allowed_sizes())
-    fams_allowed = {f for f in spec.families()}
+    fams_allowed = set(spec.embed_list())   # 角色字体 + look 附加字面（Anton/Space Mono）
     deck_families: set[str] = set()
 
     for i, prims in enumerate(slides_prims, 1):

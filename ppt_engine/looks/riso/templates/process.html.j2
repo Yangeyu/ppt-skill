@@ -1,0 +1,28 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+{% set pal = [
+  {'bg': colors['blue'],    'fg': colors['bg-content'], 'accent': colors['pink'],    'shadow': colors['pink']},
+  {'bg': colors['pink'],    'fg': colors['ink'],        'accent': colors['blue'],    'shadow': colors['blue']},
+  {'bg': colors['mustard'], 'fg': colors['ink'],        'accent': colors['ink'],     'shadow': colors['blue']},
+  {'bg': colors['ink'],     'fg': colors['bg-content'], 'accent': colors['pink'],    'shadow': colors['pink']},
+  {'bg': colors['blue'],    'fg': colors['bg-content'], 'accent': colors['mustard'], 'shadow': colors['pink']}
+] %}
+<div class="r-frame">
+  {% include "_head.html.j2" %}
+  <div class="r-body" style="align-items:center;">
+    <div class="r-steps">
+      {% for s in d.steps %}
+      {% set c = pal[loop.index0 % 5] %}
+      <div class="r-step-cell">
+        <div data-ppt="rect" class="r-step-shadow" style="background:{{ c.shadow }};"></div>
+        <div data-ppt="rect" class="r-step" style="background:{{ c.bg }};color:{{ c.fg }};">
+          <div data-ppt="text" class="r-step-num" style="color:{{ c.accent }};">{{ '%02d' % loop.index }}</div>
+          <div data-ppt="text" class="r-step-title" style="color:{{ c.fg }};">{{ s.title }}</div>
+          {% if s.desc %}<div data-ppt="text" class="r-step-desc" style="color:{{ c.fg }};">{{ s.desc }}</div>{% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

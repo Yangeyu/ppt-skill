@@ -1,0 +1,22 @@
+{% extends "base.html.j2" %}
+{% block bg %}{% endblock %}
+{% block frame %}
+<div data-ppt="rect" data-ppt-z="-20" style="position:absolute;inset:0;background:{{ colors['blue'] }};"></div>
+{% if d.number %}<div data-ppt="text" data-ppt-deco data-ppt-z="-5" class="r-sec-num" style="color:#15409E;">{{ d.number }}</div>{% endif %}
+<div class="r-sec-frame">
+  {% if d.number %}<div data-ppt="text" class="r-sec-kick" style="color:{{ colors['mustard'] }};">SECTION {{ d.number }}</div>{% endif %}
+  <div class="r-title-wrap" style="margin-top:4px;">
+    <div data-ppt="text" data-ppt-deco class="r-sec-title" data-ppt-z="1" style="position:absolute;left:4px;top:4px;color:{{ colors['mustard'] }};">{{ d.title }}</div>
+    <div data-ppt="text" class="r-sec-title" data-ppt-z="2" style="position:relative;color:{{ colors['on-dark'] }};">{{ d.title }}</div>
+  </div>
+  <div data-ppt="rect" class="r-sec-tick" style="background:{{ colors['mustard'] }};"></div>
+  {% if d.subtitle %}<div data-ppt="text" class="r-sec-sub" style="color:{{ colors['on-dark-muted'] }};">{{ d.subtitle }}</div>{% endif %}
+</div>
+<!-- graphic punctuation: mustard square over pink misregistration ghost -->
+<div data-ppt="rect" data-ppt-deco data-ppt-z="1" style="position:absolute;right:112px;top:70px;width:64px;height:64px;background:{{ colors['pink'] }};"></div>
+<div data-ppt="rect" data-ppt-z="2" style="position:absolute;right:118px;top:64px;width:64px;height:64px;background:{{ colors['mustard'] }};border:3px solid {{ colors['on-dark'] }};"></div>
+<!-- bottom rule + mono captions (page chrome, like content pages) -->
+<div data-ppt="rect" style="position:absolute;left:60px;right:60px;bottom:60px;height:2px;background:{{ colors['on-dark'] }};"></div>
+<div data-ppt="text" style="position:absolute;left:60px;bottom:36px;font-family:var(--font-mono);font-size:11px;font-weight:700;letter-spacing:.14em;color:{{ colors['on-dark-muted'] }};">RISO · SECTION {{ d.number }}</div>
+<div data-ppt="text" style="position:absolute;right:60px;bottom:36px;font-family:var(--font-mono);font-size:11px;font-weight:700;letter-spacing:.14em;color:{{ colors['on-dark-muted'] }};">BLUE × PINK × MUSTARD</div>
+{% endblock %}

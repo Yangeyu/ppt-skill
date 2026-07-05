@@ -1,0 +1,12 @@
+<div class="r-head">
+  {% if d.eyebrow %}<div data-ppt="text" class="r-kicker">{{ d.eyebrow }}</div>{% endif %}
+  <div class="r-title-wrap">
+    <div data-ppt="text" data-ppt-deco class="r-title" data-ppt-z="1" style="position:absolute;left:3px;top:3px;color:{{ colors['blue'] }};">{{ d.title }}</div>
+    <div data-ppt="text" class="r-title" data-ppt-z="2" style="position:relative;color:{{ colors['ink'] }};">{{ d.title }}</div>
+  </div>
+  {% if d.subtitle is defined and d.subtitle %}<div data-ppt="text" class="r-sub">{{ d.subtitle }}</div>{% endif %}
+  <div class="r-rule-wrap">
+    <div data-ppt="rect" class="r-rule"></div>
+    <div data-ppt="rect" class="r-tick"></div>
+  </div>
+</div>

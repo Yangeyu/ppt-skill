@@ -12,6 +12,7 @@ import os
 from mcp.server.fastmcp import FastMCP
 
 from ppt_engine.spec import THEMES, SpecLock
+from ppt_engine.looks import list_looks
 from ppt_engine.artdirect import art_direct, DesignBrief
 from ppt_engine.compose import generate
 
@@ -21,10 +22,12 @@ mcp = FastMCP("ppt-engine")
 @mcp.tool()
 def list_seeds() -> list[dict]:
     """列出可选 seed 主题（艺术总监的起点/兜底）。"""
-    return [{"id": t.id, "name": t.name,
-             "primary": t.colors["primary"], "paper": t.colors["bg-content"],
-             "display_font": t.display_font, "body_font": t.body_font}
-            for t in THEMES.values()]
+    looks = list_looks()
+    seeds = [{"id": t.id, "name": t.name,
+              "primary": t.colors["primary"], "paper": t.colors["bg-content"],
+              "display_font": t.display_font, "body_font": t.body_font}
+             for t in THEMES.values()]
+    return looks + seeds
 
 
 @mcp.tool()

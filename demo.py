@@ -15,7 +15,7 @@ from ppt_engine.ir import (
 
 DECK = Deck(
     meta=DeckMeta(title="2026 上半年增长复盘"),
-    theme="editorial",
+    theme="riso",
     slides=[
         Slide(data=CoverData(
             eyebrow="Growth Review",

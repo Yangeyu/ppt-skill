@@ -17,6 +17,9 @@ FONT_DIR = Path(__file__).parent / "assets" / "fonts"
 FONT_FILES = {
     "Noto Sans SC": ("NotoSansSC-Regular.ttf", "NotoSansSC-Bold.ttf"),
     "Noto Serif SC": ("NotoSerifSC-Regular.ttf", "NotoSerifSC-Bold.ttf"),
+    "Noto Sans SC Black": ("NotoSansSC-Black.ttf", "NotoSansSC-Black.ttf"),
+    "Anton": ("Anton-Regular.ttf", "Anton-Regular.ttf"),
+    "Space Mono": ("SpaceMono-Regular.ttf", "SpaceMono-Regular.ttf"),
 }
 
 # glyphs templates inject beyond the IR text (punctuation, quotes, latin, digits)

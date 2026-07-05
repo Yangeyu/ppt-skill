@@ -20,6 +20,10 @@ ALIGN = {"left": PP_ALIGN.LEFT, "center": PP_ALIGN.CENTER, "right": PP_ALIGN.RIG
 CHART_T = {"column": XL_CHART_TYPE.COLUMN_CLUSTERED, "bar": XL_CHART_TYPE.BAR_CLUSTERED,
            "line": XL_CHART_TYPE.LINE_MARKERS}
 ZRANK = {"rect": 0, "line": 0, "image": 5, "icon": 6, "chart": 5, "text": 10}
+# families that carry CJK glyphs — used to split a:latin (Latin face) from
+# a:ea (East-Asian face) so a heavy Latin display + a CJK black can coexist in one run
+CJK_FAMILIES = {"Noto Sans SC", "Noto Serif SC", "Noto Sans SC Black", "PingFang SC",
+                "Songti SC", "STSong", "Hiragino Sans GB", "Microsoft YaHei", "SimHei"}
 TEXT_SLOT = {
     "tx1": MSO_THEME_COLOR.TEXT_1, "bg1": MSO_THEME_COLOR.BACKGROUND_1,
     "tx2": MSO_THEME_COLOR.TEXT_2, "bg2": MSO_THEME_COLOR.BACKGROUND_2,
@@ -138,7 +142,7 @@ def _add_text(slide, p, theme):
         w += pad
     tb = slide.shapes.add_textbox(x, y, w, h)
     tf = tb.text_frame
-    tf.word_wrap = True
+    tf.word_wrap = not p.get("nowrap", False)
     tf.margin_left = tf.margin_right = tf.margin_top = tf.margin_bottom = 0
     tf.vertical_anchor = MSO_ANCHOR.TOP
     try:
@@ -148,7 +152,14 @@ def _add_text(slide, p, theme):
     para = tf.paragraphs[0]
     para.alignment = ALIGN.get(p.get("align", "left"), PP_ALIGN.LEFT)
     fs = p["fontSizePx"]
-    para.line_spacing = max(0.8, p.get("lineHeightPx", fs * 1.2) / fs)
+    lh = p.get("lineHeightPx", fs * 1.2)
+    if p.get("nowrap"):
+        # exact spacing (pt) = the browser-measured line box. Multiple spacing
+        # scales the FONT's own line height (CJK ~1.4em), which draws display
+        # glyphs tens of px lower than measured and overlaps the block below.
+        para.line_spacing = Pt(lh * 0.75)
+    else:
+        para.line_spacing = max(0.8, lh / fs)
 
     run = para.add_run()
     run.text = p["text"].upper() if p.get("upper") else p["text"]
@@ -162,8 +173,10 @@ def _add_text(slide, p, theme):
         f.color.theme_color = TEXT_SLOT[slot]
     elif hexv:
         f.color.rgb = RGBColor.from_string(hexv)
-    fam = p.get("family") or theme.body_font
-    _set_run_fonts(run, fam, fam)
+    fams = p.get("families") or ([p["family"]] if p.get("family") else [theme.body_font])
+    latin = fams[0]
+    ea = next((f for f in fams if f in CJK_FAMILIES), latin)
+    _set_run_fonts(run, latin, ea)
     ls = p.get("letterSpacingPx", 0) or 0
     if ls:
         run._r.get_or_add_rPr().set("spc", str(int(ls * 0.75 * 100)))

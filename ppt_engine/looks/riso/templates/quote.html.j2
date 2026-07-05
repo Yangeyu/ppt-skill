@@ -1,0 +1,11 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+<div class="r-quote-frame">
+  <div data-ppt="text" class="r-quote-mark" style="color:{{ colors['pink'] }};">“</div>
+  <div class="r-quote-wrap">
+    <div data-ppt="text" class="r-quote-text" style="color:{{ colors['ink'] }};">{{ d.quote }}</div>
+  </div>
+  <div data-ppt="rect" class="r-quote-tick" style="background:{{ colors['blue'] }};"></div>
+  {% if d.attribution %}<div data-ppt="text" class="r-quote-attr" style="color:{{ colors['muted'] }};">{{ d.attribution }}</div>{% endif %}
+</div>
+{% endblock %}

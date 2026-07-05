@@ -1,0 +1,43 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+{% set pal = [
+  {'bg': colors['blue'],    'fg': colors['bg-content'], 'accent': colors['pink'],    'shadow': colors['pink']},
+  {'bg': colors['pink'],    'fg': colors['ink'],        'accent': colors['blue'],    'shadow': colors['blue']},
+  {'bg': colors['mustard'], 'fg': colors['ink'],        'accent': colors['ink'],     'shadow': colors['blue']},
+  {'bg': colors['ink'],     'fg': colors['bg-content'], 'accent': colors['pink'],    'shadow': colors['pink']},
+  {'bg': colors['blue'],    'fg': colors['bg-content'], 'accent': colors['mustard'], 'shadow': colors['pink']},
+  {'bg': colors['pink'],    'fg': colors['ink'],        'accent': colors['blue'],    'shadow': colors['blue']}
+] %}
+<div class="r-frame">
+  {% include "_head.html.j2" %}
+  <div class="r-grid">
+    {% for card in d.cards %}
+    {% set c = pal[loop.index0 % 6] %}
+    <div class="r-cell">
+      <div data-ppt="rect" class="r-card-shadow" style="background:{{ c.shadow }};"></div>
+      <div data-ppt="rect" class="r-card" style="background:{{ c.bg }};color:{{ c.fg }};">
+        <div data-ppt="icon" class="r-card-ico" style="color:{{ c.fg }};">
+          <svg width="38" height="38" viewBox="0 0 24 24" fill="currentColor">{{ icons[card.icon]|safe }}</svg>
+        </div>
+        <div data-ppt="text" class="r-card-num" style="color:{{ c.accent }};">{{ '%02d' % loop.index }}</div>
+        <div class="r-card-meat">
+          <div data-ppt="text" class="r-card-title" style="color:{{ c.fg }};">{{ card.title }}</div>
+          {% if card.subtitle %}
+          <div data-ppt="text" class="r-card-sub" style="color:{{ c.accent }};">{{ card.subtitle }}</div>
+          <div data-ppt="rect" class="r-card-tick" style="background:{{ c.accent }};"></div>
+          {% endif %}
+          {% for ln in card.lines %}
+          <div data-ppt="text" class="r-line {{ 'first' if loop.first else '' }}" style="color:{{ c.fg }};">{{ ln }}</div>
+          {% endfor %}
+          {% if card.punch %}<div data-ppt="text" class="r-card-punch" style="color:{{ c.accent }};">{{ card.punch }}</div>{% endif %}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  <div class="r-foot">
+    <div data-ppt="text" class="r-foot-t">{{ d.eyebrow or 'RISO ZINE' }}</div>
+    <div data-ppt="text" class="r-foot-t">PICK ONE · PICK ALL · MAKE IT YOURS</div>
+  </div>
+</div>
+{% endblock %}

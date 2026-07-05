@@ -1,0 +1,18 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+<div data-ppt="rect" style="position:absolute;right:78px;top:92px;width:150px;height:150px;background:{{ colors['pink'] }};"></div>
+<div data-ppt="rect" style="position:absolute;right:86px;top:84px;width:150px;height:150px;background:{{ colors['blue'] }};border:2px solid {{ colors['ink'] }};"></div>
+<div class="r-out-frame">
+  <div class="r-out-wrap">
+    <div data-ppt="text" data-ppt-deco class="r-out-title" data-ppt-z="1" style="position:absolute;left:4px;top:4px;color:{{ colors['pink'] }};">{{ d.title }}</div>
+    <div data-ppt="text" class="r-out-title" data-ppt-z="2" style="position:relative;color:{{ colors['ink'] }};">{{ d.title }}</div>
+  </div>
+  {% if d.subtitle %}
+  <div style="position:relative;display:inline-block;align-self:flex-start;margin-top:30px;padding:11px 18px;">
+    <div data-ppt="rect" style="position:absolute;inset:0;background:{{ colors['ink'] }};"></div>
+    <div data-ppt="text" class="r-out-sub" style="position:relative;color:{{ colors['bg-content'] }};">{{ d.subtitle }}</div>
+  </div>
+  {% endif %}
+  {% if d.contact %}<div data-ppt="text" class="r-out-contact">{{ d.contact }}</div>{% endif %}
+</div>
+{% endblock %}
