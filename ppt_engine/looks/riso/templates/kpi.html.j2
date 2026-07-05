@@ -1,0 +1,23 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+<div class="r-frame">
+  {% include "_head.html.j2" %}
+  <div class="r-body" style="align-items:center;">
+    <div class="r-kpis">
+      {% for s in d.stats %}
+      {% set accent = [colors['blue'], colors['pink'], colors['mustard'], colors['ink']][loop.index0 % 4] %}
+      <div class="r-kpi">
+        <div data-ppt="rect" class="r-kpi-top"></div>
+        <div data-ppt="rect" class="r-kpi-tick" style="background:{{ accent }};"></div>
+        <div class="r-kpi-valwrap">
+          <div data-ppt="text" data-ppt-deco class="r-kpi-val" data-ppt-z="1" style="position:absolute;left:3px;top:3px;color:{{ accent }};">{{ s.value }}</div>
+          <div data-ppt="text" class="r-kpi-val" data-ppt-z="2" style="position:relative;color:{{ colors['ink'] }};">{{ s.value }}</div>
+        </div>
+        <div data-ppt="text" class="r-kpi-label">{{ s.label }}</div>
+        {% if s.delta %}<div data-ppt="text" class="r-kpi-delta">{{ s.delta }}</div>{% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

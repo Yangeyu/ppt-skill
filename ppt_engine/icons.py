@@ -1,6 +1,9 @@
 """Minimal stroke-icon set (Lucide-style, MIT-spirit paths). Rendered in the
 browser as SVG, then rasterized per-element to a transparent PNG and embedded
-as a native picture — the v1 asset pipeline (v2: SVG -> freeform)."""
+as a native picture — the v1 asset pipeline (v2: SVG -> freeform).
+
+Base set only: semantic names every look can rely on. Look-specific glyphs
+live in looks/<id>/icons.json and are merged over this set at load time."""
 
 ICONS = {
     "target": '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',

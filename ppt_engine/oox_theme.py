@@ -39,8 +39,8 @@ def inject_theme(prs, theme):
                     f'<a:ea typeface="{ea}"/><a:cs typeface="{latin}"/></a:{tag}>')
 
         font_xml = (f'<a:fontScheme name="{theme.name}">'
-                    + font_block("majorFont", theme.display_font, theme.display_font)
-                    + font_block("minorFont", theme.body_font, theme.body_font)
+                    + font_block("majorFont", theme.major_font, theme.major_font)
+                    + font_block("minorFont", theme.minor_font, theme.minor_font)
                     + "</a:fontScheme>")
         elements.replace(elements.find("a:fontScheme", NS), _el(font_xml))
 

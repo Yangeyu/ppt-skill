@@ -1,0 +1,41 @@
+{
+  "id": "riso",
+  "name": "Riso",
+  "colors": {
+    "bg-content": "#F5EFE0",
+    "paper-2": "#EAE2CC",
+    "surface": "#EAE2CC",
+    "bg": "#161616",
+    "bg-2": "#0F0F0F",
+    "ink": "#1A1A1A",
+    "muted": "#5A5A5A",
+    "hairline": "#1A1A1A",
+    "primary": "#1E4DBC",
+    "primary-2": "#FF5C8A",
+    "blue": "#1E4DBC",
+    "pink": "#FF5C8A",
+    "mustard": "#E8A02E",
+    "black": "#1A1A1A",
+    "on-paper-muted": "#6B6256",
+    "pos": "#1E4DBC",
+    "neg": "#FF5C8A",
+    "on-dark": "#F5EFE0",
+    "on-dark-muted": "#BDB8A8",
+    "glow": "#0F0F0F"
+  },
+  "font_vars": {
+    "font-display": "\"Anton\", \"Noto Sans SC Black\", sans-serif",
+    "font-mono": "\"Space Mono\", \"Noto Sans SC\", monospace",
+    "font-body": "\"Noto Sans SC\", \"PingFang SC\", sans-serif"
+  },
+  "embed_fonts": ["Noto Sans SC", "Noto Sans SC Black", "Anton", "Space Mono"],
+  "major_font": "Noto Sans SC Black",
+  "minor_font": "Noto Sans SC",
+  "chart_palette": ["1E4DBC", "FF5C8A", "E8A02E", "1A1A1A", "5A5A5A", "EAE2CC"],
+  "fonts": {
+    "Noto Sans SC": ["NotoSansSC-Regular.ttf", "NotoSansSC-Bold.ttf"],
+    "Noto Sans SC Black": ["NotoSansSC-Black.ttf", "NotoSansSC-Black.ttf"],
+    "Anton": ["Anton-Regular.ttf", "Anton-Regular.ttf"],
+    "Space Mono": ["SpaceMono-Regular.ttf", "SpaceMono-Regular.ttf"]
+  }
+}

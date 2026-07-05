@@ -34,6 +34,25 @@ class CoverData(BaseModel):
     footer: str = Field(default="", max_length=48)
 
 
+class HeroFact(BaseModel):
+    """One big-number fact on a hero page (fact-strip, Jimbocho style)."""
+    value: str = Field(max_length=10)
+    label: str = Field(max_length=16)
+
+
+class HeroData(BaseModel):
+    """Full-bleed image-mode page: a riso-treated picture + overlaid native type."""
+    kind: Literal["hero"] = "hero"
+    eyebrow: str = Field(default="", max_length=24)
+    title: str = Field(max_length=28)
+    subtitle: str = Field(default="", max_length=48)
+    footer: str = Field(default="", max_length=48)
+    art: str = Field(default="sun", max_length=16)     # procedural fallback: sun | city | shanghai | vanity | …
+    src: str = Field(default="", max_length=240)        # optional source image to riso-ify
+    prompt: str = Field(default="", max_length=300)     # t2i content prompt (engine enforces the look)
+    facts: list[HeroFact] = Field(default_factory=list, max_length=3)
+
+
 class SectionData(BaseModel):
     kind: Literal["section"] = "section"
     number: str = Field(default="", max_length=4)
@@ -70,6 +89,8 @@ Point = Annotated[str, Field(max_length=60)]
 
 class TocItem(BaseModel):
     title: str = Field(max_length=24)
+    desc: str = Field(default="", max_length=32)        # one-line summary under the title
+    pages: str = Field(default="", max_length=10)       # page-range chip, e.g. "P03–P04"
 
 
 class TocData(BaseModel):
@@ -113,6 +134,61 @@ class ProcessData(BaseModel):
     steps: list[Step] = Field(min_length=2, max_length=5)
 
 
+class IconCard(BaseModel):
+    icon: str
+    title: str = Field(max_length=12)
+    subtitle: str = Field(default="", max_length=32)   # latin/mono caption
+    lines: list[str] = Field(default_factory=list, max_length=3)   # each ~ max_length below
+    punch: str = Field(default="", max_length=20)      # the colored take-away line
+
+
+class IconGridData(BaseModel):
+    """Riso icon-grid: 4–6 solid color-block cards (icon + title + caption +
+    a couple lines + a punch line)."""
+    kind: Literal["icon_grid"] = "icon_grid"
+    eyebrow: str = Field(default="", max_length=24)
+    title: str = Field(max_length=24)
+    subtitle: str = Field(default="", max_length=56)   # mono strapline under title
+    cards: list[IconCard] = Field(min_length=2, max_length=6)
+
+
+class Milestone(BaseModel):
+    year: str = Field(max_length=10)
+    title: str = Field(max_length=16)
+    desc: str = Field(default="", max_length=44)
+
+
+class TimelineData(BaseModel):
+    kind: Literal["timeline"] = "timeline"
+    eyebrow: str = Field(default="", max_length=24)
+    title: str = Field(max_length=24)
+    subtitle: str = Field(default="", max_length=56)
+    milestones: list[Milestone] = Field(min_length=2, max_length=5)
+
+
+class TableData(BaseModel):
+    kind: Literal["table"] = "table"
+    eyebrow: str = Field(default="", max_length=24)
+    title: str = Field(max_length=24)
+    subtitle: str = Field(default="", max_length=56)
+    headers: list[str] = Field(min_length=2, max_length=5)
+    rows: list[list[str]] = Field(min_length=1, max_length=8)
+
+
+class Pillar(BaseModel):
+    heading: str = Field(max_length=16)
+    tag: str = Field(default="", max_length=22)        # latin/mono sub-label
+    points: list[Point] = Field(min_length=1, max_length=5)
+
+
+class PillarsData(BaseModel):
+    kind: Literal["pillars"] = "pillars"
+    eyebrow: str = Field(default="", max_length=24)
+    title: str = Field(max_length=24)
+    subtitle: str = Field(default="", max_length=56)
+    columns: list[Pillar] = Field(min_length=2, max_length=4)
+
+
 class QuoteData(BaseModel):
     kind: Literal["quote"] = "quote"
     quote: str = Field(max_length=80)
@@ -127,8 +203,9 @@ class ClosingData(BaseModel):
 
 
 SlideData = Annotated[
-    Union[CoverData, SectionData, KpiData, BulletsData, ChartData,
-          TocData, TwoColData, CompareData, ProcessData, QuoteData, ClosingData],
+    Union[CoverData, HeroData, SectionData, KpiData, BulletsData, ChartData,
+          TocData, TwoColData, CompareData, ProcessData, IconGridData,
+          TimelineData, TableData, PillarsData, QuoteData, ClosingData],
     Field(discriminator="kind"),
 ]
 
@@ -150,5 +227,5 @@ class Slide(BaseModel):
 
 class Deck(BaseModel):
     meta: DeckMeta
-    theme: str = "aurora"
+    theme: str = "riso"
     slides: list[Slide]

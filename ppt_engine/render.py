@@ -17,6 +17,10 @@ from .oox_theme import inject_theme
 
 ALIGN = {"left": PP_ALIGN.LEFT, "center": PP_ALIGN.CENTER, "right": PP_ALIGN.RIGHT,
          "start": PP_ALIGN.LEFT, "end": PP_ALIGN.RIGHT, "justify": PP_ALIGN.JUSTIFY}
+# families that carry CJK glyphs — used to split a:latin (Latin face) from
+# a:ea (East-Asian face) so a heavy Latin display + a CJK black can coexist in one run
+CJK_FAMILIES = {"Noto Sans SC", "Noto Serif SC", "Noto Sans SC Black", "PingFang SC",
+                "Songti SC", "STSong", "Hiragino Sans GB", "Microsoft YaHei", "SimHei"}
 CHART_T = {"column": XL_CHART_TYPE.COLUMN_CLUSTERED, "bar": XL_CHART_TYPE.BAR_CLUSTERED,
            "line": XL_CHART_TYPE.LINE_MARKERS}
 ZRANK = {"rect": 0, "line": 0, "image": 5, "icon": 6, "chart": 5, "text": 10}
@@ -138,7 +142,7 @@ def _add_text(slide, p, theme):
         w += pad
     tb = slide.shapes.add_textbox(x, y, w, h)
     tf = tb.text_frame
-    tf.word_wrap = True
+    tf.word_wrap = not p.get("nowrap", False)
     tf.margin_left = tf.margin_right = tf.margin_top = tf.margin_bottom = 0
     tf.vertical_anchor = MSO_ANCHOR.TOP
     try:
@@ -162,8 +166,10 @@ def _add_text(slide, p, theme):
         f.color.theme_color = TEXT_SLOT[slot]
     elif hexv:
         f.color.rgb = RGBColor.from_string(hexv)
-    fam = p.get("family") or theme.body_font
-    _set_run_fonts(run, fam, fam)
+    fams = p.get("families") or [theme.minor_font]
+    latin = fams[0] if fams else theme.minor_font
+    ea = next((f for f in fams if f in CJK_FAMILIES), latin)
+    _set_run_fonts(run, latin, ea)
     ls = p.get("letterSpacingPx", 0) or 0
     if ls:
         run._r.get_or_add_rPr().set("spc", str(int(ls * 0.75 * 100)))

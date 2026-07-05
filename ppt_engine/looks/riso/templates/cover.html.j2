@@ -1,0 +1,26 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+<div class="rc-frame">
+  {% if d.eyebrow %}<div data-ppt="rect" class="rc-tag"><div data-ppt="text" class="rc-tag-t">{{ d.eyebrow }}</div></div>{% endif %}
+  <div data-ppt="text" class="rc-mark">RISO · BLUE × PINK</div>
+
+  <!-- riso color-block motif (vector stand-in for the screen-print hero) -->
+  <div data-ppt="rect" style="position:absolute;right:88px;top:196px;width:248px;height:300px;background:{{ colors['pink'] }};"></div>
+  <div data-ppt="rect" style="position:absolute;right:96px;top:186px;width:248px;height:300px;background:{{ colors['blue'] }};border:2px solid {{ colors['ink'] }};"></div>
+  <div data-ppt="rect" style="position:absolute;right:236px;top:372px;width:140px;height:140px;background:{{ colors['mustard'] }};border:2px solid {{ colors['ink'] }};"></div>
+
+  <div class="rc-title-wrap">
+    <div class="rc-line">
+      <div data-ppt="text" data-ppt-deco class="rc-title" data-ppt-z="1" style="position:absolute;left:4px;top:4px;color:{{ colors['pink'] }};">{{ d.title }}</div>
+      <div data-ppt="text" class="rc-title" data-ppt-z="2" style="position:relative;color:{{ colors['ink'] }};">{{ d.title }}</div>
+    </div>
+    {% if d.subtitle %}<div data-ppt="text" style="font-family:var(--font-body);font-weight:700;font-size:20px;line-height:1.4;color:{{ colors['ink'] }};margin-top:22px;max-width:620px;">{{ d.subtitle }}</div>{% endif %}
+  </div>
+
+  <div class="rc-foot-rule" data-ppt="rect"></div>
+  <div class="rc-foot">
+    {% if d.footer %}<div data-ppt="text" class="rc-foot-t">{{ d.footer }}</div>{% else %}<div></div>{% endif %}
+    <div data-ppt="text" class="rc-foot-t">EDITION 2026 · DEMO</div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,4 @@
+{
+  "_comment": "riso 版式的跨字段约束——ir.py/schema.ts 的字段预算之外、由版式几何决定的上限。生成侧(mastra normalizeDeck)与提示词都从这里读，单一来源。",
+  "toc_max_items": 6
+}

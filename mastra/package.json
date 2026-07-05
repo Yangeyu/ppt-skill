@@ -1,0 +1,25 @@
+{
+  "name": "ppt-riso-mastra",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Mastra module: a market brief -> Deck IR (LLM) -> native riso-look .pptx via the Python ppt_engine",
+  "scripts": {
+    "smoke": "tsx src/smoke.ts",
+    "generate": "tsx src/generate.ts",
+    "beauty": "tsx src/generate.ts beauty"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@mastra/core": "^1.49.0",
+    "dotenv": "^17.4.2",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.0",
+    "tsx": "^4.23.0",
+    "typescript": "^6.0.3"
+  }
+}

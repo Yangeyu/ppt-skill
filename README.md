@@ -16,25 +16,57 @@ IR(pydantic)              语义 + 字数预算(判别联合,每版式独立 sch
 ```
 
 - **可编辑**:全部原生对象 + 令牌写入 `theme1.xml` 的 `clrScheme/fontScheme`,可在 PowerPoint「设计 > 颜色 / 字体」一键换肤。
-- **高颜值**:设计固化在令牌(`theme.py`)+ 版式(`templates/`),不依赖 LLM 审美。
+- **高颜值**:设计固化在 look 包(令牌 + 版式模板),不依赖 LLM 审美。
 - **不溢出**:几何来自浏览器实测;结构层断言零越界。
+
+## 仓库布局
+
+```
+ppt_engine/          核心库(纯 Python,pip 可装)
+  looks/riso/        riso look 包 —— 当前唯一精调 look(见下)
+mastra/              生成层(TypeScript):brief --LLM--> Deck IR --cli--> pptx
+examples/            确定性 demo(不依赖 LLM)
+out/                 全部产物(gitignore),一次生成 = 一个目录
+docs/                设计文档
+```
+
+## look 包(`ppt_engine/looks/<id>/`)
+
+一套设计语言 = 一个自包含目录,引擎按目录发现并加载,新增 look 引擎零改动:
+
+```
+manifest.json     设计令牌:色板 / 字体栈 / 嵌入清单 / chart palette / major·minor
+templates/*.j2    全套版式模板(自包含,无共享回退)
+fonts/*.ttf       该 look 嵌入的全部字体
+icons.json        look 专属图标,叠加在引擎基础 stroke 图标集之上
+art.py            图像钩子:STYLE_SUFFIX(t2i 风格纪律)+ hero_generate / hero_from_source
+constraints.json  跨字段版式约束(如 toc≤6),生成侧(mastra)从这里读
+agent.zh.md       给 LLM 的指令片段(美学气质 + 版式 cheat-sheet)
+```
+
+生成器通过 `python3 -m ppt_engine.cli --describe riso` 拿到图标白名单/约束/指令片段——**约束单一来源**。
+
+现有 look:**riso**(Risograph zine:暖纸 + 联邦蓝/荧光粉/芥末,Anton × 思源黑 Black 重黑海报标题,Space Mono 注解,硬边色块 + 套色错位)。糙版主题(editorial/aurora/ember)已清除,git 历史可寻。
 
 ## 运行
 
 ```bash
-pip install python-pptx playwright jinja2 pydantic pillow lxml fonttools
-python3 demo.py growth_review.pptx ./preview   # 第二个参数可选:每页浏览器截图(真实字体预览)
+pip install -e .                                  # 或手动装 pyproject 里的依赖
+python3 examples/demo_riso.py                     # riso 全套版式样张 → out/riso_demo/
+python3 examples/demo_beauty_riso.py              # 上海美妆样张(含 t2i hero) → out/beauty_riso/
+python3 -m ppt_engine.cli --deck deck.json --out out/x/deck.pptx --shots out/x/shots
+cd mastra && npm run beauty                       # brief --qwen3.7-plus--> IR --> pptx(见 mastra/README)
 ```
 
 > 默认用系统 Chrome(`channel="chrome"`),无需 `playwright install`。
 
-## 能力(P1)
+## 能力
 
-- **11 个版式原型**:`cover` `toc` `section` `kpi` `bullets` `two_col` `comparison` `process`(带图标)`chart`(原生图表)`quote` `closing`。
-- **3 套主题**:`editorial`(暖纸 · 思源宋体 · 朱砂,默认高颜值)、`aurora`(商务靛蓝)、`ember`(暖橙红)。同一份 IR,换 `theme` 即整体改色 + 改字体。
-- **编辑部设计系统(高颜值)**:衬线大标(思源宋体)× 黑体正文的字号反差、暖纸/墨色双场景、发丝线分隔、章节页巨型虚化数字、朱砂单点强调——设计语言固化在令牌+版式,产出杂志级版面而非默认模板。
-- **双字体嵌入(跨平台一致)**:衬线 **Noto Serif SC** + 黑体 **Noto Sans SC**(均 OFL 可嵌入),按 deck 用字**子集化**后嵌入 `.pptx`(写入 `major/minorFont`);同一份子集喂给浏览器度量(`@font-face`)与最终文档 → 任意机器零安装、渲染一致。整套 deck 仅 +~360KB。
-- **图标/素材管线**:内置 stroke 图标集 → 浏览器 SVG → 逐元素栅格化为透明 PNG → 原生图片嵌入。
+- **16 个版式原型**:`cover` `hero`(image-mode 全出血大图)`toc` `section` `kpi` `bullets` `two_col` `comparison` `process` `chart`(原生图表)`icon_grid` `timeline` `table` `pillars` `quote` `closing`。
+- **image-mode(hero 大图页)**:t2i(qwen-image-2.0,prompt 只写内容、look 强制风格)→ look 的 `hero_from_source` 双版分色后处理;无 key/失败自动降级到程序化 `hero_generate`(sun/city/shanghai/vanity 母题),离线可用;全出血嵌入为**原生图片** + scrim + 原生叠字。
+- **Risograph 设计系统(高颜值)**:**Anton × 思源黑 Black** 重黑海报标题、**Space Mono** 等宽注解、**套色错位**(同字错位叠色)、硬边色块卡、暖纸 + 联邦蓝/荧光粉/芥末三色。
+- **多字体嵌入 + 拉丁/中文分字族**:OFL 开源字体按 deck 用字**子集化**后嵌入 `.pptx`(写入 `major/minorFont`);**按元素拆 `a:latin` / `a:ea`**——同一标题里拉丁走 Anton、中文走思源黑 Black。同一份子集喂浏览器度量与最终文档 → 任意机器零安装、渲染一致。
+- **图标/素材管线**:stroke 基础集 + look 实心集 → 浏览器 SVG → 逐元素栅格化为透明 PNG → 原生图片嵌入。
 - **原生图表**:`add_chart`,categories/series 可在 PowerPoint 改数据。
 - **渲染-自检闭环**:① IR 字数预算(生成端拦截)② 结构不变量(几何层断言越界/重叠,无需出图)③ `render_preview` 出图供视觉评审。
 
@@ -43,29 +75,24 @@ python3 demo.py growth_review.pptx ./preview   # 第二个参数可选:每页浏
 | 文件 | 职责 |
 |------|------|
 | `ppt_engine/ir.py` | IR:判别联合 + 字数预算(`max_length`/条数上限) |
-| `ppt_engine/theme.py` | 设计令牌(颜色/字体/图表色板)+ scheme 映射 |
-| `ppt_engine/templates/` | 版式原型(HTML/CSS),11 个 `*.html.j2` |
-| `ppt_engine/icons.py` | stroke 图标集(v1 PNG,v2 freeform) |
+| `ppt_engine/theme.py` | look 加载器:`looks/*/manifest.json` → `Theme`(令牌 + 模板目录 + 图标 + art 钩子 + scheme 映射) |
+| `ppt_engine/looks/riso/` | riso look 包(令牌/模板/字体/图标/图像钩子/约束/agent 指令) |
+| `ppt_engine/icons.py` | 引擎基础 stroke 图标集(每个 look 都可用的语义名) |
+| `ppt_engine/genimage.py` | 通用 t2i 客户端(DashScope qwen-image-2.0),风格后缀由 look 注入 |
 | `ppt_engine/measure.py` | 浏览器内 JS:`[data-ppt]` 叶子 → 几何 + 样式 |
 | `ppt_engine/render.py` | 几何 → 原生 pptx(渐变/字体/图表色/主题色引用) |
 | `ppt_engine/oox_theme.py` | 令牌写入 `theme1.xml`(一键换色/换字) |
-| `ppt_engine/fonts.py` | 按 deck 用字子集化开源 CJK 字体 |
+| `ppt_engine/fonts.py` | 按 deck 用字子集化 look 的字体 |
 | `ppt_engine/embed_fonts.py` | 把子集字体嵌入 `.pptx`(OOXML `embeddedFontLst`) |
 | `ppt_engine/selfcheck.py` | 结构不变量 + `render_preview` 出图 |
 | `ppt_engine/build.py` | 编排:IR → 子集字体 → HTML → 浏览器 → 渲染 → 嵌字 |
-
-## 已验证
-
-- 11 页中文 deck,11 种版式全部跑通;在真 PowerPoint 的 OOXML 上用 LibreOffice 出图核验。
-- 结构自检:81 文本框 · 59 形状 · 4 图标图片 · 1 原生图表 · **0 文本越界/重叠**。
-- 文本可读取(可编辑)、图表数据原生可改、`ember` 主题验证整体换肤。
-- 字体嵌入结构校验:2 个 `fntdata` 子集(regular/bold),关键中文字形齐全,包可被重新打开。
-- 自检三道闸均验证可拦截:字数超限 / 条数超限 / 几何越界 / 文本重叠。
+| `ppt_engine/cli.py` | JSON 桥(外部编排器入口)+ `--describe` look 契约 |
+| `mastra/` | LLM 生成层:brief → Deck IR → cli 构建(详见 `mastra/README.md`) |
 
 ## 已知限制 / 下一步
 
-- **预览保真**:浏览器截图(`preview/slide_*.png`)用嵌入字体,是**真实排版**;LibreOffice 的 `render_preview` 不认嵌入字会把宋体替换成楷体——只用它核验**版式/几何**,字体效果以浏览器图或真 PowerPoint 为准。
+- **预览保真**:浏览器截图(`out/<run>/shots/`)用嵌入字体,是**真实排版**;但**原生图表与 hero 海报图只在真实 `.pptx` 里渲染**——用 LibreOffice `render_preview` 核验(注意它会把嵌入字替换成楷体状字形,是预览替字非 bug)。
 - **图标为 PNG**:可缩放性有限 → 下一步 SVG→freeform 保矢量。
-- **封面纯排版**:已是编辑部杂志封面;下一步可选**封面 image-mode**(AI 出图全出血 + 叠原生字)再加冲击。
 - **自检的视觉层**:`render_preview` 已出图,接入视觉模型做美学评审 + 自动修复闭环。
-- 阴影/质感深化(噪点、玻璃拟态)、更多主题与版式、MCP 接入。
+- 更多 look(编辑部/极简等,按 look 包格式增量添加)、MCP 接入。
+- 大方向:v0.3「按主题现场生成身份」路线(见 `feature/ppt-master` 分支 docs)以本 look 包格式为 seed/兜底。

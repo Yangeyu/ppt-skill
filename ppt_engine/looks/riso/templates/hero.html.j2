@@ -1,0 +1,34 @@
+{% extends "base.html.j2" %}
+{% block bg %}{% endblock %}
+{% block frame %}
+<div data-ppt="image" data-ppt-z="-20" data-src="{{ hero_img }}" style="position:absolute;inset:0;"></div>
+<div data-ppt="rect" data-ppt-z="-10" style="position:absolute;left:0;top:0;width:56%;height:100%;background:rgba(245,239,224,0.66);"></div>
+<div class="rc-frame">
+  {% if d.eyebrow %}<div data-ppt="rect" class="rc-tag"><div data-ppt="text" class="rc-tag-t">{{ d.eyebrow }}</div></div>{% endif %}
+  <div data-ppt="text" class="rc-mark">RISO · BLUE × PINK</div>
+  <div class="rc-title-wrap">
+    <div class="rc-line">
+      <div data-ppt="text" data-ppt-deco class="rc-title" data-ppt-z="1" style="position:absolute;left:4px;top:4px;color:{{ colors['pink'] }};">{{ d.title }}</div>
+      <div data-ppt="text" class="rc-title" data-ppt-z="2" style="position:relative;color:{{ colors['ink'] }};">{{ d.title }}</div>
+    </div>
+    {% if d.subtitle %}<div data-ppt="text" class="rc-sub" style="font-family:var(--font-body);font-weight:700;font-size:20px;line-height:1.4;color:{{ colors['ink'] }};margin-top:22px;max-width:540px;">{{ d.subtitle }}</div>{% endif %}
+    {% if d.facts %}
+    <div style="display:flex;gap:52px;margin-top:34px;">
+      {% for f in d.facts %}
+      {% set accent = [colors['blue'], colors['pink'], colors['mustard']][loop.index0 % 3] %}
+      <div>
+        <div data-ppt="rect" style="width:28px;height:6px;background:{{ accent }};margin-bottom:10px;"></div>
+        <div data-ppt="text" style="font-family:var(--font-display);font-weight:400;font-size:38px;line-height:1;color:{{ colors['ink'] }};white-space:nowrap;">{{ f.value }}</div>
+        <div data-ppt="text" style="font-family:var(--font-mono);font-size:11px;font-weight:700;letter-spacing:.1em;color:{{ colors['on-paper-muted'] }};margin-top:8px;white-space:nowrap;">{{ f.label }}</div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+  <div class="rc-foot-rule" data-ppt="rect"></div>
+  <div class="rc-foot">
+    {% if d.footer %}<div data-ppt="text" class="rc-foot-t">{{ d.footer }}</div>{% else %}<div></div>{% endif %}
+    <div data-ppt="text" class="rc-foot-t">SCREEN-PRINT · DUOTONE</div>
+  </div>
+</div>
+{% endblock %}

@@ -17,18 +17,19 @@ MEASURE_JS = r"""
     if (kind === 'text') {
       const fs = parseFloat(cs.fontSize);
       const lh = cs.lineHeight === 'normal' ? fs * 1.2 : parseFloat(cs.lineHeight);
-      const family = (cs.fontFamily.split(',')[0] || '').replace(/["']/g, '').trim();
+      const families = cs.fontFamily.split(',').map(s => s.replace(/["']/g, '').trim()).filter(Boolean);
       Object.assign(p, {
         text: norm(el.textContent),
         fontSizePx: fs,
         fontWeight: parseInt(cs.fontWeight) || 400,
         italic: cs.fontStyle === 'italic',
-        family: family,
+        families: families,
         color: cs.color,
         align: cs.textAlign,
         lineHeightPx: lh,
         upper: cs.textTransform === 'uppercase',
         letterSpacingPx: cs.letterSpacing === 'normal' ? 0 : parseFloat(cs.letterSpacing),
+        nowrap: cs.whiteSpace === 'nowrap' || cs.whiteSpace === 'pre',
       });
     } else if (kind === 'rect') {
       const bw = parseFloat(cs.borderTopWidth) || 0;

@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ppt-engine"
+version = "0.2.0"
+description = "浏览器排版 → 原生可编辑 pptx 引擎（IR 确定性路线）；look 包驱动，riso 为首个精调 look"
+requires-python = ">=3.10"
+dependencies = [
+    "python-pptx>=0.6.23",
+    "pydantic>=2.5",
+    "jinja2>=3.1",
+    "playwright>=1.40",
+    "fonttools>=4.40",
+    "pillow>=10.0",
+    "lxml>=4.9",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.4"]
+
+[tool.setuptools.packages.find]
+include = ["ppt_engine*"]
+
+[tool.setuptools.package-data]
+# look 包是运行时资产，必须随库分发
+ppt_engine = ["looks/**/*"]

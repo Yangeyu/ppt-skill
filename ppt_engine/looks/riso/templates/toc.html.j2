@@ -1,0 +1,26 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+<div class="r-frame">
+  {% include "_head.html.j2" %}
+  <div class="r-body" style="align-items:center;">
+    <div class="r-toc">
+      {% for it in d['items'] %}
+      {% set accent = [colors['blue'], colors['pink'], colors['mustard']][loop.index0 % 3] %}
+      <div class="r-toc-item">
+        <div class="r-toc-row">
+          <div data-ppt="text" class="r-toc-num" style="color:{{ accent }};">{{ '%02d' % loop.index }}</div>
+          <div data-ppt="text" class="r-toc-title">{{ it.title }}</div>
+          {% if it.desc %}<div data-ppt="text" style="font-family:var(--font-body);font-size:14px;color:{{ colors['on-paper-muted'] }};white-space:nowrap;align-self:center;margin-left:6px;">{{ it.desc }}</div>{% endif %}
+          {% if it.pages %}
+          <div data-ppt="rect" style="margin-left:auto;background:{{ accent }};padding:5px 12px;align-self:center;">
+            <div data-ppt="text" style="font-family:var(--font-mono);font-size:11.5px;font-weight:700;letter-spacing:.12em;color:{{ colors['bg-content'] if accent != colors['mustard'] else colors['ink'] }};white-space:nowrap;">{{ it.pages }}</div>
+          </div>
+          {% endif %}
+        </div>
+        <div data-ppt="rect" class="r-toc-rule"></div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -11,14 +11,6 @@ from pathlib import Path
 from fontTools.ttLib import TTFont
 from fontTools.subset import Subsetter, Options
 
-FONT_DIR = Path(__file__).parent / "assets" / "fonts"
-
-# typeface name -> (regular file, bold file) under assets/fonts/
-FONT_FILES = {
-    "Noto Sans SC": ("NotoSansSC-Regular.ttf", "NotoSansSC-Bold.ttf"),
-    "Noto Serif SC": ("NotoSerifSC-Regular.ttf", "NotoSerifSC-Bold.ttf"),
-}
-
 # glyphs templates inject beyond the IR text (punctuation, quotes, latin, digits)
 BASE_CHARS = set(string.printable) | set("，。、·—–“”‘’：；％（）《》【】！？…　@&%")
 
@@ -54,10 +46,10 @@ def _subset(path: Path, unicodes: list[int]) -> bytes:
     return buf.getvalue()
 
 
-def _family(typeface: str, unicodes: list[int]) -> dict:
-    reg_file, bold_file = FONT_FILES[typeface]
-    reg = _subset(FONT_DIR / reg_file, unicodes)
-    bold = _subset(FONT_DIR / bold_file, unicodes)
+def _family(typeface: str, font_dir: Path, files: tuple, unicodes: list[int]) -> dict:
+    reg_file, bold_file = files
+    reg = _subset(font_dir / reg_file, unicodes)
+    bold = _subset(font_dir / bold_file, unicodes)
     return {
         "typeface": typeface,
         "regular": reg, "bold": bold,
@@ -66,13 +58,15 @@ def _family(typeface: str, unicodes: list[int]) -> dict:
     }
 
 
-def prepare_fonts(deck, families: list[str]) -> dict:
-    """Subset every requested family over the deck's character set."""
+def prepare_fonts(deck, theme) -> dict:
+    """Subset every family the look embeds over the deck's character set.
+    The ttf files come from the look package itself (theme.dir / fonts/)."""
     unicodes = [ord(c) for c in collect_chars(deck)]
+    font_dir = theme.dir / "fonts"
     seen, fams = set(), []
-    for tf in families:
-        if tf in seen or tf not in FONT_FILES:
+    for tf in theme.families():
+        if tf in seen or tf not in theme.font_files:
             continue
         seen.add(tf)
-        fams.append(_family(tf, unicodes))
+        fams.append(_family(tf, font_dir, theme.font_files[tf], unicodes))
     return {"families": fams}
