@@ -1,0 +1,30 @@
+{% extends "base.html.j2" %}
+{% from "_brush.html.j2" import corners with context %}
+{% block frame %}
+{{ corners(170) }}
+{% set rot = [colors['tan'], colors['sage'], colors['pink'], colors['blue']] %}
+<div class="m-frame">
+  {% include "_head.html.j2" %}
+  <div class="m-body">
+    <div class="m-pillars">
+      {% for p in d.columns %}
+      {% set c = rot[loop.index0 % 4] %}
+      <div data-ppt="rect" class="m-pillar">
+        <div data-ppt="text" class="m-pillar-h">{{ p.heading }}</div>
+        {% if p.tag %}<div data-ppt="text" class="m-pillar-tag">{{ p.tag }}</div>{% endif %}
+        <div data-ppt="rect" class="m-pillar-rule" style="background:{{ c }};"></div>
+        <div class="m-pillar-points">
+          {% for pt in p.points %}
+          <div class="m-pillar-row">
+            <div data-ppt="rect" class="m-pillar-mark" style="background:{{ c }};"></div>
+            <div data-ppt="text" class="m-pillar-text">{{ pt }}</div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% include "_foot.html.j2" %}
+{% endblock %}

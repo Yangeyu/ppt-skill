@@ -1,0 +1,29 @@
+{% extends "base.html.j2" %}
+{% from "_brush.html.j2" import corners with context %}
+{% block frame %}
+{# 攻/防两卡 — 左深灰蓝卡（焦点，反纸白字）× 右暖纸卡（源模板图文页的灰蓝面板语言） #}
+{{ corners(170) }}
+<div class="m-frame">
+  {% include "_head.html.j2" %}
+  <div class="m-body">
+    <div class="m-cols">
+      {% for col, bg, fg, sub in [(d.left, colors['bg'], colors['on-dark'], 'rgba(251,248,241,.62)'),
+                                  (d.right, colors['surface'], colors['ink'], colors['muted'])] %}
+      <div data-ppt="rect" class="m-col-card" style="background:{{ bg }};">
+        <div data-ppt="text" class="m-col-h" style="color:{{ colors['on-dark'] if loop.first else colors['slate'] }};">{{ col.heading }}</div>
+        <div data-ppt="rect" class="m-col-rule" style="background:{{ 'rgba(251,248,241,.55)' if loop.first else colors['accent'] }};"></div>
+        <div class="m-col-points">
+          {% for pt in col.points %}
+          <div class="m-col-row">
+            <div data-ppt="text" class="m-col-num" style="color:{{ sub }};">{{ '%02d'|format(loop.index) }}</div>
+            <div data-ppt="text" class="m-col-text" style="color:{{ fg }};">{{ pt }}</div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% include "_foot.html.j2" %}
+{% endblock %}

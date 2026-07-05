@@ -1,0 +1,29 @@
+{% extends "base.html.j2" %}
+{% from "_brush.html.j2" import corners with context %}
+{% block frame %}
+{# 圆形色底 + 白描边图标的居中卡阵（源模板 P5 菱形chip的圆形化转译） #}
+{{ corners(170) }}
+{% set rot = [colors['tan'], colors['sage'], colors['pink'], colors['blue'], colors['gold'], colors['slate']] %}
+<div class="m-frame">
+  {% include "_head.html.j2" %}
+  <div class="m-grid">
+    {% for card in d.cards %}
+    <div class="m-cell">
+      <div class="m-chip" style="width:52px;height:52px;">
+        <div data-ppt="rect" style="position:absolute;inset:0;background:{{ rot[loop.index0 % 6] }};border-radius:50%;"></div>
+        <div data-ppt="icon" data-ppt-deco style="position:absolute;left:14px;top:14px;width:24px;height:24px;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">{{ icons[card.icon]|safe }}</svg>
+        </div>
+      </div>
+      <div data-ppt="text" class="m-cell-title">{{ card.title }}</div>
+      {% if card.subtitle %}<div data-ppt="text" class="m-cell-sub">{{ card.subtitle }}</div>{% endif %}
+      {% for ln in card.lines %}
+      <div data-ppt="text" class="m-cell-line {{ 'first' if loop.first else '' }}">{{ ln }}</div>
+      {% endfor %}
+      {% if card.punch %}<div data-ppt="text" class="m-cell-punch">{{ card.punch }}</div>{% endif %}
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% include "_foot.html.j2" %}
+{% endblock %}

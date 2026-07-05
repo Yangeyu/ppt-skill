@@ -1,0 +1,22 @@
+{% extends "base.html.j2" %}
+{% from "_brush.html.j2" import corners with context %}
+{% block frame %}
+{{ corners() }}
+<div class="m-frame">
+  {% include "_head.html.j2" %}
+  <div class="m-body">
+    {% set rot = [colors['tan'], colors['sage'], colors['pink'], colors['blue']] %}
+    <div class="m-kpis">
+      {% for s in d.stats %}
+      <div data-ppt="rect" class="m-kpi">
+        <div data-ppt="rect" style="width:12px;height:12px;border-radius:50%;background:{{ rot[loop.index0 % 4] }};"></div>
+        <div data-ppt="text" class="m-kpi-val" {% if loop.first %}style="color:{{ colors['accent'] }};"{% endif %}>{{ s.value }}</div>
+        <div data-ppt="text" class="m-kpi-label">{{ s.label }}</div>
+        {% if s.delta %}<div data-ppt="text" class="m-kpi-delta">{{ s.delta }}</div>{% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% include "_foot.html.j2" %}
+{% endblock %}

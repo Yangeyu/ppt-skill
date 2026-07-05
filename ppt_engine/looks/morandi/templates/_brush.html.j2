@@ -1,0 +1,23 @@
+{# 干笔刷宏 —— 预生成透明 PNG（image.py BRUSH_ASSETS），data-ppt="image" 原生嵌入。
+   ⚠ 不要改回 data-ppt="icon"：元素超出视口时 Playwright 元素截图会退化成
+   整页截图，产生幽灵重影（见 image.py 头注）。原生图允许负偏移出血。
+   name ∈ brush-cross(760²) / brush-tl(300²) / brush-br(300²) / brush-line(520×90)。 #}
+{% macro brush(name, size, pos, vb=760, vbh=None) %}
+{% set hh = (size * (vbh or vb) / vb)|round|int %}
+<div data-ppt="image" data-ppt-deco data-ppt-z="-10" data-src="{{ icons[name ~ '.png'] }}"
+     style="position:absolute;{{ pos }}width:{{ size }}px;height:{{ hh }}px;"></div>
+{% endmacro %}
+
+{# 内容页角部点缀（左上驼金 + 右下粉） #}
+{% macro corners(size=200) %}
+{{ brush('brush-tl', size, 'left:-34px;top:-38px;', 300) }}
+{{ brush('brush-br', size, 'right:-34px;bottom:-38px;', 300) }}
+{% endmacro %}
+
+{# 陶土橙圆角 chip：rect+text 结构（文字元素的 CSS background 不会进 pptx） #}
+{% macro chip(text, extra='') %}
+<div style="position:relative;margin-top:24px;{{ extra }}">
+  <div data-ppt="rect" style="position:absolute;inset:0;background:{{ colors['accent'] }};border-radius:3px;"></div>
+  <div data-ppt="text" style="position:relative;font-family:var(--font-mono);font-size:11.5px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:{{ colors['accent-on'] }};padding:7px 18px 6px;">{{ text }}</div>
+</div>
+{% endmacro %}

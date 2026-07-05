@@ -1,0 +1,29 @@
+{% extends "base.html.j2" %}
+{% from "_brush.html.j2" import chip with context %}
+{% block frame %}
+{# 封面/图页 — 全出血莫兰迪图（左置主体）+ 右侧纸白纱罩 + 右置文字（对应源模板封面构图） #}
+<div data-ppt="image" data-ppt-z="-20" data-src="{{ hero_img }}" style="position:absolute;inset:0;"></div>
+<div data-ppt="rect" data-ppt-z="-15" class="mh-scrim" style="background:rgba(251,248,241,.80);"></div>
+<div class="mh-frame">
+  {% if d.eyebrow %}<div data-ppt="text" class="mh-kick">{{ d.eyebrow }}</div>{% endif %}
+  <div class="mh-title-row">
+    {% for seg in d.title|marksplit %}
+    <div data-ppt="text" class="mh-title"{% if seg.mark %} style="color:{{ colors['accent'] }};"{% endif %}>{{ seg.text }}</div>
+    {% endfor %}
+  </div>
+  {% if d.subtitle %}<div data-ppt="text" class="mh-sub">{{ d.subtitle }}</div>{% endif %}
+  {% if d.facts %}
+  <div class="mh-facts">
+    {% set rot = [colors['tan'], colors['sage'], colors['pink']] %}
+    {% for f in d.facts %}
+    <div class="mh-fact">
+      <div data-ppt="rect" class="mh-fact-rule" style="background:{{ colors['accent'] if loop.first else rot[loop.index0 % 3] }};"></div>
+      <div data-ppt="text" class="mh-fact-val" {% if loop.first %}style="color:{{ colors['accent'] }};"{% endif %}>{{ f.value }}</div>
+      <div data-ppt="text" class="mh-fact-label">{{ f.label }}</div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% if d.footer %}{{ chip(d.footer, 'align-self:flex-start;') }}{% endif %}
+</div>
+{% endblock %}

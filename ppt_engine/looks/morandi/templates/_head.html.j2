@@ -1,0 +1,15 @@
+{# 居中头部：EN 眉标 · 宋体重标题（强调词陶土橙）· 副题 · 细线中断短划 #}
+<div class="m-head">
+  {% if d.eyebrow %}<div data-ppt="text" class="m-kicker">{{ d.eyebrow }}</div>{% endif %}
+  <div class="m-title-row">
+    {% for seg in d.title|marksplit %}
+    <div data-ppt="text" class="m-title"{% if seg.mark %} style="color:{{ colors['accent'] }};"{% endif %}>{{ seg.text }}</div>
+    {% endfor %}
+  </div>
+  {% if d.subtitle is defined and d.subtitle %}<div data-ppt="text" class="m-sub">{{ d.subtitle }}</div>{% endif %}
+  <div class="m-div">
+    <div data-ppt="rect" class="m-div-line"></div>
+    <div data-ppt="rect" class="m-div-dash"></div>
+    <div data-ppt="rect" class="m-div-line"></div>
+  </div>
+</div>

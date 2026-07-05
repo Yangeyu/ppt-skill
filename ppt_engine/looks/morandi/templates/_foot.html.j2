@@ -1,0 +1,15 @@
+{% if page_total %}
+{% set fl = foot_left|default(deck_title) %}
+{% set fm = foot_muted|default(colors['muted'], true) %}
+{% set fd = foot_dot|default(colors['hairline'], true) %}
+{% set fa = foot_accent|default(colors['accent'], true) %}
+<div class="m-pagefoot">
+  <div data-ppt="text" class="m-foot-t" style="color:{{ fm }};">{{ fl }}</div>
+  <div class="m-dots">
+    {% for i in range(page_total) %}
+    <div data-ppt="rect" style="width:5px;height:5px;border-radius:50%;background:{{ fa if (i + 1) == page_no else fd }};"></div>
+    {% endfor %}
+  </div>
+  <div data-ppt="text" class="m-foot-t" style="color:{{ fm }};">MORANDI · 莫兰迪</div>
+</div>
+{% endif %}

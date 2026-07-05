@@ -1,0 +1,24 @@
+{% extends "base.html.j2" %}
+{% from "_brush.html.j2" import corners with context %}
+{% block frame %}
+{# 中文数字序号清单（源模板「面临问题」页构图：壹贰叁肆 + 陶土橙点缀） #}
+{{ corners() }}
+{% set cn = ['壹','贰','叁','肆','伍','陆','柒','捌','玖','拾'] %}
+<div class="m-frame">
+  {% include "_head.html.j2" %}
+  <div class="m-body">
+    <div class="m-vlist">
+      {% for b in d.bullets %}
+      <div class="m-vitem">
+        <div class="m-vrow">
+          <div data-ppt="text" class="m-vnum" {% if b.emphasis %}style="color:{{ colors['accent'] }};"{% endif %}>{{ cn[loop.index0] }}</div>
+          <div data-ppt="text" class="m-vtext {{ 'em' if b.emphasis else '' }}">{{ b.text }}</div>
+        </div>
+        {% if not loop.last %}<div data-ppt="rect" class="m-vrule"></div>{% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% include "_foot.html.j2" %}
+{% endblock %}

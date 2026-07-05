@@ -34,3 +34,5 @@ brand×layout(自由融合)。
 ## 当前成员
 
 - **riso** —— Risograph zine(默认)。见 `riso/spec.md`。
+- **swiss** —— 瑞士国际主义(IKB 单锚点+细字重+发丝线)。见 `swiss/spec.md`。
+- **morandi** —— 莫兰迪简约(暖纸+灰蓝+五色轮换+干笔刷肌理)。见 `morandi/spec.md`。

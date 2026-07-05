@@ -1,0 +1,26 @@
+{% extends "base.html.j2" %}
+{% from "_brush.html.j2" import corners with context %}
+{% block frame %}
+{# 横向时间轴 — 圆节点五色轮换，末站陶土橙点亮 #}
+{{ corners(170) }}
+{% set rot = [colors['tan'], colors['sage'], colors['pink'], colors['blue'], colors['gold']] %}
+<div class="m-frame">
+  {% include "_head.html.j2" %}
+  <div class="m-body" style="align-items:center;">
+    <div class="m-tl">
+      <div data-ppt="rect" class="m-tl-axis"></div>
+      <div class="m-tl-row">
+        {% for m in d.milestones %}
+        <div class="m-tl-item">
+          <div data-ppt="text" class="m-tl-year" {% if loop.last %}style="color:{{ colors['accent'] }};"{% endif %}>{{ m.year }}</div>
+          <div data-ppt="rect" class="m-tl-node" style="background:{{ colors['accent'] if loop.last else rot[loop.index0 % 5] }};{% if loop.last %}width:15px;height:15px;margin-top:22px;{% endif %}"></div>
+          <div data-ppt="text" class="m-tl-title">{{ m.title }}</div>
+          {% if m.desc %}<div data-ppt="text" class="m-tl-desc">{{ m.desc }}</div>{% endif %}
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% include "_foot.html.j2" %}
+{% endblock %}

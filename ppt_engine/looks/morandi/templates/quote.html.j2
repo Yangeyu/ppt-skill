@@ -1,0 +1,22 @@
+{% extends "base.html.j2" %}
+{% from "_brush.html.j2" import brush with context %}
+{% block frame %}
+{# 金句 — 角部大笔刷 + 居中宋体宣言（强调词陶土橙）+ 陶土橙大引号 #}
+{{ brush('brush-tl', 280, 'left:-46px;top:-52px;', 300) }}
+{{ brush('brush-br', 280, 'right:-46px;bottom:-52px;', 300) }}
+<div class="m-quote-frame">
+  <div data-ppt="text" class="m-quote-mark">“</div>
+  <div class="m-quote-row">
+    {% for seg in d.quote|marksplit %}
+    <div data-ppt="text" class="m-quote-text"{% if seg.mark %} style="color:{{ colors['accent'] }};"{% endif %}>{{ seg.text }}</div>
+    {% endfor %}
+  </div>
+  <div class="m-div">
+    <div data-ppt="rect" class="m-div-line"></div>
+    <div data-ppt="rect" class="m-div-dash"></div>
+    <div data-ppt="rect" class="m-div-line"></div>
+  </div>
+  {% if d.attribution %}<div data-ppt="text" class="m-quote-attr">{{ d.attribution }}</div>{% endif %}
+</div>
+{% include "_foot.html.j2" %}
+{% endblock %}

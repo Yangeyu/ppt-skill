@@ -1,0 +1,23 @@
+{% extends "base.html.j2" %}
+{% from "_brush.html.j2" import brush, chip with context %}
+{% block frame %}
+{# 无图封面 — 左满幅笔刷交叉 + 右置标题（有图封面请用 hero 原型） #}
+{{ brush('brush-cross', 700, 'left:-110px;top:10px;') }}
+{{ brush('brush-br', 240, 'right:-40px;bottom:-44px;', 300) }}
+<div class="m-sec-right">
+  {% if d.eyebrow %}<div data-ppt="text" class="m-sec-kick">{{ d.eyebrow }}</div>{% endif %}
+  <div class="m-sec-title-row">
+    {% for seg in d.title|marksplit %}
+    <div data-ppt="text" class="m-sec-title"{% if seg.mark %} style="color:{{ colors['accent'] }};"{% endif %}>{{ seg.text }}</div>
+    {% endfor %}
+  </div>
+  {% if d.subtitle %}<div data-ppt="text" class="m-sec-sub">{{ d.subtitle }}</div>{% endif %}
+  <div class="m-div" style="justify-content:flex-end;">
+    <div data-ppt="rect" class="m-div-line"></div>
+    <div data-ppt="rect" class="m-div-dash"></div>
+    <div data-ppt="rect" class="m-div-line"></div>
+  </div>
+  {% if d.footer %}{{ chip(d.footer) }}{% endif %}
+</div>
+{% include "_foot.html.j2" %}
+{% endblock %}

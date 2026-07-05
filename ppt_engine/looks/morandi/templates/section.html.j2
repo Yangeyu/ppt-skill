@@ -1,0 +1,24 @@
+{% extends "base.html.j2" %}
+{% from "_brush.html.j2" import brush, chip with context %}
+{% block frame %}
+{# 章节页 — 左满幅笔刷交叉，右置章节标题 + 陶土橙单元 chip（源模板章节页构图） #}
+{{ brush('brush-cross', 700, 'left:-110px;top:10px;') }}
+{{ brush('brush-br', 240, 'right:-40px;bottom:-44px;', 300) }}
+{% set cn = ['壹','贰','叁','肆','伍','陆','柒','捌','玖','拾'] %}
+{% set ni = d.number|int(0) %}
+<div class="m-sec-right">
+  <div data-ppt="text" class="m-sec-kick">{{ d.subtitle or ('SECTION ' ~ d.number) }}</div>
+  <div class="m-sec-title-row">
+    {% for seg in d.title|marksplit %}
+    <div data-ppt="text" class="m-sec-title"{% if seg.mark %} style="color:{{ colors['accent'] }};"{% endif %}>{{ seg.text }}</div>
+    {% endfor %}
+  </div>
+  <div class="m-div" style="justify-content:flex-end;">
+    <div data-ppt="rect" class="m-div-line"></div>
+    <div data-ppt="rect" class="m-div-dash"></div>
+    <div data-ppt="rect" class="m-div-line"></div>
+  </div>
+  {{ chip((('第' ~ cn[ni - 1] ~ '单元') if ni else 'SECTION') ~ ' · ' ~ d.number) }}
+</div>
+{% include "_foot.html.j2" %}
+{% endblock %}

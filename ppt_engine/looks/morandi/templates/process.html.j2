@@ -1,0 +1,27 @@
+{% extends "base.html.j2" %}
+{% from "_brush.html.j2" import corners with context %}
+{% block frame %}
+{# 步骤 — 圆chip中文数字 + 背后细连接线（源模板 P7 序号卡的圆形化） #}
+{{ corners(170) }}
+{% set cn = ['壹','贰','叁','肆','伍','陆','柒','捌','玖','拾'] %}
+{% set rot = [colors['tan'], colors['sage'], colors['pink'], colors['blue'], colors['gold']] %}
+<div class="m-frame">
+  {% include "_head.html.j2" %}
+  <div class="m-body" style="align-items:center;">
+    <div class="m-steps">
+      <div data-ppt="rect" style="position:absolute;left:8%;right:8%;top:23px;height:1px;background:var(--hairline);"></div>
+      {% for st in d.steps %}
+      <div class="m-step">
+        <div class="m-chip" style="width:48px;height:48px;">
+          <div data-ppt="rect" style="position:absolute;inset:0;background:{{ rot[loop.index0 % 5] }};border-radius:50%;"></div>
+          <div data-ppt="text" class="m-chip-num" style="font-size:17px;">{{ cn[loop.index0] }}</div>
+        </div>
+        <div data-ppt="text" class="m-step-title">{{ st.title }}</div>
+        {% if st.desc %}<div data-ppt="text" class="m-step-desc">{{ st.desc }}</div>{% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% include "_foot.html.j2" %}
+{% endblock %}
