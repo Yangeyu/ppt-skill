@@ -6,8 +6,9 @@
  *   npm run generate -- "<any free-form brief>"  [out.pptx]  [shotsDir]
  */
 import 'dotenv/config';
-import { mkdir, writeFile } from 'node:fs/promises';
-import { dirname, resolve } from 'node:path';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
+import { basename, dirname, resolve } from 'node:path';
 import { deckArchitect, LOOK, LOOK_ID, MODEL_ID } from './mastra/agents/deck-architect.js';
 import { DeckSchema, type Deck } from './mastra/schema.js';
 import { buildPptx, REPO_ROOT, type BuildResult } from './mastra/run-python.js';
@@ -16,13 +17,74 @@ import { BRIEFS } from './briefs/beauty.js';
 const TOC_MAX = Number(LOOK.constraints['toc_max_items'] ?? 6); // from looks/<id>/constraints.json
 
 async function askForDeck(prompt: string): Promise<Deck> {
-  const res = await deckArchitect.generate(prompt, { structuredOutput: { schema: DeckSchema } });
-  const obj = (res as { object?: unknown }).object ?? extractJson((res as { text?: string }).text ?? '');
+  // Lenient generation: take raw text, then repair-then-validate locally.
+  // Over-budget strings/arrays are CLAMPED (not fatal); only structural errors
+  // (missing fields, bad kinds) trigger a retry. ir.py re-validates at build time.
+  const res = await deckArchitect.generate(prompt, {
+    modelSettings: { maxOutputTokens: 16384 }, // dense 16-page decks must not truncate
+  });
+  const obj = extractJson((res as { text?: string }).text ?? '');
+  if (obj === undefined) throw new Error('no JSON object found in model output');
+  const clamps = clampToSchema(obj);
+  if (clamps.length) console.error('  预算截断修复:\n   - ' + clamps.join('\n   - '));
   const parsed = DeckSchema.safeParse(obj);
   if (!parsed.success) {
     throw new Error('agent output failed schema validation:\n' + JSON.stringify(parsed.error.issues.slice(0, 8), null, 2));
   }
+  // a truncated stream can still yield a schema-valid stub — reject skeletons
+  if (parsed.data.slides.length < 8) {
+    throw new Error(`deck too short (${parsed.data.slides.length} slides) — likely truncated output, need 12-16 pages`);
+  }
   return parsed.data;
+}
+
+/** Truncate every over-budget string/array in place, guided by zod's own
+ *  too_big issues. Returns a log of what was clamped. */
+function clampToSchema(obj: unknown): string[] {
+  const clamps: string[] = [];
+  for (let round = 0; round < 6; round++) {
+    const r = DeckSchema.safeParse(obj);
+    if (r.success) break;
+    let fixed = false;
+    for (const issue of r.error.issues) {
+      if (issue.code !== 'too_big') continue;
+      const max = Number((issue as { maximum?: unknown }).maximum);
+      const parent = issue.path.slice(0, -1).reduce((o: unknown, k) => (o as Record<string | number, unknown>)?.[k], obj);
+      const key = issue.path[issue.path.length - 1] as string | number;
+      const val = (parent as Record<string | number, unknown>)?.[key];
+      if (typeof val === 'string' && val.length > max) {
+        (parent as Record<string | number, unknown>)[key] = val.slice(0, max);
+        clamps.push(`${issue.path.join('.')}: 字符串截到 ${max}`);
+        fixed = true;
+      } else if (Array.isArray(val) && val.length > max) {
+        (parent as Record<string | number, unknown>)[key] = val.slice(0, max);
+        clamps.push(`${issue.path.join('.')}: 数组截到 ${max} 项`);
+        fixed = true;
+      }
+    }
+    if (!fixed) break; // remaining issues are structural — let the caller retry
+  }
+  return clamps;
+}
+
+/** Up to `attempts` tries. Network blips retry with the same prompt; schema
+ *  violations retry with the validation error appended as feedback. */
+async function askWithRetries(prompt: string, attempts = 5): Promise<Deck> {
+  let feedback = '';
+  for (let i = 1; ; i++) {
+    try {
+      return await askForDeck(prompt + feedback);
+    } catch (e) {
+      const msg = ((e as Error).message ?? String(e)).split('\n')[0];
+      if (i >= attempts) throw e;
+      const isNetwork = /ECONNRESET|ETIMEDOUT|Timeout|fetch failed|Cannot connect/i.test(msg);
+      console.error(`✗ 第 ${i}/${attempts} 次生成失败（${isNetwork ? '网络' : 'schema'}），重试:`, msg);
+      if (!isNetwork) {
+        feedback = `\n\n注意：上一次输出不符合 schema（${msg}），请严格按字段与字数预算重新输出完整 Deck。`;
+      }
+      await new Promise((r) => setTimeout(r, isNetwork ? 8000 : 3000));
+    }
+  }
 }
 
 function extractJson(text: string): unknown {
@@ -71,21 +133,27 @@ async function main() {
   const argv = process.argv.slice(2);
   const first = argv[0] ?? 'beauty';
   const brief = BRIEFS[first];
-  const prompt = brief ? brief.prompt : first;
-  const out = brief ? brief.out : argv[1] ?? 'out/deck_ai/deck.pptx';
-  const shots = brief ? brief.shots : argv[2] ?? 'out/deck_ai/shots';
+  let prompt = brief ? brief.prompt : first;
+  let runName = 'deck_ai';
+  // a .md/.txt path as first arg = use the document as source material
+  if (!brief && /\.(md|txt)$/i.test(first) && existsSync(first)) {
+    const doc = await readFile(first, 'utf-8');
+    runName = basename(first).replace(/\.(md|txt)$/i, '');
+    prompt = `请把下面这份报告转化为一份 12-16 页的演示文稿（**页数硬上限 16 页**），面向报告的委托方/决策团队汇报。
+要求：只使用报告中的数据与结论，不要编造；抓核心叙事线而非逐章搬运（不必每章一页，果断取舍合并）；数据前置、每页有信息增量。
+
+──── 报告原文 ────
+${doc}`;
+  }
+  const out = brief ? brief.out : argv[1] ?? `out/${runName}/deck.pptx`;
+  const shots = brief ? brief.shots : argv[2] ?? `out/${runName}/shots`;
 
   console.error(`\n▶ 生成 Deck  ·  model=${MODEL_ID}  ·  brief=${brief ? brief.id : 'inline'}`);
   console.error(`  DASHSCOPE_API_KEY set: ${!!process.env.DASHSCOPE_API_KEY}\n`);
   const t0 = Date.now();
 
-  let deck: Deck;
-  try {
-    deck = await askForDeck(prompt);
-  } catch (e) {
-    console.error('✗ 首次生成不合规，重试一次:', (e as Error).message.split('\n')[0]);
-    deck = await askForDeck(prompt + '\n\n注意：上一次输出不符合 schema，请严格按字段与字数预算重新输出完整 Deck。');
-  }
+  const deck0 = await askWithRetries(prompt);
+  let deck: Deck = deck0;
 
   const norm = normalizeDeck(deck);
   deck = norm.deck;

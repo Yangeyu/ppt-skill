@@ -131,25 +131,29 @@ html, body { margin: 0; padding: 0; }
 .r-step-title { font-family: var(--font-display); font-weight: 400; font-size: 21px; margin-top: 10px; }
 .r-step-desc { font-family: var(--font-body); font-size: 13.5px; line-height: 1.42; margin-top: auto; }
 
-/* ===== two columns ===== */
+/* ===== two columns (full-height, points distributed) ===== */
 .r-cols { width: 100%; display: flex; gap: 52px; }
-.r-col { flex: 1 1 0; }
+.r-col { flex: 1 1 0; display: flex; flex-direction: column; }
 .r-col-h { font-family: var(--font-display); font-weight: 400; font-size: 30px; }
-.r-col-rule { width: 46px; height: 5px; margin: 13px 0 20px; }
-.r-col-row { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 15px; }
-.r-col-mark { width: 10px; height: 10px; margin-top: 8px; flex: 0 0 auto; }
-.r-col-text { font-family: var(--font-body); font-size: 17px; line-height: 1.45; color: var(--ink); }
+.r-col-rule { width: 46px; height: 5px; margin: 13px 0 8px; }
+.r-col-points { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: space-evenly; }
+.r-col-row { display: flex; align-items: flex-start; gap: 14px; }
+.r-col-mark { width: 11px; height: 11px; margin-top: 9px; flex: 0 0 auto; }
+.r-col-text { font-family: var(--font-body); font-size: 19px; line-height: 1.45; color: var(--ink); }
+.r-col-end { width: 100%; height: 2px; background: var(--ink); }
 
-/* ===== comparison (two color-block cards) ===== */
+/* ===== comparison (two color plates, card fills the plate) ===== */
 .r-cmp { width: 100%; display: flex; gap: 26px; }
 .r-cmp-cell { flex: 1 1 0; position: relative; }
 .r-cmp-shadow { position: absolute; inset: 0; transform: translate(7px, 7px); }
-.r-cmp-card { position: relative; border: 2px solid var(--ink); padding: 28px 28px 26px; }
+.r-cmp-card { position: absolute; inset: 0; border: 2px solid var(--ink); padding: 28px 28px 26px;
+              display: flex; flex-direction: column; }
 .r-cmp-h { font-family: var(--font-display); font-weight: 400; font-size: 30px; }
-.r-cmp-rule { width: 46px; height: 5px; margin: 12px 0 20px; }
-.r-cmp-row { display: flex; align-items: flex-start; gap: 13px; margin-bottom: 14px; }
-.r-cmp-mark { width: 10px; height: 10px; margin-top: 7px; flex: 0 0 auto; }
-.r-cmp-text { font-family: var(--font-body); font-size: 16.5px; line-height: 1.42; }
+.r-cmp-rule { width: 46px; height: 5px; margin: 12px 0 8px; }
+.r-cmp-points { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: space-evenly; }
+.r-cmp-row { display: flex; align-items: flex-start; gap: 13px; }
+.r-cmp-mark { width: 10px; height: 10px; margin-top: 8px; flex: 0 0 auto; }
+.r-cmp-text { font-family: var(--font-body); font-size: 18px; line-height: 1.42; }
 
 /* ===== kpi (big numbers) ===== */
 .r-kpis { width: 100%; display: flex; gap: 26px; }
@@ -207,17 +211,25 @@ html, body { margin: 0; padding: 0; }
 .r-tcell.h { background: var(--blue); }
 .r-tcell.h .r-tcell-t, .r-thead-t { font-family: var(--font-display); font-weight: 400; font-size: 15px; color: var(--bg-content); }
 
-/* ===== pillars ===== */
-.r-pillars { width: 100%; display: flex; gap: 20px; align-items: stretch; }
-.r-pillar { flex: 1 1 0; display: flex; flex-direction: column; }
-.r-pillar-head { border: 2px solid var(--ink); padding: 16px 18px; }
+/* ===== pillars (full-height cards: color head + bordered body) ===== */
+.r-pillars { width: 100%; display: flex; gap: 22px; }
+.r-pillar-cell { flex: 1 1 0; position: relative; }
+.r-pillar-shadow { position: absolute; inset: 0; transform: translate(6px, 6px); }
+.r-pillar { position: absolute; inset: 0; display: flex; flex-direction: column; }
+.r-pillar-head { border: 2px solid var(--ink); padding: 16px 18px; position: relative; }
 .r-pillar-h { font-family: var(--font-display); font-weight: 400; font-size: 24px; }
 .r-pillar-tag { font-family: var(--font-mono); font-size: 10.5px; font-weight: 700; letter-spacing: .08em;
                 text-transform: uppercase; margin-top: 5px; }
-.r-pillar-body { padding: 16px 4px 0; }
-.r-pillar-row { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 13px; }
-.r-pillar-mark { width: 9px; height: 9px; margin-top: 7px; flex: 0 0 auto; }
-.r-pillar-text { font-family: var(--font-body); font-size: 15px; line-height: 1.4; color: var(--ink); }
+.r-pillar-num { position: absolute; right: 14px; top: 12px; font-family: var(--font-display);
+                font-weight: 400; font-size: 34px; line-height: 1; }
+.r-pillar-body { flex: 1 1 auto; border: 2px solid var(--ink); border-top: none; background: var(--bg-content);
+                 padding: 12px 18px; display: flex; flex-direction: column; justify-content: space-evenly; }
+.r-pillar-row { display: flex; align-items: flex-start; gap: 12px; }
+.r-pillar-mark { width: 10px; height: 10px; margin-top: 8px; flex: 0 0 auto; }
+.r-pillar-text { font-family: var(--font-body); font-size: 16px; line-height: 1.4; color: var(--ink); }
+
+/* top-hugging layouts read as dead paper below — optically center them */
+.r-kpis, .r-tl, .r-steps, .r-table { margin-top: auto; margin-bottom: auto; }
 
 /* body text that may run long must wrap (overrides the single-line default) */
 .r-vtext, .r-col-text, .r-cmp-text, .r-step-desc, .r-take-text, .r-tcell-t,

@@ -8,12 +8,15 @@
       <div class="r-col">
         <div data-ppt="text" class="r-col-h" style="color:{{ accent }};">{{ col.heading }}</div>
         <div data-ppt="rect" class="r-col-rule" style="background:{{ accent }};"></div>
-        {% for pt in col.points %}
-        <div class="r-col-row">
-          <div data-ppt="rect" class="r-col-mark" style="background:{{ accent }};"></div>
-          <div data-ppt="text" class="r-col-text">{{ pt }}</div>
+        <div class="r-col-points">
+          {% for pt in col.points %}
+          <div class="r-col-row">
+            <div data-ppt="rect" class="r-col-mark" style="background:{{ accent }};"></div>
+            <div data-ppt="text" class="r-col-text">{{ pt }}</div>
+          </div>
+          {% endfor %}
         </div>
-        {% endfor %}
+        <div data-ppt="rect" class="r-col-end"></div>
       </div>
       {% endfor %}
     </div>

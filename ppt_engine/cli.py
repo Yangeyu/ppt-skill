@@ -98,7 +98,7 @@ def main(argv=None) -> int:
         _emit({"ok": False, "stage": "build", "error": f"{type(e).__name__}: {e}"})
         return 4
 
-    issues = check_layout(prims)
+    issues = check_layout(prims, kinds=[s.kind for s in deck.slides])
     result = {
         "ok": True,
         "out": str(Path(args.out).resolve()),

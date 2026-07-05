@@ -14,12 +14,14 @@
         <div data-ppt="rect" class="r-cmp-card" style="background:{{ c.bg }};color:{{ c.fg }};">
           <div data-ppt="text" class="r-cmp-h" style="color:{{ c.fg }};">{{ col.heading }}</div>
           <div data-ppt="rect" class="r-cmp-rule" style="background:{{ c.accent }};"></div>
-          {% for pt in col.points %}
-          <div class="r-cmp-row">
-            <div data-ppt="rect" class="r-cmp-mark" style="background:{{ c.accent }};"></div>
-            <div data-ppt="text" class="r-cmp-text" style="color:{{ c.fg }};">{{ pt }}</div>
+          <div class="r-cmp-points">
+            {% for pt in col.points %}
+            <div class="r-cmp-row">
+              <div data-ppt="rect" class="r-cmp-mark" style="background:{{ c.accent }};"></div>
+              <div data-ppt="text" class="r-cmp-text" style="color:{{ c.fg }};">{{ pt }}</div>
+            </div>
+            {% endfor %}
           </div>
-          {% endfor %}
         </div>
       </div>
       {% endfor %}

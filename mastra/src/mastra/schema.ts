@@ -33,7 +33,16 @@ export const ColumnSchema = z.object({
   points: z.array(z.string().max(60)).min(1).max(5),
 });
 
-export const TocItemSchema = z.object({ title: z.string().max(24) });
+export const TocItemSchema = z.object({
+  title: z.string().max(24),
+  desc: z.string().max(32).default('').describe('one-line summary under the title'),
+  pages: z.string().max(10).default('').describe('page-range chip, e.g. "P03–P04"'),
+});
+
+export const HeroFactSchema = z.object({
+  value: z.string().max(10).describe('the big number, e.g. "42岁", "130+", "1:4.7"'),
+  label: z.string().max(16).describe('what the number measures'),
+});
 
 export const StepSchema = z.object({
   title: z.string().max(16),
@@ -76,8 +85,10 @@ const HeroData = z.object({
   title: z.string().max(28),
   subtitle: z.string().max(48).default(''),
   footer: z.string().max(48).default(''),
-  art: z.string().max(16).default('sun').describe('motif seed for generated poster art: sun | city | wave | ...'),
+  art: z.string().max(16).default('sun').describe('procedural fallback motif: sun | city | shanghai | vanity | ...'),
   src: z.string().max(240).default('').describe('optional source image path to riso-ify; leave "" to auto-generate art'),
+  prompt: z.string().max(300).default('').describe('t2i CONTENT prompt in English (motif only — the look enforces style); "" = procedural art'),
+  facts: z.array(HeroFactSchema).max(3).default([]).describe('big-number fact strip on the cover'),
 });
 
 const SectionData = z.object({
@@ -219,7 +230,9 @@ export const DeckMetaSchema = z.object({
 export const DeckSchema = z.object({
   meta: DeckMetaSchema,
   theme: z.string().default('riso'),
-  slides: z.array(SlideSchema).min(1).max(20),
+  // hard cap is lenient — the page budget (12-16) is enforced by prompt + normalize,
+  // so an over-eager model yields a long deck instead of a wasted generation
+  slides: z.array(SlideSchema).min(1).max(24),
 });
 
 export type Deck = z.infer<typeof DeckSchema>;

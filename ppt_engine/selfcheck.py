@@ -11,11 +11,29 @@ from .units import CANVAS_W_PX, CANVAS_H_PX
 SOFFICE = ["soffice", "/Applications/LibreOffice.app/Contents/MacOS/soffice"]
 
 
-def check_layout(slides_prims, bleed: int = 24) -> list[dict]:
-    """Flag out-of-canvas text and overlapping text boxes. Decorative shapes
-    may bleed; text may not. Returns a structured issue list (empty == clean)."""
+# pages that are intentionally airy / full-bleed — exempt from the sparse check
+_AIRY_KINDS = {"cover", "hero", "section", "quote", "closing"}
+_SPARSE_FILL = 0.60      # content must reach at least this fraction of canvas height
+_FOOT_ZONE = 60          # px above the bottom edge that belongs to footer chrome
+
+
+def check_layout(slides_prims, bleed: int = 24, kinds: list | None = None) -> list[dict]:
+    """Flag out-of-canvas text, overlapping text boxes, and sparse pages whose
+    content stops high and leaves a slab of dead paper. Decorative shapes may
+    bleed; text may not. Returns a structured issue list (empty == clean)."""
     issues = []
     for i, prims in enumerate(slides_prims, 1):
+        kind = kinds[i - 1] if kinds else None
+        # sparse page: ignore footer chrome, then ask how far real content reaches
+        content = [p for p in prims
+                   if not p.get("deco") and p["kind"] in ("text", "icon", "chart", "img")
+                   and p["y"] + p["h"] < CANVAS_H_PX - _FOOT_ZONE]
+        if kind not in _AIRY_KINDS and len(content) >= 4:
+            bottom = max(p["y"] + p["h"] for p in content)
+            if bottom < CANVAS_H_PX * _SPARSE_FILL:
+                issues.append({"slide": i, "type": "sparse",
+                               "detail": f"content ends at {int(bottom)}px "
+                                         f"({bottom / CANVAS_H_PX:.0%} of canvas)"})
         # decorative text (ghost numerals etc.) bleeds/overlaps by design — skip it
         texts = [p for p in prims if p["kind"] == "text" and not p.get("deco")]
         for p in texts:

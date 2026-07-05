@@ -12,18 +12,22 @@
     <div class="r-pillars">
       {% for col in d.columns %}
       {% set c = pal[loop.index0 % 4] %}
-      <div class="r-pillar">
-        <div data-ppt="rect" class="r-pillar-head" style="background:{{ c.bg }};color:{{ c.fg }};">
-          <div data-ppt="text" class="r-pillar-h" style="color:{{ c.fg }};">{{ col.heading }}</div>
-          {% if col.tag %}<div data-ppt="text" class="r-pillar-tag" style="color:{{ c.accent }};">{{ col.tag }}</div>{% endif %}
-        </div>
-        <div class="r-pillar-body">
-          {% for pt in col.points %}
-          <div class="r-pillar-row">
-            <div data-ppt="rect" class="r-pillar-mark" style="background:{{ c.bg }};"></div>
-            <div data-ppt="text" class="r-pillar-text">{{ pt }}</div>
+      <div class="r-pillar-cell">
+        <div data-ppt="rect" class="r-pillar-shadow" style="background:{{ c.accent }};"></div>
+        <div class="r-pillar">
+          <div data-ppt="rect" class="r-pillar-head" style="background:{{ c.bg }};color:{{ c.fg }};">
+            <div data-ppt="text" class="r-pillar-h" style="color:{{ c.fg }};">{{ col.heading }}</div>
+            {% if col.tag %}<div data-ppt="text" class="r-pillar-tag" style="color:{{ c.accent }};">{{ col.tag }}</div>{% endif %}
+            <div data-ppt="text" data-ppt-deco="1" class="r-pillar-num" style="color:{{ c.accent }};">{{ '%02d'|format(loop.index) }}</div>
           </div>
-          {% endfor %}
+          <div data-ppt="rect" class="r-pillar-body">
+            {% for pt in col.points %}
+            <div class="r-pillar-row">
+              <div data-ppt="rect" class="r-pillar-mark" style="background:{{ c.bg }};"></div>
+              <div data-ppt="text" class="r-pillar-text">{{ pt }}</div>
+            </div>
+            {% endfor %}
+          </div>
         </div>
       </div>
       {% endfor %}
