@@ -4,22 +4,30 @@ ppt-tool 的 **Mastra** 模块（TypeScript）。用 [Mastra](https://mastra.ai/
 
 ## 为什么有这个模块
 
-引擎本体**零模型**(所有智能在 agent 侧),所以需要一个真实的外部 agent 消费者
-来验证整条链路。这个 TS 工程就是那个消费者:deckGenerator 走 skill 同款快路径
-(契约直出 IR + 五重机器复核回喂),visionCritic 提供引擎里没有的识图美学评审
-(读 `cli --render` 的 LibreOffice 真渲染)。
+引擎本体**零模型决策**(所有智能在 agent 侧),所以需要真实的外部 agent 消费者
+来验证。本工程提供**两种消费形态**,测的东西不同:
+
+| 形态 | 命令 | 编排者 | 验证对象 |
+|---|---|---|---|
+| **skill 装载** | `pnpm skillgen` | **agent 自主**:SKILL.md 全文进 instructions,配一个 `ppt_cli` 工具,agent 自己取契约→写 IR→复核→修复→生成 | **SKILL.md 的引导力本身**(真实 skill 消费形态,同 Claude Code 装载) |
+| **pipeline** | `pnpm generate` | 驱动代码(generate.ts)编排回路,agent 只产 IR | 引擎+契约+评论官(确定性、便宜,适合回归) |
 
 ## Agents
 
 | id | 作用 | 输入 |
 |---|---|---|
-| `deckGenerator` | Deck 生成官：素材原文 + 生成契约 → 整份 Deck IR；契约由驱动运行时调 `cli --contract <look>` 现场获取（单一来源），复核回路 = `cli --check-only`（IR 校验 + 事实/密度评论官）回喂自修 | 素材 + 契约 |
-| `visionCritic` | 识图美学评论官，读页面截图打分（hierarchy/balance/design/boldness/fit）+ 改进建议（`--vision` 选装） | 图片 + 意图 |
+| `skillRunner` | **skill 装载形态主 agent**:运行时读入 `../ppt-skill/SKILL.md` 作 instructions,唯一工具 `ppt_cli`(通用 cli 包装,skill 教的命令与工具调用 1:1 对应;IR 走 stdin);无驱动代劳,工作流由 agent 按 skill 自主执行 | 素材(+可选 look/页数) |
+| `deckGenerator` | Deck 生成官(pipeline 形态):素材原文 + 生成契约 → 整份 Deck IR;契约由驱动运行时调 `cli --contract <look>` 现场获取(单一来源),复核回路 = `cli --check-only` 回喂自修 | 素材 + 契约 |
+| `visionCritic` | 识图美学评论官,读页面截图打分(hierarchy/balance/design/boldness/fit)+ 改进建议(`--vision` 选装) | 图片 + 意图 |
 
 评分维度对齐 `../ppt-skill/docs/QUALITY.md` 页面层 rubric。
 
 ```bash
-# 真 agent e2e:素材 → deckGenerator 自产 IR → 五重机器复核自修 → 原生 pptx
+# skill 装载形态:agent 装载 SKILL.md + ppt_cli 工具,自主走完整工作流
+pnpm skillgen ../ppt-skill/demos/data/isdin_report_full.md riso
+pnpm skillgen <素材.md> [look] [页数]                # look/页数可省,agent 按 skill 决策
+
+# pipeline 形态:驱动编排,agent 只产 IR(回归/CI 用)
 pnpm generate ../ppt-skill/demos/data/isdin_report_full.md crimson        # 页数按素材自动推荐
 pnpm generate <素材.md> <look> <页数>                            # 显式页数(下限硬控)
 #   --staged      三段流(事实清单→大纲→落地):长且无结构的素材才值得

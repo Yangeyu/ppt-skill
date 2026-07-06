@@ -9,6 +9,7 @@
     "build": "mastra build",
     "vision": "tsx src/vision.ts",
     "generate": "tsx src/generate.ts",
+    "skillgen": "tsx src/skillgen.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
