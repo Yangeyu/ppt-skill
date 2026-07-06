@@ -1,6 +1,6 @@
 __pycache__/
 *.pyc
-# generated decks (regenerate with: python3 demo_v03.py)
+# generated decks (regenerate via ppt-skill demos / mastra)
 *.pptx
 preview/
 # env / build / outputs

@@ -18,7 +18,7 @@
 .venv/bin/python demos/demo_beauty_riso.py            # → out/beauty_riso/
 .venv/bin/python demos/demo.py                        # → out/growth_review/
 
-# agent 端到端(正式入口是 mastra:cd mastra && pnpm generate ../demos/data/isdin_report_full.md crimson 15)
+# agent 端到端(正式入口是 mastra:cd mastra && pnpm generate ../ppt-skill/demos/data/isdin_report_full.md crimson 15)
 # 本 Python 版为无 Node 环境的冒烟件;两者共用同一契约(cli --contract)与复核回路
 .venv/bin/python demos/agent_generate.py demos/data/isdin_report_full.md crimson 15
 ```

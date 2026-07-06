@@ -23,7 +23,8 @@ import { fileURLToPath } from "node:url";
 import { deckGenerator } from "./mastra/agents/deck-generator";
 import { visionCritic } from "./mastra/agents/vision-critic";
 
-const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
+// mastra 是 ppt-skill 的外部消费者:所有引擎调用/素材/产物都锚定兄弟模块 ../ppt-skill
+const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "../../ppt-skill");
 const PY = resolve(ROOT, ".venv/bin/python");
 
 function cli(args: string[], input?: string): { code: number; stdout: string } {
@@ -95,7 +96,7 @@ async function stageLoop(label: string, ask: string, maxRepair: number,
 async function main() {
   const flags = new Set(process.argv.slice(2).filter((a) => a.startsWith("--")));
   const pos = process.argv.slice(2).filter((a) => !a.startsWith("--"));
-  const srcPath = resolve(process.cwd(), pos[0] ?? "../demos/data/isdin_report_full.md");
+  const srcPath = resolve(process.cwd(), pos[0] ?? "../ppt-skill/demos/data/isdin_report_full.md");
   const look = pos[1] ?? "crimson";
   // 页数由素材信息量派生(覆盖充分优先),显式传参才作为用户约束
   const nSlidesArg = pos[2] ? Number(pos[2]) : null;

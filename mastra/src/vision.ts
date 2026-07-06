@@ -2,7 +2,7 @@
  * 识图 CLI —— 用 qwen3.7-plus 对一张幻灯片截图做美学评审。
  *
  * 用法：
- *   pnpm vision                          # 默认评审 ../out_v03/slide_01_custom.png
+ *   pnpm vision                          # 默认评审 ../ppt-skill/out/isdin_crimson/preview/slide-01.png
  *   pnpm vision <图片路径或URL> [意图说明]
  *
  * 本地图片会被读成 base64 data URL 直接喂给多模态模型；http(s) URL 则原样传入。
@@ -31,7 +31,7 @@ async function toImagePart(src: string): Promise<{ image: string; mimeType: stri
 }
 
 async function main() {
-  const src = process.argv[2] ?? "../out_v03/slide_01_custom.png";
+  const src = process.argv[2] ?? "../ppt-skill/out/isdin_crimson/preview/slide-01.png";
   const intent = process.argv[3] ?? "这是一份 zine 文化指南的封面页";
 
   const part = await toImagePart(src);
