@@ -114,14 +114,46 @@ html, body { margin: 0; padding: 0; }
 .r-sec-sub { font-family: var(--font-mono); font-size: 15px; font-weight: 700; letter-spacing: .12em;
              margin-top: 24px; max-width: 640px; }
 
-/* ===== vertical list (numbered key points) ===== */
+/* ===== checklist (chip rows, ppt-master zine how-to voice) ===== */
 .r-vlist { width: 100%; display: flex; flex-direction: column; justify-content: space-evenly; }
-.r-vrow { display: flex; align-items: flex-start; gap: 22px;
-  border-bottom: 1px solid var(--hairline); padding-bottom: 14px; }
-.r-vrow:last-child { border-bottom: none; }
-.r-vnum { font-family: var(--font-display); font-weight: 400; font-size: 42px; line-height: .82; flex: 0 0 auto; min-width: 58px; }
-.r-vtext { font-family: var(--font-body); font-size: 20px; line-height: 1.4; color: var(--ink); padding-top: 4px; }
+.r-vrow { position: relative; display: flex; align-items: center; gap: 22px; padding: 12px 4px; }
+.r-vrule { position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--ink); }
+.r-vblock { position: absolute; inset: 4px -14px; }         /* emphasis row: solid ink slab */
+.r-vchip { position: relative; flex: 0 0 auto; width: 46px; height: 46px;
+  display: flex; align-items: center; justify-content: center; }
+.r-vchip-t { font-family: var(--font-display); font-weight: 400; font-size: 23px; }
+.r-vtext { font-family: var(--font-body); font-size: 20px; line-height: 1.4; color: var(--ink); }
 .r-vtext.em { font-weight: 700; }
+
+/* ===== bottom note bar (">_" annotation, the zine's black strip) ===== */
+.r-note-wrap { position: relative; flex: 0 0 auto; margin-top: 22px; }
+.r-note-shadow { position: absolute; inset: 0; transform: translate(5px, 5px); }
+.r-note-bar { position: relative; display: flex; align-items: baseline; gap: 13px; padding: 12px 18px 11px; }
+.r-note-k { font-family: var(--font-mono); font-weight: 700; font-size: 14px; letter-spacing: .08em; }
+.r-note-t { font-family: var(--font-body); font-weight: 700; font-size: 16.5px; white-space: normal; flex: 1 1 auto; min-width: 0; }
+
+/* ===== timeline v2 — cards hang alternately off the axis ===== */
+.r-tl2 { position: relative; width: 100%; height: 100%; min-height: 380px; }
+.r-tl2-axis { position: absolute; left: 8px; right: 8px; top: 50%; height: 4px; margin-top: -2px; background: var(--ink); }
+.r-tl2-row { display: flex; gap: 22px; height: 100%; }
+.r-tl2-item { flex: 1 1 0; position: relative; }
+.r-tl2-dot { position: absolute; left: 50%; top: 50%; width: 15px; height: 15px;
+  margin: -10px 0 0 -10px; border: 3px solid var(--ink); }
+.r-tl2-cardwrap { position: absolute; left: 0; right: 0; }
+.up .r-tl2-cardwrap { bottom: 57%; }
+.down .r-tl2-cardwrap { top: 57%; }
+.r-tl2-shadow { position: absolute; inset: 0; transform: translate(6px, 6px); }
+.r-tl2-card { position: relative; border: 2px solid var(--ink); padding: 13px 15px 12px; }
+.r-tl2-title { font-family: var(--font-display); font-weight: 400; font-size: 18.5px; line-height: 1.05; }
+.r-tl2-desc { font-family: var(--font-body); font-size: 12.5px; line-height: 1.36; margin-top: 7px; white-space: normal; }
+.r-tl2-year { position: absolute; left: 2px; font-family: var(--font-display); font-weight: 400; font-size: 30px; line-height: 1; }
+.up .r-tl2-year { top: 55.5%; margin-top: 14px; }
+.down .r-tl2-year { bottom: 55.5%; margin-bottom: 14px; }
+
+/* ===== closing stacked manifesto lines ===== */
+.r-out-lines { display: flex; flex-direction: column; gap: 10px; }
+.r-out-linewrap { position: relative; display: inline-block; align-self: flex-start; }
+.r-out-line { font-family: var(--font-display); font-weight: 400; font-size: 84px; line-height: 1.0; }
 
 /* ===== numbered steps (horizontal cards) ===== */
 .r-steps { width: 100%; display: flex; gap: 18px; align-items: stretch; }

@@ -58,5 +58,9 @@ LOOK = Look(
     image_postprocess=riso_ify,
     image_fallback=make_hero,
     pick_when="文化/创意/轻松题材,宣言式表达",
-    # density 留空:大字稀疏页与密集页交替是 riso 的风格纪律,不设下限
+    density={                       # zine 的密集页要真密(大字页 kpi/quote 不设限)
+        "bullets_min": 4,
+        "icon_grid_min": 4,
+        "table_rows_min": 3,
+    },
 )

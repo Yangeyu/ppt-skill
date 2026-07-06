@@ -1,0 +1,10 @@
+{# 页底黑色注记条:so_what 的 zine 形态(">_" 终端风人话点破)#}
+{% if d.get('so_what') %}
+<div class="r-note-wrap">
+  <div data-ppt="rect" data-ppt-deco class="r-note-shadow" style="background:{{ colors['pink'] }};"></div>
+  <div data-ppt="rect" class="r-note-bar" style="background:{{ colors['ink'] }};">
+    <div data-ppt="text" class="r-note-k" style="color:{{ colors['mustard'] }};">&gt;_</div>
+    <div data-ppt="text" class="r-note-t" style="color:{{ colors['bg-content'] }};">{{ d.so_what }}</div>
+  </div>
+</div>
+{% endif %}

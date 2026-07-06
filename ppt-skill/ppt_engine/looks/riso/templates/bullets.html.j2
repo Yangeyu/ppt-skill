@@ -5,13 +5,27 @@
   <div class="r-body">
     <div class="r-vlist">
       {% for b in d.bullets %}
-      {% set accent = [colors['blue'], colors['pink'], colors['mustard']][loop.index0 % 3] %}
+      {% set accent = [colors['blue'], colors['pink'], colors['mustard'], colors['ink']][loop.index0 % 4] %}
+      {% set chip_fg = colors['bg-content'] if accent in [colors['blue'], colors['ink']] else colors['ink'] %}
       <div class="r-vrow">
-        <div data-ppt="text" class="r-vnum" style="color:{{ accent }};">{{ '%02d' % loop.index }}</div>
-        <div data-ppt="text" class="r-vtext {{ 'em' if b.emphasis else '' }}">{{ b.text }}</div>
+        {% if b.emphasis %}
+        <div data-ppt="rect" data-ppt-z="1" class="r-vblock" style="background:{{ colors['ink'] }};"></div>
+        <div data-ppt="rect" data-ppt-z="2" class="r-vchip" style="background:{{ colors['pink'] }};">
+          <div data-ppt="text" data-ppt-z="3" class="r-vchip-t" style="color:{{ colors['ink'] }};">{{ '%02d' % loop.index }}</div>
+        </div>
+        <div data-ppt="text" data-ppt-z="3" class="r-vtext em" style="position:relative;color:{{ colors['bg-content'] }};">{{ b.text }}</div>
+        {% else %}
+        <div data-ppt="rect" class="r-vchip" style="background:{{ accent }};">
+          <div data-ppt="text" data-ppt-z="2" class="r-vchip-t" style="color:{{ chip_fg }};">{{ '%02d' % loop.index }}</div>
+        </div>
+        <div data-ppt="text" class="r-vtext">{{ b.text }}</div>
+        {% if not loop.last %}<div data-ppt="rect" class="r-vrule"></div>{% endif %}
+        {% endif %}
       </div>
       {% endfor %}
     </div>
   </div>
+  {% include "_note.html.j2" %}
+  {% include "_foot.html.j2" %}
 </div>
 {% endblock %}

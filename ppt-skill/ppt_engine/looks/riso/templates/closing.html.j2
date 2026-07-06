@@ -3,10 +3,24 @@
 <div data-ppt="rect" style="position:absolute;right:78px;top:92px;width:150px;height:150px;background:{{ colors['pink'] }};"></div>
 <div data-ppt="rect" style="position:absolute;right:86px;top:84px;width:150px;height:150px;background:{{ colors['blue'] }};border:2px solid {{ colors['ink'] }};"></div>
 <div class="r-out-frame">
+  {# 宣言式收尾:title 里的"。"把句子断成叠行套色宣言(印一份。送一份。换一份。)#}
+  {% set lines = d.title.split('。') | select | list %}
+  {% if lines | length > 1 %}
+  <div class="r-out-lines">
+    {% for ln in lines %}
+    {% set accent = [colors['blue'], colors['pink'], colors['ink']][loop.index0 % 3] %}
+    <div class="r-out-linewrap">
+      <div data-ppt="text" data-ppt-deco class="r-out-line" data-ppt-z="1" style="position:absolute;left:4px;top:4px;color:{{ colors['pink'] if accent != colors['pink'] else colors['mustard'] }};">{{ ln }}。</div>
+      <div data-ppt="text" class="r-out-line" data-ppt-z="2" style="position:relative;color:{{ accent }};">{{ ln }}。</div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
   <div class="r-out-wrap">
     <div data-ppt="text" data-ppt-deco class="r-out-title" data-ppt-z="1" style="position:absolute;left:4px;top:4px;color:{{ colors['pink'] }};">{{ d.title }}</div>
     <div data-ppt="text" class="r-out-title" data-ppt-z="2" style="position:relative;color:{{ colors['ink'] }};">{{ d.title }}</div>
   </div>
+  {% endif %}
   {% if d.subtitle %}
   <div style="position:relative;display:inline-block;align-self:flex-start;margin-top:30px;padding:11px 18px;">
     <div data-ppt="rect" style="position:absolute;inset:0;background:{{ colors['ink'] }};"></div>
