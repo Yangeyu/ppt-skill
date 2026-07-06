@@ -3,6 +3,15 @@
 <div class="r-frame">
   {% include "_head.html.j2" %}
   <div class="r-body">
+    {# zine p03:给了 prompt 就出左侧插图列(描边纸框 + mono 图注) #}
+    {% if hero_img %}
+    <div class="r-illu-col">
+      <div data-ppt="rect" data-ppt-deco class="r-illu-col-shadow" style="background:{{ colors['pink'] }};"></div>
+      <div data-ppt="rect" data-ppt-z="1" class="r-illu-col-frame"></div>
+      <div data-ppt="image" data-ppt-z="2" data-src="{{ hero_img }}" class="r-illu-col-img"></div>
+      <div data-ppt="text" data-ppt-z="2" class="r-illu-col-cap">{{ d.eyebrow or 'FIELD NOTES' }}</div>
+    </div>
+    {% endif %}
     <div class="r-vlist">
       {% for b in d.bullets %}
       {% set accent = [colors['blue'], colors['pink'], colors['mustard'], colors['ink']][loop.index0 % 4] %}

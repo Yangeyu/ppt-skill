@@ -32,6 +32,7 @@ class CoverData(BaseModel):
     title: str = Field(max_length=28)
     subtitle: str = Field(default="", max_length=48)
     footer: str = Field(default="", max_length=48)
+    prompt: str = Field(default="", max_length=300)     # 封面主视觉 t2i 内容 prompt(风格由 look 统一)
 
 
 class HeroFact(BaseModel):
@@ -74,6 +75,7 @@ class BulletsData(BaseModel):
     title: str = Field(max_length=24)
     bullets: list[Bullet] = Field(min_length=1, max_length=6)
     so_what: str = Field(default="", max_length=60)
+    prompt: str = Field(default="", max_length=300)     # 左侧插图列 t2i prompt(纵向构图,可选)
 
 
 class ChartData(BaseModel):
@@ -123,6 +125,7 @@ class CompareData(BaseModel):
     left: Column
     right: Column
     so_what: str = Field(default="", max_length=60)
+    prompt: str = Field(default="", max_length=300)     # 顶部插图横幅 t2i prompt(横向构图,可选)
 
 
 class Step(BaseModel):
@@ -137,6 +140,7 @@ class ProcessData(BaseModel):
     title: str = Field(max_length=24)
     steps: list[Step] = Field(min_length=2, max_length=5)
     so_what: str = Field(default="", max_length=60)
+    prompt: str = Field(default="", max_length=300)     # 顶部插图横幅 t2i prompt(横向构图,可选)
 
 
 class IconCard(BaseModel):
@@ -196,6 +200,7 @@ class PillarsData(BaseModel):
     subtitle: str = Field(default="", max_length=56)
     columns: list[Pillar] = Field(min_length=2, max_length=4)
     so_what: str = Field(default="", max_length=60)
+    prompt: str = Field(default="", max_length=300)     # 顶部插图横幅 t2i prompt(横向构图,可选)
 
 
 class QuoteData(BaseModel):
@@ -209,6 +214,7 @@ class ClosingData(BaseModel):
     title: str = Field(default="谢谢", max_length=20)
     subtitle: str = Field(default="", max_length=48)
     contact: str = Field(default="", max_length=48)
+    prompt: str = Field(default="", max_length=300)     # 右侧收尾插画 t2i prompt(纵向构图,可选)
 
 
 class SideBar(BaseModel):

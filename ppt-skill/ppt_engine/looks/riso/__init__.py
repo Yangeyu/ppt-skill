@@ -64,4 +64,15 @@ LOOK = Look(
         "icon_grid_min": 4,
         "table_rows_min": 3,
     },
+    # 内容页插图槽(对标 ppt-master zine:插图不只在 hero,栏目页也有画)。
+    # aspect 必须与模板里图元素的盒子宽高比一致,否则原生嵌图会变形。
+    image_slots={
+        "hero":       {"size": "1664*928", "aspect": 16 / 9},
+        "cover":      {"size": "1664*928", "aspect": 16 / 9},      # 全出血封面主视觉
+        "bullets":    {"size": "1140*1472", "aspect": 312 / 392},  # 左侧插图列(.r-illu-col-img)
+        "closing":    {"size": "1140*1472", "aspect": 560 / 720},  # 右侧收尾插画
+        "process":    {"size": "1664*928", "aspect": 1156 / 146},  # 顶部插图横幅(.r-band-img)
+        "comparison": {"size": "1664*928", "aspect": 1156 / 146},
+        "pillars":    {"size": "1664*928", "aspect": 1156 / 146},
+    },
 )

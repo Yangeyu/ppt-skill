@@ -1,26 +1,47 @@
 {% extends "base.html.j2" %}
 {% block frame %}
+{# zine p01 封面:全出血主视觉(prompt 生成)+ 期号章 + 右侧纸片注记卡 + 左下叠行套色巨题 #}
+{% if hero_img %}
+<div data-ppt="image" data-ppt-z="-20" data-src="{{ hero_img }}" style="position:absolute;inset:0;"></div>
+{% endif %}
 <div class="rc-frame">
   {% if d.eyebrow %}<div data-ppt="rect" class="rc-tag"><div data-ppt="text" class="rc-tag-t">{{ d.eyebrow }}</div></div>{% endif %}
   <div data-ppt="text" class="rc-mark">RISO · BLUE × PINK</div>
 
+  {% if not hero_img %}
   <!-- riso color-block motif (vector stand-in for the screen-print hero) -->
   <div data-ppt="rect" style="position:absolute;right:88px;top:196px;width:248px;height:300px;background:{{ colors['pink'] }};"></div>
   <div data-ppt="rect" style="position:absolute;right:96px;top:186px;width:248px;height:300px;background:{{ colors['blue'] }};border:2px solid {{ colors['ink'] }};"></div>
   <div data-ppt="rect" style="position:absolute;right:236px;top:372px;width:140px;height:140px;background:{{ colors['mustard'] }};border:2px solid {{ colors['ink'] }};"></div>
+  {% endif %}
 
-  <div class="rc-title-wrap">
-    <div class="rc-line">
-      <div data-ppt="text" data-ppt-deco class="rc-title" data-ppt-z="1" style="position:absolute;left:4px;top:4px;color:{{ colors['pink'] }};">{{ d.title }}</div>
-      <div data-ppt="text" class="rc-title" data-ppt-z="2" style="position:relative;color:{{ colors['ink'] }};">{{ d.title }}</div>
+  {% if d.subtitle %}
+  <div class="rc-card-wrap">
+    <div data-ppt="rect" data-ppt-deco class="rc-card-shadow" style="background:{{ colors['pink'] }};"></div>
+    <div data-ppt="rect" data-ppt-z="1" class="rc-card">
+      <div data-ppt="rect" data-ppt-z="2" class="rc-card-rule"></div>
+      <div data-ppt="text" data-ppt-z="2" class="rc-sub">{{ d.subtitle }}</div>
+      <div data-ppt="text" data-ppt-z="2" class="rc-card-foot">{% if page_total %}{{ '%02d' % page_total }} PAGES · {% endif %}RISO PRINT</div>
     </div>
-    {% if d.subtitle %}<div data-ppt="text" style="font-family:var(--font-body);font-weight:700;font-size:20px;line-height:1.4;color:{{ colors['ink'] }};margin-top:32px;max-width:620px;">{{ d.subtitle }}</div>{% endif %}
+  </div>
+  {% endif %}
+
+  {# 标题按 "·" 或空格断成 ≤3 行叠行套色(ZINE / CULTURE / GUIDE);无分隔则单行 #}
+  {% set tlines = d.title.replace(' ', '·').split('·') | select | list %}
+  <div class="rc-title-wrap">
+    {% for ln in tlines %}
+    {% set accent = [colors['blue'], colors['ink']][loop.index0 % 2] %}
+    <div class="rc-line" style="display:block;">
+      <div data-ppt="text" data-ppt-deco class="rc-title{{ ' small' if tlines|length == 1 and d.title|length > 9 else '' }}" data-ppt-z="1" style="position:absolute;left:4px;top:4px;color:{{ colors['pink'] }};">{{ ln }}</div>
+      <div data-ppt="text" class="rc-title{{ ' small' if tlines|length == 1 and d.title|length > 9 else '' }}" data-ppt-z="2" style="position:relative;color:{{ accent }};">{{ ln }}</div>
+    </div>
+    {% endfor %}
   </div>
 
   <div class="rc-foot-rule" data-ppt="rect"></div>
   <div class="rc-foot">
     {% if d.footer %}<div data-ppt="text" class="rc-foot-t">{{ d.footer }}</div>{% else %}<div></div>{% endif %}
-    <div data-ppt="text" class="rc-foot-t">EDITION 2026 · DEMO</div>
+    <div data-ppt="text" class="rc-foot-t">EDITION 2026</div>
   </div>
 </div>
 {% endblock %}

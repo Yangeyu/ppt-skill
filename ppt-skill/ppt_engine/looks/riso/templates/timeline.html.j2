@@ -1,11 +1,12 @@
 {% extends "base.html.j2" %}
 {% block frame %}
+{# zine p04 双段卡:彩色标题条 + 近黑正文体,年份巨字贴轴 #}
 {% set pal = [
-  {'bg': colors['blue'],    'fg': colors['bg-content'], 'shadow': colors['pink']},
-  {'bg': colors['ink'],     'fg': colors['bg-content'], 'shadow': colors['pink']},
-  {'bg': colors['mustard'], 'fg': colors['ink'],        'shadow': colors['blue']},
   {'bg': colors['pink'],    'fg': colors['ink'],        'shadow': colors['blue']},
-  {'bg': colors['blue'],    'fg': colors['bg-content'], 'shadow': colors['mustard']}
+  {'bg': colors['blue'],    'fg': colors['bg-content'], 'shadow': colors['pink']},
+  {'bg': colors['mustard'], 'fg': colors['ink'],        'shadow': colors['blue']},
+  {'bg': colors['pink'],    'fg': colors['ink'],        'shadow': colors['mustard']},
+  {'bg': colors['blue'],    'fg': colors['bg-content'], 'shadow': colors['pink']}
 ] %}
 <div class="r-frame">
   {% include "_head.html.j2" %}
@@ -18,10 +19,14 @@
         <div class="r-tl2-item {{ 'up' if loop.index0 % 2 == 0 else 'down' }}">
           <div class="r-tl2-cardwrap">
             <div data-ppt="rect" data-ppt-deco class="r-tl2-shadow" style="background:{{ c.shadow }};"></div>
-            <div data-ppt="rect" data-ppt-z="1" class="r-tl2-card" style="background:{{ c.bg }};">
+            <div data-ppt="rect" data-ppt-z="1" class="r-tl2-chead" style="background:{{ c.bg }};">
               <div data-ppt="text" data-ppt-z="2" class="r-tl2-title" style="color:{{ c.fg }};">{{ m.title }}</div>
-              {% if m.desc %}<div data-ppt="text" data-ppt-z="2" class="r-tl2-desc" style="color:{{ c.fg }};">{{ m.desc }}</div>{% endif %}
             </div>
+            {% if m.desc %}
+            <div data-ppt="rect" data-ppt-z="1" class="r-tl2-cbody" style="background:{{ colors['ink'] }};">
+              <div data-ppt="text" data-ppt-z="2" class="r-tl2-desc" style="color:{{ colors['bg-content'] }};">{{ m.desc }}</div>
+            </div>
+            {% endif %}
           </div>
           <div data-ppt="rect" data-ppt-z="2" class="r-tl2-dot" style="background:{{ c.bg }};"></div>
           <div data-ppt="text" class="r-tl2-year" style="color:{{ c.bg if c.bg != colors['mustard'] else colors['ink'] }};">{{ m.year }}</div>

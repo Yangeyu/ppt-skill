@@ -1,0 +1,8 @@
+{# 顶部插图横幅(zine p06 工艺 banner):agent 在 IR 给 prompt 才出现 #}
+{% if hero_img %}
+<div class="r-band">
+  <div data-ppt="rect" data-ppt-deco class="r-band-shadow" style="background:{{ colors['pink'] }};"></div>
+  <div data-ppt="rect" data-ppt-z="1" class="r-band-frame"></div>
+  <div data-ppt="image" data-ppt-z="2" data-src="{{ hero_img }}" class="r-band-img"></div>
+</div>
+{% endif %}

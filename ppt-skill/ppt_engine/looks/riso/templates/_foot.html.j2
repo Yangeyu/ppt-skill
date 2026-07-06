@@ -1,5 +1,5 @@
-{# 页脚 chrome:期刊感的 mono 小字(左刊名,右页码/套色标)#}
+{# 页脚 chrome(zine 惯例):左 = 页码·本页栏目标签,右 = 刊名 #}
 <div class="r-foot">
+  <div data-ppt="text" class="r-foot-t">{% if page_no %}P{{ '%02d' % page_no }} / {{ '%02d' % page_total }}{% endif %}{% if d.eyebrow is defined and d.eyebrow %} · {{ d.eyebrow }}{% endif %}</div>
   <div data-ppt="text" class="r-foot-t">{{ deck_title if deck_title else 'RISO ZINE' }}</div>
-  <div data-ppt="text" class="r-foot-t">{% if page_no %}P{{ '%02d' % page_no }} / {{ '%02d' % page_total }}{% else %}BLUE × PINK × MUSTARD{% endif %}</div>
 </div>

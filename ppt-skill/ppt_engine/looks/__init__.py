@@ -31,6 +31,10 @@ class Look:
     pick_when: str = ""                 # 选型指引：什么内容气质该选这个 look
     density: dict = field(default_factory=dict) # 密度纪律：critic/density 消费的配额
                                         # （空 = 稀疏是该 look 的风格，不设下限）
+    image_slots: dict = field(default_factory=dict)
+                                        # 内容页插图槽：{kind: {"size": t2i 尺寸,
+                                        # "aspect": 槽位宽高比(None=整页不裁)}}；
+                                        # 空 = 该 look 只有 hero 一个图像位
 
 
 def _discover() -> dict[str, Look]:

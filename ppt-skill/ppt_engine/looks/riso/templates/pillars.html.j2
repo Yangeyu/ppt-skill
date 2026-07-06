@@ -1,27 +1,30 @@
 {% extends "base.html.j2" %}
 {% block frame %}
+{# zine p10 栏目对照:彩色名牌头(名 + mono 标签)+ 描边纸面正文,满高 + 套色阴影 #}
 {% set pal = [
-  {'bg': colors['blue'],    'fg': colors['bg-content'], 'accent': colors['pink']},
-  {'bg': colors['pink'],    'fg': colors['ink'],        'accent': colors['blue']},
-  {'bg': colors['mustard'], 'fg': colors['ink'],        'accent': colors['ink']},
-  {'bg': colors['ink'],     'fg': colors['bg-content'], 'accent': colors['pink']}
+  {'bg': colors['blue'],    'fg': colors['bg-content'], 'accent': colors['pink'],    'shadow': colors['pink']},
+  {'bg': colors['pink'],    'fg': colors['ink'],        'accent': colors['blue'],    'shadow': colors['blue']},
+  {'bg': colors['ink'],     'fg': colors['bg-content'], 'accent': colors['pink'],    'shadow': colors['pink']},
+  {'bg': colors['mustard'], 'fg': colors['ink'],        'accent': colors['ink'],     'shadow': colors['blue']}
 ] %}
 <div class="r-frame">
   {% include "_head.html.j2" %}
+  {% include "_band.html.j2" %}
   <div class="r-body">
     <div class="r-pillars">
       {% for col in d.columns %}
       {% set c = pal[loop.index0 % 4] %}
       <div class="r-pillar">
-        <div data-ppt="rect" class="r-pillar-head" style="background:{{ c.bg }};color:{{ c.fg }};">
-          <div data-ppt="text" class="r-pillar-h" style="color:{{ c.fg }};">{{ col.heading }}</div>
-          {% if col.tag %}<div data-ppt="text" class="r-pillar-tag" style="color:{{ c.accent }};">{{ col.tag }}</div>{% endif %}
+        <div data-ppt="rect" data-ppt-deco class="r-pillar-shadow" style="background:{{ c.shadow }};"></div>
+        <div data-ppt="rect" data-ppt-z="1" class="r-pillar-head" style="background:{{ c.bg }};">
+          <div data-ppt="text" data-ppt-z="2" class="r-pillar-h" style="color:{{ c.fg }};">{{ col.heading }}</div>
+          {% if col.tag %}<div data-ppt="text" data-ppt-z="2" class="r-pillar-tag" style="color:{{ c.accent if c.bg != colors['mustard'] else colors['ink'] }};">{{ col.tag }}</div>{% endif %}
         </div>
-        <div class="r-pillar-body">
+        <div data-ppt="rect" data-ppt-z="1" class="r-pillar-body">
           {% for pt in col.points %}
           <div class="r-pillar-row">
-            <div data-ppt="rect" class="r-pillar-mark" style="background:{{ c.bg }};"></div>
-            <div data-ppt="text" class="r-pillar-text">{{ pt }}</div>
+            <div data-ppt="rect" data-ppt-z="2" class="r-pillar-mark" style="background:{{ c.bg }};"></div>
+            <div data-ppt="text" data-ppt-z="2" class="r-pillar-text">{{ pt }}</div>
           </div>
           {% endfor %}
         </div>
@@ -29,6 +32,7 @@
       {% endfor %}
     </div>
   </div>
+  {% include "_note.html.j2" %}
   {% include "_foot.html.j2" %}
 </div>
 {% endblock %}

@@ -1,7 +1,12 @@
 {% extends "base.html.j2" %}
 {% block frame %}
+{# zine p18 收尾:左侧叠行套色宣言,右侧收尾插画(prompt 生成)+ 黑色 colophon 章 #}
+{% if hero_img %}
+<div data-ppt="image" data-ppt-z="-10" data-src="{{ hero_img }}" style="position:absolute;right:0;top:0;width:560px;height:720px;"></div>
+{% else %}
 <div data-ppt="rect" style="position:absolute;right:78px;top:92px;width:150px;height:150px;background:{{ colors['pink'] }};"></div>
 <div data-ppt="rect" style="position:absolute;right:86px;top:84px;width:150px;height:150px;background:{{ colors['blue'] }};border:2px solid {{ colors['ink'] }};"></div>
+{% endif %}
 <div class="r-out-frame">
   {# 宣言式收尾:title 里的"。"把句子断成叠行套色宣言(印一份。送一份。换一份。)#}
   {% set lines = d.title.split('。') | select | list %}
@@ -27,6 +32,13 @@
     <div data-ppt="text" class="r-out-sub" style="position:relative;color:{{ colors['bg-content'] }};">{{ d.subtitle }}</div>
   </div>
   {% endif %}
-  {% if d.contact %}<div data-ppt="text" class="r-out-contact">{{ d.contact }}</div>{% endif %}
+  {% if d.contact and not hero_img %}<div data-ppt="text" class="r-out-contact">{{ d.contact }}</div>{% endif %}
 </div>
+{% if d.contact and hero_img %}
+<div style="position:absolute;right:36px;bottom:36px;padding:14px 18px;">
+  <div data-ppt="rect" data-ppt-z="3" style="position:absolute;inset:0;background:{{ colors['ink'] }};"></div>
+  <div data-ppt="text" data-ppt-z="4" style="position:relative;font-family:var(--font-mono);font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:{{ colors['pink'] }};">COLOPHON</div>
+  <div data-ppt="text" data-ppt-z="4" style="position:relative;font-family:var(--font-mono);font-size:12px;font-weight:700;letter-spacing:.1em;color:{{ colors['bg-content'] }};margin-top:7px;">{{ d.contact }}</div>
+</div>
+{% endif %}
 {% endblock %}

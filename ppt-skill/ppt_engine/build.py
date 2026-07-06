@@ -31,6 +31,22 @@ TPL_DIR = Path(__file__).parent / "looks" / "_shared"
 _MARK_RE = re.compile(r"\*\*(.+?)\*\*")
 
 
+def _crop_to_aspect(path: str, aspect: float) -> None:
+    """Center-crop a PNG to the slot's w/h aspect (native images can't srcRect)."""
+    from PIL import Image
+    im = Image.open(path)
+    w, h = im.size
+    if abs(w / h - aspect) < 0.02:
+        return
+    if w / h > aspect:
+        nw = int(h * aspect)
+        box = ((w - nw) // 2, 0, (w - nw) // 2 + nw, h)
+    else:
+        nh = int(w / aspect)
+        box = (0, (h - nh) // 2, w, (h - nh) // 2 + nh)
+    im.crop(box).save(path)
+
+
 def marksplit(s: str) -> list[dict]:
     out, pos = [], 0
     s = s or ""
@@ -80,9 +96,12 @@ class Engine:
         tpl = env.get_template(f"{slide.kind}.html.j2")
         return tpl.render(**self._context(slide, theme, look, fonts, extra))
 
-    def _hero_image(self, slide, theme, look, asset_dir: Path, idx: int) -> str:
+    def _slide_image(self, slide, theme, look, asset_dir: Path, idx: int) -> str:
         """The look-owned image pipeline: prompt -> t2i (+style suffix) ->
-        re-ink post-pass; else source image re-inked; else procedural fallback."""
+        re-ink post-pass; else source image re-inked; else procedural fallback.
+        Content-page slots (look.image_slots) pick the t2i size and get a
+        center-crop to the slot's aspect so the native image never distorts."""
+        slot = look.image_slots.get(slide.kind, {})
         out = str(asset_dir / f"hero_{idx}.png")
         src = getattr(slide.data, "src", "")
         if src and not Path(src).exists():   # 模型偶发往 src 填废值——忽略,走 prompt/兜底
@@ -90,17 +109,20 @@ class Engine:
         prompt = getattr(slide.data, "prompt", "")
         if prompt and not src:
             src = genimage.generate(prompt, str(asset_dir / f"hero_{idx}_raw.png"),
-                                    style_suffix=look.image_style_suffix) or ""
+                                    style_suffix=look.image_style_suffix,
+                                    size=slot.get("size", "1664*928")) or ""
         if src:
             if look.image_postprocess:
                 look.image_postprocess(src, theme, out)
             else:
                 shutil.copyfile(src, out)
-            return out
-        if look.image_fallback:
+        elif look.image_fallback:
             look.image_fallback(getattr(slide.data, "art", "sun"), theme, out)
-            return out
-        return ""
+        else:
+            return ""
+        if slot.get("aspect"):
+            _crop_to_aspect(out, slot["aspect"])
+        return out
 
     def build(self, deck: Deck, out_path: str, screenshot_dir: str | None = None,
               embed: bool = True, spec: SpecLock | None = None):
@@ -123,8 +145,8 @@ class Engine:
             for idx, slide in enumerate(deck.slides):
                 extra = {"page_no": idx + 1, "page_total": len(deck.slides),
                          "deck_title": deck.meta.title}
-                if slide.kind == "hero":
-                    extra["hero_img"] = self._hero_image(slide, theme, look, asset_dir, idx)
+                if slide.kind == "hero" or getattr(slide.data, "prompt", ""):
+                    extra["hero_img"] = self._slide_image(slide, theme, look, asset_dir, idx)
                 page.set_content(self.html_for(slide, theme, fonts, extra, look),
                                  wait_until="load")
                 page.evaluate("async () => { await document.fonts.ready; }")
