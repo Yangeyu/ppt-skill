@@ -16,8 +16,12 @@ deck 弧线(杂志一期的目录感):
   没关系,像杂志栏目)→ quote 放全篇最扎心的一句 → closing 宣言收尾。
 - closing 的 title 用"。"断成 2~3 个短句(如"印一份。送一份。换一份。"),
   会排成叠行套色宣言——这是全篇的落款,写祈使句。
-- 翻页节奏:大字页(section/kpi/quote)与密集页(icon_grid/table/timeline/bullets)
-  交替,绝不连续 3 页同类。
+- 翻页节奏(每页在三档里选一档,连续 dense ≤3):
+  **anchor**(定调:cover/toc/closing)、**breathing**(喘息:hero/section/quote,
+  一页一个念头)、**dense**(密集证据:icon_grid/table/timeline/bullets/process)。
+  每个栏目至少给一页 breathing——呼吸在页与页之间。
+- 素材带参考文献/来源时,closing 前给一页 SOURCES(bullets 版式,
+  eyebrow="SOURCES & CREDITS")——zine 的致谢页惯例。
 
 版式路由(zine 的栏目类型学):
 - 记住一个数 → kpi(海报化,2~3 个大数);演变/历史/节奏 → timeline

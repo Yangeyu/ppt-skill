@@ -45,7 +45,8 @@ SPEC = SpecLock(
     type_scale=TypeScale(ratio=1.5, display=112, h1=54, h2=30, body=20, caption=15, micro=12),
     grid=Grid(cols=12, margin=60, gutter=24, unit=8),
     image=ImageTreatment(style="screen-print"),
-    rules=["硬边无圆角", "巨号标题单行不折(nowrap)", "强调色只做强调,大面积留给纸色"],
+    rules=["硬边无圆角", "巨号标题单行不折(nowrap)", "强调色只做强调,大面积留给纸色",
+           "mustard 是第三色只做焦点(<5% 面积),蓝粉双色承担套色主体(源:ppt-master zine design_spec)"],
     rationale="Risograph zine——纸感套色海报风,巨号标题/硬边色块/套印错位,适合潮流文化与叙事主题",
 )
 
