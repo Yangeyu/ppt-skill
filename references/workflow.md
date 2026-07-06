@@ -1,5 +1,29 @@
 # workflow.md —— cli 往返细节与修复策略
 
+## 三段流(长且无结构的素材才升级到这里)
+
+一步直出整份 IR 时,全局问题(论证链断裂/密度失衡/素材利用率低)靠单页修补救
+不回来——素材无结构时先抽事实、再定大纲、最后填格,每段都有机器审核兜底。
+**结构化报告不要走这条路**:实测质量持平、耗时约 4 倍。
+
+1. **事实清单**:取契约 → 把素材抽成结构化 facts(逐字摘录) → 机器审核:
+   ```bash
+   python -m ppt_engine.cli --contract <look> --stage factsheet
+   # 产出 factsheet.json 后(审核返回的 recommended_pages 可作页数 N):
+   python -m ppt_engine.cli --check-only --stage factsheet --source material.md < factsheet.json
+   ```
+2. **叙事大纲**:取契约 → 规划每页论点/版式/证据分配(先组织后填格) → 机器审核
+   (页数下限硬控、每证据页必须引用 fact_id、素材利用率、exhibit 配额):
+   ```bash
+   python -m ppt_engine.cli --contract <look> --stage outline --slides <N>
+   python -m ppt_engine.cli --check-only --stage outline --look <look> --slides <N> \
+       --factsheet factsheet.json < outline.json
+   ```
+3. **落地 Deck IR**:取 deck 契约,按已批准的大纲逐页填格(thesis 是标题底稿,
+   fact_ids 指向证据),之后与快路径汇合(check-only 回路 → 生成自查)。
+
+中间产物(factsheet.json / outline.json)保存下来供用户审计。
+
 ## stdout 约定
 
 cli 的 stdout 永远是**一行 JSON**(唯一例外:`--contract` 输出纯文本契约,

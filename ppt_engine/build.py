@@ -2,9 +2,9 @@
 Optionally writes a PNG per slide (the faithful design preview).
 
 Templates resolve through the look package first (looks/<id>/templates/), then
-the shared templates/ dir (创作轨 custom 等公共原型). Hero image discipline —
-t2i style suffix / re-ink post-pass / procedural fallback — lives in the look
-package too; the engine never special-cases a look."""
+looks/_shared/ (创作轨 custom 等跨 look 公共原型) — 模板只有 look 包库一个家。
+Hero image discipline — t2i style suffix / re-ink post-pass / procedural
+fallback — lives in the look package too; the engine never special-cases a look."""
 from __future__ import annotations
 import json
 import re
@@ -24,7 +24,7 @@ from .embed_fonts import embed_fonts
 from . import genimage
 from .units import CANVAS_W_PX, CANVAS_H_PX
 
-TPL_DIR = Path(__file__).parent / "templates"
+TPL_DIR = Path(__file__).parent / "looks" / "_shared"
 
 # 标题强调词标记：**词** —— 模板把每段拆成独立文本原语，标记段上强调色。
 # （文本原语是叶子级单色 run，行内混色必须拆段才能原生进 pptx。）

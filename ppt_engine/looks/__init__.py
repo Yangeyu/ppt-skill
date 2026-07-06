@@ -1,14 +1,18 @@
-"""Look 包库 —— 参考 ppt-master 的模板组织（templates/<kind>/<id>/ 自包含目录包）。
+"""Look 包库 —— 本引擎的"模板库"就是这里（对标 ppt-master 的
+templates/<kind>/<id>/ 自包含目录包；我们叫 look 因为它比版式多三段:
+叙事哲学 + 设计语言 + 图像纪律）。
 
 一个 look 包 = 一个子目录，四个分段（对应 ppt-master 的 segment 划分）：
   身份段  __init__.py 里的 SpecLock（色/字/字阶令牌，已过身份评论官的设计语言）
-  结构段  templates/*.j2（该 look 的版式库；缺的原型回落共享 templates/）
+  结构段  templates/*.j2（该 look 的版式库；缺的原型回落 _shared/）
   图像段  image_* 钩子（t2i 风格纪律 / 后处理再上墨 / 离线程序化兜底）
   引导段  guidance.md（该 look 的叙事声音/deck 弧线/版式路由/数据表现纪律，
           由 contract.py 拼进生成契约喂给 agent——look 的"报告哲学"所在）
 
-引擎不特判任何 look，只消费本注册表；新增 look = 新建子目录 + LOOK 常量，
-零引擎改动。设计规格文档随包放（spec.md，frontmatter 同 ppt-master design_spec）。"""
+_shared/ 放跨 look 公共原型（创作轨 custom.html.j2 等），无 __init__.py，
+不进注册表。引擎不特判任何 look，只消费本注册表；新增 look = 新建子目录 +
+LOOK 常量，零引擎改动。设计规格文档随包放（spec.md，frontmatter 同
+ppt-master design_spec）。"""
 from __future__ import annotations
 from dataclasses import dataclass
 from importlib import import_module

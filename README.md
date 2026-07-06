@@ -10,17 +10,22 @@ python demo_v03.py "独立书店与 zine 文化指南"
 
 > 设计文档见 [`docs/DESIGN.md`](docs/DESIGN.md)（架构 v0.3，15 节）与 [`docs/QUALITY.md`](docs/QUALITY.md)（可执行的高颜值 rubric）。
 
-## 组织形态:skill + 引擎 + 评论官
+## 组织形态:本仓库就是一个 skill
 
-- **skill 管"怎么想"**:[`skill/SKILL.md`](skill/SKILL.md) 引导任何 agent 用本工具——
-  第一步永远是 `python -m ppt_engine.cli --contract <look>` 现场取**生成契约**
+**[`SKILL.md`](SKILL.md) 在仓库根**(ppt-master 形态):把整个仓库放进(或软链到)
+`~/.claude/skills/ppt-tool/`,任何 agent 即可装载;`ppt_engine/` 是 skill 引导
+调用的执行工具,`references/` 是二级细节文档。三层分工:
+
+- **skill 管"怎么想"**:`SKILL.md` 引导 agent——第一步永远是
+  `python -m ppt_engine.cli --contract <look>` 现场取**生成契约**
   (版式菜单+字数预算从 `ir.py` schema 自动生成;叙事/组织/数据表现纪律来自各
   look 包第四段 `guidance.md`——每个 look 是一种报告哲学,不只是一种配色)。
 - **引擎管"怎么排"**:agent 只产语义 IR,几何由浏览器算,导出原生可编辑 pptx。
 - **评论官管"对不对"**:`--check-only --source` 秒级返回 IR 校验错误 + 事实复核
   (数字溯源/闭合槽位/结构数量),agent 回喂自修;prompt 说服不了的,机器把关。
 
-外部 agent 消费者示例:`mastra/`(deckGenerator,`pnpm generate`)。
+外部 agent 消费者示例:`mastra/`(deckGenerator,`pnpm generate`);
+`demos/`、`tests/`、`docs/` 是开发/验证设施,skill 消费者不需要读。
 
 ---
 
@@ -97,17 +102,22 @@ print(spec.name, spec.colors["primary"], [m.name for m in spec.motifs])
 ## 工程结构
 
 ```
+SKILL.md       skill 入口:引导 agent 的工作流(契约→IR→复核回路→自查)
+references/    skill 二级文档(cli 往返细节/三段流/修复策略/已知伪影)
 ppt_engine/
   artdirect/   艺术总监 + 身份评论官（§4）   director.py  identity_critic.py
   spec.py      生成式 SpecLock（令牌/字阶/网格/母题）+ WCAG + 可读性归一
   theme.py     seed 主题（editorial/aurora/ember，可选起点/兜底）
   planner.py   主题 → Deck IR（双轨路由）
   ir.py        受约束 IR（结构页字数预算 + 创作页 CustomData）
-  templates/   结构轨版式 j2 + custom.html.j2（设计系统套件）
+  looks/       模板库=look 包（crimson/swiss/riso/morandi,每包四段:
+               身份 SpecLock + 版式 templates/*.j2 + 图像 image.py + 叙事 guidance.md;
+               _shared/ 放跨 look 公共原型如创作轨 custom.html.j2）
+  contract.py  生成契约单一来源（kind 菜单+字数预算自动来自 ir.py ⊕ 事实纪律 ⊕ look guidance）
   build.py     浏览器编排（Playwright 排版+量测+截图）
   measure.py   MEASURE_JS 抽取 data-ppt 原语
   render.py    原语 → 原生 DrawingML（schemeClr / 原生图表 / 嵌字）
-  critic/      结构评论官(structural) + 美学评论官(aesthetic)
+  critic/      评论官:结构(structural) + 事实(facts) + 密度(density) + 美学(aesthetic)
   compose.py   七段管线总入口 generate()
   llm.py       OpenAI 兼容封装（DashScope / OpenAI）
 ppt_mcp/server.py   MCP 接入
