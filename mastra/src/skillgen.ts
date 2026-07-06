@@ -25,13 +25,20 @@ async function main() {
 
   const t0 = Date.now();
   let step = 0;
-  const res = await skillRunner.generate(ask, {
-    maxSteps: 40,
-    onStepFinish: () => { step += 1; },   // 工具调用明细由工具自己打日志
-  });
-
-  console.log(`\n—— agent 最终报告(${((Date.now() - t0) / 1000).toFixed(0)}s / ${step} steps)——\n`);
-  console.log(res.text);
+  try {
+    const res = await skillRunner.generate(ask, {
+      maxSteps: 40,
+      onStepFinish: () => { step += 1; },   // 工具调用明细由工具自己打日志
+    });
+    console.log(`\n—— agent 最终报告(${((Date.now() - t0) / 1000).toFixed(0)}s / ${step} steps)——\n`);
+    console.log(res.text);
+  } catch (e: any) {
+    // 网络抖动常死在收尾的报告轮——此时产物往往已经建完,别让 exit 1 误导
+    console.error(`\n✗ agent 会话中断(${step} steps 后):${e?.message ?? e}`);
+    console.error(`  产物可能已生成,请查 ../ppt-skill/out/ 下最新目录(pptx + preview/),`);
+    console.error(`  并用 cli --check-only 复核 ../ppt-skill/deck.json。`);
+    process.exit(1);
+  }
 }
 
 main().catch((e) => { console.error(e); process.exit(1); });
