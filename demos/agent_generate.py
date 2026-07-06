@@ -14,9 +14,10 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 from pydantic import ValidationError
 
-from ppt_engine import llm
+import llm   # demos/llm.py —— LLM 客户端属演示设施,引擎本体零模型
 from ppt_engine.build import Engine
 from ppt_engine.contract import render_contract
 from ppt_engine.critic.facts import check_facts

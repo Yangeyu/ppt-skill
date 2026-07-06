@@ -1,33 +1,31 @@
 """确定性地板测试 —— 不依赖浏览器/LLM，验证 A 层评论官与令牌纪律。
 
-覆盖：seed 过身份评论官 / pos-neg 可读性归一 / SpecLock 与 Theme 接口兼容 /
-身份评论官能拒坏设计语言 / 结构评论官能抓越界·重叠·离板色·低对比。"""
-import re
+覆盖：全部注册 look 的 SpecLock 过身份评论官(look 作者门禁) / pos-neg 可读性
+归一 / SpecLock 渲染接口 / 身份评论官能拒坏设计语言 / 结构评论官能抓
+越界·重叠·离板色·低对比。"""
 from ppt_engine.spec import SpecLock, TypeScale, contrast_ratio, legibilize
-from ppt_engine.theme import THEMES
-from ppt_engine.artdirect import critique_identity
-from ppt_engine.artdirect.identity_critic import identity_ok
-from ppt_engine.critic import critique_structure
-
-SEEDS = list(THEMES)
+from ppt_engine.looks import LOOKS
+from ppt_engine.critic import critique_identity, critique_structure
+from ppt_engine.critic.identity import identity_ok
 
 
 def _errs(issues):
     return [i for i in issues if i.level == "error"]
 
 
-# ---- 身份层 --------------------------------------------------------------
-def test_all_seeds_pass_identity():
-    for s in SEEDS:
-        assert identity_ok(SpecLock.from_seed(s)), f"seed {s} 未过身份评论官"
+# ---- 身份层:look 包作者门禁 ----------------------------------------------
+def test_all_looks_pass_identity():
+    for lid, look in LOOKS.items():
+        errs = _errs(critique_identity(look.spec))
+        assert not errs, f"look {lid} 未过身份评论官: {[str(e) for e in errs]}"
 
 
-def test_seeds_semantic_colors_legible():
-    for s in SEEDS:
-        sp = SpecLock.from_seed(s)
+def test_looks_semantic_colors_legible():
+    for lid, look in LOOKS.items():
+        sp = look.spec
         paper = sp.colors["bg-content"]
-        assert contrast_ratio(sp.colors["pos"], paper) >= 3.1, f"{s} pos 不可读"
-        assert contrast_ratio(sp.colors["neg"], paper) >= 3.1, f"{s} neg 不可读"
+        assert contrast_ratio(sp.colors["pos"], paper) >= 3.1, f"{lid} pos 不可读"
+        assert contrast_ratio(sp.colors["neg"], paper) >= 3.1, f"{lid} neg 不可读"
 
 
 def test_legibilize_darkens_light_semantic():
@@ -39,7 +37,7 @@ def test_legibilize_darkens_light_semantic():
 
 
 def test_identity_rejects_bad_language():
-    bad = SpecLock.from_seed("editorial")
+    bad = SpecLock.from_seed("crimson")
     bad.type_scale = TypeScale(ratio=1.07, display=24, h1=22, h2=21, body=20, caption=19, micro=18)  # 非模块化+对比弱
     bad.display_font = "Impact"          # 不可嵌入
     errs = _errs(critique_identity(bad))
@@ -50,9 +48,9 @@ def test_identity_rejects_bad_language():
 
 
 # ---- 结构层（合成已测原语，无需浏览器） ----------------------------------
-SPEC = SpecLock.from_seed("editorial")
-INK = "rgb(33, 28, 24)"        # #211C18 ink
-PAPER = "rgb(245, 240, 230)"   # #F5F0E6 bg-content
+SPEC = LOOKS["crimson"].spec
+INK = "rgb(17, 17, 17)"        # #111111 ink
+PAPER = "rgb(243, 244, 239)"   # #F3F4EF bg-content
 BG_RECT = {"kind": "rect", "x": 0, "y": 0, "w": 1280, "h": 720, "z": -20, "fill": PAPER}
 
 
@@ -93,9 +91,9 @@ def test_punctuation_only_contrast_is_warning_not_error():
     assert not any(e.check == "PG-CL-2" for e in _errs(critique_structure([page], SPEC)))
 
 
-# ---- SpecLock 与 Theme 接口兼容（render/oox/fonts 不改即用） --------------
-def test_speclock_theme_compatible_surface():
-    sp = SpecLock.from_seed("aurora")
+# ---- SpecLock 渲染接口（build/render/oox/fonts 的消费面） ------------------
+def test_speclock_render_surface():
+    sp = LOOKS["swiss"].spec
     assert isinstance(sp.css_vars(), str) and "--type-display" in sp.css_vars()
     assert set(sp.scheme()) >= {"dk1", "lt1", "accent1", "accent2"}
     assert sp.color_slot()                      # 反查表非空

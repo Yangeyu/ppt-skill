@@ -9,7 +9,7 @@
   ③ 叙事与组织纪律:look 包第四段 looks/<id>/guidance.md,每个 look
     自己的叙事声音/deck 弧线/版式路由/数据表现规范。
 
-消费方:cli --contract / planner.py / ppt_mcp / mastra deck-generator /
+消费方:cli --contract / ppt_mcp get_contract / mastra deck-generator /
 skill(SKILL.md 教 agent 运行 cli 现场获取)。禁止在任何消费方手写第二份。"""
 from __future__ import annotations
 import types

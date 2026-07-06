@@ -1,6 +1,6 @@
 """Text-to-image for hero pages — qwen-image-2.0 via DashScope (sync endpoint).
 
-Contract: the caller (LLM planner / demo) describes only the CONTENT of the
+Contract: the caller (agent IR / demo) describes only the CONTENT of the
 picture (topic-specific motif); the LOOK is enforced twice by the engine —
   1. the look package's style suffix appended to every prompt (passed in as
      `style_suffix`; this module is look-agnostic);

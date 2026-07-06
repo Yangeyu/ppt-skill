@@ -1,7 +1,9 @@
-"""身份评论官 —— 校验现场生成的设计语言「体系是否成立」（QUALITY §1）。
+"""身份评论官 —— 校验一份设计语言「体系是否成立」（QUALITY §1）。
 
-纯 Python、零模型、可单测。这是 freedom 路线的安全阀：信任 LLM 发明美学，
-但用机器把住 A 层体系。任一 error → 退回艺术总监修正/重生成。
+纯 Python、零模型、可单测。当前角色是 **look 包作者的门禁**:每个 look 的
+SpecLock 必须零 error 才能入库(tests/test_floor.py 对全部注册 look 断言);
+未来若恢复「按主题现场生成身份」的 freedom 路线(docs/DESIGN.md 北极星),
+它就是那条路线的安全阀——信任 LLM 发明美学,用机器把住 A 层体系。
 
 实现 QUALITY.md §1：字阶(ID-TS-*) / 配色(ID-CL-*) / 字体(ID-FT-*) / 网格母题(ID-GR/MT-*)。"""
 from __future__ import annotations

@@ -1,19 +1,16 @@
-"""SpecLock — 现场生成并冻结的设计语言（v0.3 单一真源）。
+"""SpecLock — 冻结的设计语言（单一真源），look 包的身份段。
 
-它是 v0.2 `theme.py:Theme` 的演进：
- - 向后兼容：暴露 `colors / display_font / body_font / chart_palette / name` 与
-   `css_vars() / families() / scheme() / color_slot()`，故 build/render/oox/fonts
-   不改即可把 SpecLock 当 theme 用。
- - 新增（v0.3）：`type_scale`(模块化字阶) / `grid`(网格) / `image`(图像统一处理) /
-   `motifs`(招牌母题) / `rules`(硬规则)，供设计系统套件实例化与评论官校验。
+暴露 `colors / display_font / body_font / chart_palette / name` 与
+`css_vars() / families() / scheme() / color_slot()`，build/render/oox/fonts
+统一消费；`type_scale`(模块化字阶) / `grid`(网格) / `image`(图像统一处理) /
+`motifs`(招牌母题) / `rules`(硬规则) 供模板实例化与评论官校验。
 
-来源两条：`from_seed(theme_id, ...)` 从预置主题确定性派生（兜底/测试）；
-或由艺术总监(LLM)直接产出 `SpecLock`（freedom）。两者都先过身份评论官再冻结。"""
+每个 look 包在 __init__.py 里声明一份 SpecLock,必须过身份评论官
+(critic/identity.py)才能入库——这是 look 作者的门禁,tests/test_floor.py
+对全部注册 look 断言。"""
 from __future__ import annotations
 from typing import Literal
 from pydantic import BaseModel, Field
-
-from .theme import THEMES
 
 # 可接受的模块化字阶比例（QUALITY ID-TS-1）
 RATIOS = {
@@ -176,47 +173,26 @@ class SpecLock(BaseModel):
 
     # ---- 构造 ----------------------------------------------------------
     @classmethod
-    def from_seed(cls, theme_id: str = "editorial", *, scale: TypeScale | None = None,
+    def from_seed(cls, theme_id: str, *, scale: TypeScale | None = None,
                   image: ImageTreatment | None = None, motifs: list[Motif] | None = None,
                   rules: list[str] | None = None, rationale: str = "") -> "SpecLock":
-        """从预置主题/look 包确定性派生一份 SpecLock（兜底 / 测试 / freedom 的起点）。"""
+        """从 look 包派生一份 SpecLock(可覆写字阶/图像/母题——测试与定制用)。"""
         from .looks import LOOKS   # 懒导入防环（looks → spec）
-        if theme_id in LOOKS:
-            base = LOOKS[theme_id].spec
-            return base.model_copy(update={
-                k: v for k, v in {"type_scale": scale, "image": image, "motifs": motifs,
-                                  "rules": rules, "rationale": rationale}.items() if v})
-        t = THEMES[theme_id]
-        return cls(
-            id=t.id, name=t.name, colors=legibilize(dict(t.colors)),
-            display_font=t.display_font, body_font=t.body_font,
-            chart_palette=list(t.chart_palette),
-            type_scale=scale or _SEED_SCALES.get(theme_id, TypeScale()),
-            image=image or ImageTreatment(),
-            motifs=motifs or [], rules=rules or [],
-            rationale=rationale or f"seed:{theme_id}",
-        )
+        base = LOOKS[theme_id].spec
+        return base.model_copy(update={
+            k: v for k, v in {"type_scale": scale, "image": image, "motifs": motifs,
+                              "rules": rules, "rationale": rationale}.items() if v})
 
 
 def resolve_spec(spec) -> "SpecLock":
-    """接受 SpecLock / look-id / theme-id 字符串，统一返回 SpecLock。
-    未知 id 兜底到默认 look（当前唯一已优化的结构库）。"""
+    """接受 SpecLock / look-id 字符串，统一返回 SpecLock。
+    未知 id 兜底到默认 look。"""
     if isinstance(spec, SpecLock):
         return spec
     if isinstance(spec, str):
         from .looks import LOOKS, DEFAULT_LOOK
-        if spec in LOOKS or spec in THEMES:
-            return SpecLock.from_seed(spec)
-        return SpecLock.from_seed(DEFAULT_LOOK)
+        return SpecLock.from_seed(spec if spec in LOOKS else DEFAULT_LOOK)
     raise TypeError(f"resolve_spec 不支持 {type(spec)}")
-
-
-# 各 seed 主题的默认字阶（editorial 用更大的衬线巨号）
-_SEED_SCALES = {
-    "editorial": TypeScale(ratio=1.6, display=88, h1=53, h2=32, body=20, caption=15, micro=12),
-    "aurora":    TypeScale(ratio=1.5, display=80, h1=48, h2=32, body=22, caption=15, micro=12),
-    "ember":     TypeScale(ratio=1.5, display=80, h1=48, h2=32, body=22, caption=15, micro=12),
-}
 
 
 def expand_palette(minimal: dict[str, str]) -> dict[str, str]:

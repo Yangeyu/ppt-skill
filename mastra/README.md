@@ -4,15 +4,17 @@ ppt-tool 的 **Mastra** 模块（TypeScript）。用 [Mastra](https://mastra.ai/
 
 ## 为什么有这个模块
 
-v0.3 七段管线里的**美学评论官（识图）**此前因 DashScope 账号无 `qwen-vl-*` 权限一直降级跑不起来。qwen3.7-plus 多模态补上了这块，于是把 AI 编排层用 Mastra 落成一个独立 TS 工程。
+引擎本体**零模型**(所有智能在 agent 侧),所以需要一个真实的外部 agent 消费者
+来验证整条链路。这个 TS 工程就是那个消费者:deckGenerator 走 skill 同款快路径
+(契约直出 IR + 五重机器复核回喂),visionCritic 提供引擎里没有的识图美学评审
+(读 `cli --render` 的 LibreOffice 真渲染)。
 
 ## Agents
 
-| id | 作用 | 管线阶段 | 输入 |
-|---|---|---|---|
-| `visionCritic` | 识图美学评论官，读页面截图打分（hierarchy/balance/design/boldness/fit）+ 改进建议 | ⑥ | 图片 + 意图 |
-| `artDirector` | 艺术总监，为主题现场生成设计语言（配色/字阶/字体/母题/图像处理） | ① | 主题文本 |
-| `deckGenerator` | Deck 生成官：素材原文 + 生成契约 → 整份 Deck IR；契约由驱动运行时调 `cli --contract <look>` 现场获取（单一来源），复核回路 = `cli --check-only`（IR 校验 + 事实评论官）回喂自修 | ④ | 素材 + 契约 |
+| id | 作用 | 输入 |
+|---|---|---|
+| `deckGenerator` | Deck 生成官：素材原文 + 生成契约 → 整份 Deck IR；契约由驱动运行时调 `cli --contract <look>` 现场获取（单一来源），复核回路 = `cli --check-only`（IR 校验 + 事实/密度评论官）回喂自修 | 素材 + 契约 |
+| `visionCritic` | 识图美学评论官，读页面截图打分（hierarchy/balance/design/boldness/fit）+ 改进建议（`--vision` 选装） | 图片 + 意图 |
 
 评分维度对齐 `../docs/QUALITY.md` 页面层 rubric。
 
@@ -55,7 +57,8 @@ mastra/
       index.ts              Mastra 实例（注册 agents，pnpm dev 入口）
       config.ts             QWEN_MODEL 模型常量
       agents/
+        deck-generator.ts   Deck 生成官（人设;契约由驱动运行时注入）
         vision-critic.ts    识图美学评论官（多模态）
-        art-director.ts     艺术总监
+    generate.ts             e2e 驱动（pnpm generate;快路径默认,--staged/--vision 选装）
     vision.ts               识图 CLI（本地图片 → base64 → 识图 → 评分卡）
 ```

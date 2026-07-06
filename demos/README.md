@@ -6,7 +6,7 @@
 三个生成入口共用同一约定(`ppt_engine/outdir.py`):
 - demos 脚本 → `out/<slug>/`(见下表)
 - `python -m ppt_engine.cli`(JSON bridge,mastra 用)——`--out` 缺省 → `out/<deck标题>/`
-- MCP `generate_deck` —— `out_path` 缺省 → `out/<topic>/`
+- MCP `build_deck` —— `out_path` 缺省 → `out/<deck标题>/`
 
 从仓库根运行(脚本自带 sys.path 引导,任意 cwd 均可):
 
@@ -17,7 +17,6 @@
 .venv/bin/python demos/demo_isdin_morandi.py          # → out/isdin_morandi/
 .venv/bin/python demos/demo_beauty_riso.py            # → out/beauty_riso/
 .venv/bin/python demos/demo.py                        # → out/growth_review/
-.venv/bin/python demos/demo_v03.py "主题" [页数]      # → out/v03_freedom/(freedom 全管线)
 
 # agent 端到端(正式入口是 mastra:cd mastra && pnpm generate ../demos/data/isdin_report_full.md crimson 15)
 # 本 Python 版为无 Node 环境的冒烟件;两者共用同一契约(cli --contract)与复核回路
@@ -34,7 +33,6 @@
 | demo_isdin_morandi.py | morandi | 同上内容的莫兰迪工作汇报版 |
 | demo_beauty_riso.py | riso | 上海美妆 2026 趋势(14 页) |
 | demo.py | riso | 企业增长复盘(v0.2 时代 A 层案例) |
-| demo_v03.py | freedom | 主题→现场生成设计语言→双轨(需 LLM key,无 key 降级 seed) |
 | agent_generate.py | crimson | **真 agent e2e**:素材 md(`demos/data/isdin_report*.md`)→ LLM 自产 IR → 校验回喂 → 引擎;原始 IR 存 `out/<名>_<look>_agent/agent_deck.json` 供审计 |
 
 注意:hero 页含 t2i(DashScope qwen-image-2.0),同 prompt 构图有波动;
