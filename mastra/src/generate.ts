@@ -10,7 +10,11 @@
  * 所有审核由 `cli --check-only --stage ...` 机器执行(数字溯源/证据覆盖/密度/页数硬控)。
  * 阶段产物(factsheet/outline/agent_deck.json)全部落盘供审计。
  *
- * 用法: pnpm generate ../demos/data/isdin_report_full.md [look=crimson] [页数=15] [--no-vision]
+ * 用法: pnpm generate <素材.md> [look=crimson] [页数=15] [--staged] [--vision] [--vision-fix]
+ *   默认 = 快路径:deck 契约直出 + 三重复核回喂(实测 ~3.5 分钟,质量与三段流持平)。
+ *   --staged     三段流(事实清单→大纲→落地):素材长且无结构时选用
+ *   --vision     生成后 visionCritic 逐页评分出报告(看 LibreOffice 真渲染)
+ *   --vision-fix 实验性:低分页自动回喂修订一轮
  */
 import { spawnSync } from "node:child_process";
 import { mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
@@ -89,11 +93,19 @@ async function stageLoop(label: string, ask: string, maxRepair: number,
 }
 
 async function main() {
-  const srcPath = resolve(process.cwd(), process.argv[2] ?? "../demos/data/isdin_report_full.md");
-  const look = process.argv[3] ?? "crimson";
-  const nSlides = Number(process.argv[4] ?? 15);
-  const withVision = !process.argv.includes("--no-vision");
+  const flags = new Set(process.argv.slice(2).filter((a) => a.startsWith("--")));
+  const pos = process.argv.slice(2).filter((a) => !a.startsWith("--"));
+  const srcPath = resolve(process.cwd(), pos[0] ?? "../demos/data/isdin_report_full.md");
+  const look = pos[1] ?? "crimson";
+  // 页数由素材信息量派生(覆盖充分优先),显式传参才作为用户约束
+  const nSlidesArg = pos[2] ? Number(pos[2]) : null;
+  let nSlides = nSlidesArg ?? 0;
+  const staged = flags.has("--staged");     // 三段流:选装,长/乱素材才值得
+  const withVision = flags.has("--vision"); // 视觉评审:选装,出报告
+  const visionFix = flags.has("--vision-fix"); // 低分页自动修订:实验性
   const source = readFileSync(srcPath, "utf-8");
+  const t0 = Date.now();
+  const lap = () => `${((Date.now() - t0) / 1000).toFixed(0)}s`;
 
   const stem = basename(srcPath).replace(/\.[^.]+$/, "");
   const dest = resolve(ROOT, "out", `${stem}_${look}_mastra`);
@@ -101,40 +113,62 @@ async function main() {
   const save = (name: string, obj: unknown) =>
     writeFileSync(resolve(dest, name), JSON.stringify(obj, null, 1), "utf-8");
 
-  // ① 事实清单:素材 → 结构化 facts(逐字溯源)
-  const factsheet = await stageLoop(
-    "事实清单", `${contractOf("factsheet", look, nSlides)}\n\n素材:\n\n${source}`, 2,
-    (p) => problemsOf(JSON.parse(
-      cli(["--check-only", "--stage", "factsheet", "--source", srcPath], JSON.stringify(p)).stdout)));
-  save("factsheet.json", factsheet);
-  console.error(`  ✓ ${factsheet.facts.length} 条事实`);
-
-  // ② 叙事大纲:先组织后填格(版式路由/证据分配/页数硬控在此收敛)
-  const fsPath = resolve(dest, "factsheet.json");
-  const outline = await stageLoop(
-    "叙事大纲",
-    `${contractOf("outline", look, nSlides)}\n\n事实清单:\n${JSON.stringify(factsheet)}\n\n素材原文(供理解上下文):\n\n${source}`,
-    3,
-    (p) => problemsOf(JSON.parse(
-      cli(["--check-only", "--stage", "outline", "--look", look, "--slides", String(nSlides),
-           "--factsheet", fsPath], JSON.stringify(p)).stdout)));
-  save("outline.json", outline);
-  console.error(`  ✓ ${outline.slides.length} 页大纲 · 路由 ${outline.slides.map((s: any) => s.kind).join(",")}`);
-
-  // ③ 逐页落地成 Deck IR(校验+事实+密度三重复核)
   const deckCheck = (p: any) => {
     p.theme = look;
     return problemsOf(JSON.parse(
-      cli(["--check-only", "--source", srcPath], JSON.stringify(p)).stdout));
+      cli(["--check-only", "--source", srcPath, "--slides", String(nSlides)],
+          JSON.stringify(p)).stdout));
   };
-  let deck = await stageLoop(
-    "Deck IR",
-    `${contractOf("deck", look, nSlides)}\n\n已批准的叙事大纲(逐页落地,不得改动版式路由与论点;` +
-    `thesis 是该页标题的底稿,fact_ids 指向要用的证据):\n${JSON.stringify(outline)}\n\n` +
-    `事实清单:\n${JSON.stringify(factsheet)}\n\n素材原文(数字逐字以此为准):\n\n${source}`,
-    3, deckCheck);
+
+  // 快路径(默认):deck 契约 + 素材直出 IR,三重复核回喂。
+  // 实测同素材下与三段流质量持平且格式更稳(prompt 小),耗时 1/4。
+  // 未显式传页数时按素材体量估:中文约 450 字符/页(与 stages.recommend_pages 同量级)
+  if (!nSlides) nSlides = Math.min(36, Math.max(12, Math.round(source.length / 450)));
+  let deckAsk =
+    `${contractOf("deck", look, nSlides)}\n\n素材如下,请组织成约 ${nSlides} 页的 deck` +
+    `(信息量撑得起就多分页,一页一论点,不要为凑短挤压证据),` +
+    `theme 必须为 "${look}"。只输出 Deck IR 的 JSON:\n\n${source}`;
+  let outline: any = null;
+
+  if (staged) {
+    // 三段流(选装):素材长且无结构时,先抽事实、再定大纲,组织问题在填格前收敛
+    const factsheet = await stageLoop(
+      "事实清单", `${contractOf("factsheet", look, nSlides)}\n\n素材:\n\n${source}`, 2,
+      (p) => problemsOf(JSON.parse(
+        cli(["--check-only", "--stage", "factsheet", "--source", srcPath], JSON.stringify(p)).stdout)));
+    save("factsheet.json", factsheet);
+    // 页数以事实清单为准重估(引擎的 recommend_pages,单一来源)
+    const fsRep = JSON.parse(cli(
+      ["--check-only", "--stage", "factsheet", "--source", srcPath],
+      JSON.stringify(factsheet)).stdout);
+    if (!nSlidesArg && fsRep.recommended_pages) nSlides = fsRep.recommended_pages;
+    console.error(`  ✓ ${factsheet.facts.length} 条事实 · 目标 ${nSlides} 页 · ${lap()}`);
+
+    const fsPath = resolve(dest, "factsheet.json");
+    outline = await stageLoop(
+      "叙事大纲",
+      `${contractOf("outline", look, nSlides)}\n\n事实清单:\n${JSON.stringify(factsheet)}`,
+      3,
+      (p) => problemsOf(JSON.parse(
+        cli(["--check-only", "--stage", "outline", "--look", look, "--slides", String(nSlides),
+             "--factsheet", fsPath], JSON.stringify(p)).stdout)));
+    save("outline.json", outline);
+    console.error(`  ✓ ${outline.slides.length} 页大纲 · ${lap()}`);
+
+    // 落地段 prompt 保持精简(素材全文不再重复塞入——数字以事实清单 quote 为准),
+    // 格式提醒放在末尾(长 prompt 里放开头会被淹没,是实测过的格式回归来源)
+    deckAsk =
+      `${contractOf("deck", look, nSlides)}\n\n已批准的叙事大纲(逐页落地,不得改动版式路由与论点;` +
+      `thesis 是标题底稿,fact_ids 指向证据):\n${JSON.stringify(outline)}\n\n` +
+      `事实清单(数字逐字取自 quote/value):\n${JSON.stringify(factsheet)}\n\n` +
+      `再次强调输出格式:{"meta":{"title":"..."},"theme":"${look}",` +
+      `"slides":[{"data":{"kind":"...", ...}}, ...]}——每页内容都包在 "data" 里。`;
+  }
+
+  let deck = await stageLoop("Deck IR", deckAsk, 3, deckCheck);
   deck.theme = look;
   save("agent_deck.json", deck);
+  console.error(`  ✓ IR 就绪 · ${lap()}`);
 
   // build(附 LibreOffice 真渲染,供视觉评审——浏览器截图不含原生图表/hero 图)
   const outPptx = resolve(dest, `${stem}_${look}_mastra.pptx`);
@@ -167,7 +201,7 @@ async function main() {
     const reviews: any[] = [];
     const reviewOne = async (i: number, f: string) => {
       const img = `data:image/png;base64,${readFileSync(resolve(shotsDir, f)).toString("base64")}`;
-      const intent = outline.slides[i]?.thesis ?? "";
+      const intent = outline?.slides?.[i]?.thesis ?? deck.slides[i]?.data?.title ?? "";
       try {
         const res = await visionCritic.generate([{ role: "user", content: [
           { type: "image", image: img, mimeType: "image/png" },
@@ -184,6 +218,7 @@ async function main() {
     for (let b = 0; b < shots.length; b += 5)          // 5 页一批并行,避免限流
       await Promise.all(shots.slice(b, b + 5).map((f, j) => reviewOne(b + j, f)));
     save("vision_reviews.json", reviews.filter(Boolean));
+    if (!visionFix) weak.length = 0;                    // 默认只出报告,不自动修订
     const avg = reviews.length
       ? (reviews.reduce((a, r) => a + (r.hierarchy + r.balance + r.design + r.boldness + r.fit) / 5, 0) / reviews.length).toFixed(2)
       : "n/a";

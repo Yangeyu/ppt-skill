@@ -94,9 +94,15 @@ class OutlinePlan(BaseModel):
     slides: list[OutlineSlide] = Field(min_length=4, max_length=30)
 
 
-# 大纲页数硬控:偏离目标超过 max(2, 20%) 即退回
 def _page_tolerance(n_target: int) -> int:
     return max(2, round(n_target * 0.2))
+
+
+def recommend_pages(n_facts: int) -> int:
+    """按素材信息量推荐页数:证据页约 3~4 条事实/页 + 结构页(封面/目录/章节幕/收尾)。
+    页数应由素材派生,而非调用方拍脑袋——目标是覆盖充分,不是把报告压进定长模板。"""
+    evidence = max(4, round(n_facts / 3.5))
+    return min(40, max(10, evidence + 6))
 
 
 def outline_contract(look_id: str, n_slides: int) -> str:
@@ -111,7 +117,8 @@ def outline_contract(look_id: str, n_slides: int) -> str:
 
 规则(机器审核,违反退回):
 1. kind 只能取: {kinds}
-2. 页数 = {n_slides}±{_page_tolerance(n_slides)} 页(硬控);
+2. 页数 ≥{n_slides - _page_tolerance(n_slides)} 页(下限硬:不许为凑短把证据挤压/丢弃),
+   上限 {round(n_slides * 1.5)} 页——素材信息量撑得起就多分页,一页一论点;
 3. 除 hero/cover/toc/section/quote/closing 外,每页必须引用 ≥1 个 fact_id;
    证据要摊开用——素材利用率低(大量事实一页未用)会被退回;
 4. thesis 决定成稿标题的质量:内容页写成判断句,不是话题名;
@@ -132,10 +139,17 @@ def check_outline(outline: dict, look_id: str, n_slides: int,
     kinds_ok = set(available_kinds(look_id))
     slides = outline.get("slides", [])
 
+    # 页数校验是不对称的:下限硬(少于目标=砍证据,退回),上限宽(为覆盖充分
+    # 可超到 1.5 倍,再往上视为注水)。
     tol = _page_tolerance(n_slides)
-    if abs(len(slides) - n_slides) > tol:
+    if len(slides) < n_slides - tol:
         issues.append({"type": "page-count",
-                       "detail": f"共 {len(slides)} 页,目标 {n_slides}±{tol}——增删页数"})
+                       "detail": f"仅 {len(slides)} 页,低于目标 {n_slides}-{tol}——"
+                                 "不要压缩证据,把挤在一页的论点拆开"})
+    elif len(slides) > round(n_slides * 1.5):
+        issues.append({"type": "page-count",
+                       "detail": f"共 {len(slides)} 页,超过 {round(n_slides * 1.5)}——"
+                                 "合并稀薄页,删无证据支撑的页"})
 
     known_ids = {f.get("id") for f in (factsheet or {}).get("facts", [])}
     used_ids: set[str] = set()

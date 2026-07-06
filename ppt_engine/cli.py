@@ -45,6 +45,27 @@ def _emit(obj: dict) -> None:
     sys.stdout.flush()
 
 
+def _normalize_deck(payload):
+    """输入宽容:模型偶发漏掉 "data" 包裹(把 {"kind":...} 直接当 slide)。
+    纯格式问题代码修掉,不值得花一轮模型修复往返。"""
+    if isinstance(payload, dict) and isinstance(payload.get("slides"), list):
+        payload["slides"] = [
+            {"data": s} if isinstance(s, dict) and "data" not in s and "kind" in s else s
+            for s in payload["slides"]
+        ]
+        for s in payload["slides"]:
+            d = s.get("data") if isinstance(s, dict) else None
+            if not isinstance(d, dict):
+                continue
+            # 数字型的排版字段(页码芯片/章节号)容错为字符串
+            if isinstance(d.get("number"), (int, float)):
+                d["number"] = f"{int(d['number']):02d}"
+            for it in d.get("items", []) if isinstance(d.get("items"), list) else []:
+                if isinstance(it, dict) and isinstance(it.get("pages"), (int, float)):
+                    it["pages"] = f"P{int(it['pages']):02d}"
+    return payload
+
+
 def describe(look_id: str) -> int:
     """Emit a look's generator-facing contract: the single source generators
     (mastra & co.) assemble prompts and normalization rules from."""
@@ -73,7 +94,8 @@ def main(argv=None) -> int:
     ap.add_argument("--no-embed", action="store_true", help="skip font subsetting/embed")
     ap.add_argument("--describe", metavar="LOOK", help="print look metadata as JSON and exit")
     ap.add_argument("--contract", metavar="LOOK", help="print the generation contract (plain text) and exit")
-    ap.add_argument("--slides", type=int, default=14, help="target page count hint for --contract")
+    ap.add_argument("--slides", type=int, default=None,
+                    help="target page count: hint for --contract; coverage floor for deck checks")
     ap.add_argument("--source", help="path to source material; enables the facts critic")
     ap.add_argument("--check-only", action="store_true",
                     help="validate IR + facts/density critics only, skip layout/build")
@@ -94,12 +116,13 @@ def main(argv=None) -> int:
             _emit({"ok": False, "stage": "contract",
                    "error": f"unknown look '{args.contract}' (have: {', '.join(LOOKS)})"})
             return 5
+        n = args.slides or 14
         if args.stage == "factsheet":
             print(FACTSHEET_CONTRACT)
         elif args.stage == "outline":
-            print(outline_contract(args.contract, args.slides))
+            print(outline_contract(args.contract, n))
         else:
-            print(render_contract(args.contract, args.slides))
+            print(render_contract(args.contract, n))
         return 0
 
     if args.describe:
@@ -127,13 +150,19 @@ def main(argv=None) -> int:
                 _emit({"ok": False, "stage": "check", "error": "--stage factsheet 需要 --source"})
                 return 2
             issues = check_factsheet(payload, Path(args.source).read_text("utf-8"))
+            from .stages import recommend_pages
+            _emit({"ok": True, "stage": "check-factsheet", "issues": issues,
+                   "recommended_pages": recommend_pages(len(payload.get("facts", [])))})
+            _log(f"✓ check factsheet · {len(issues)} issue(s)")
+            return 0
         else:
             fs = json.loads(Path(args.factsheet).read_text("utf-8")) if args.factsheet else None
-            issues = check_outline(payload, args.look or "", args.slides, factsheet=fs)
+            issues = check_outline(payload, args.look or "", args.slides or 14, factsheet=fs)
         _log(f"✓ check {args.stage} · {len(issues)} issue(s)")
         _emit({"ok": True, "stage": f"check-{args.stage}", "issues": issues})
         return 0
 
+    payload = _normalize_deck(payload)
     try:
         deck = Deck.model_validate(payload)
     except ValidationError as e:
@@ -152,6 +181,14 @@ def main(argv=None) -> int:
 
     from .critic.density import check_density
     density_issues = check_density(payload, args.look or deck.theme)
+    # 覆盖率页数下限(与 stages.check_outline 同规则):显式传了 --slides 才启用
+    if args.slides:
+        tol = max(2, round(args.slides * 0.2))
+        if len(deck.slides) < args.slides - tol:
+            density_issues.append({
+                "slide": 0, "type": "page-count",
+                "detail": f"仅 {len(deck.slides)} 页,低于目标 {args.slides}-{tol}——"
+                          "不要压缩证据:把挤在一页的论点按'一页一论点'拆开,补齐素材中未用的事实"})
 
     if args.check_only:                   # 廉价修复档:不起浏览器,秒级往返
         result = {"ok": True, "stage": "check", "kinds": [s.kind for s in deck.slides],

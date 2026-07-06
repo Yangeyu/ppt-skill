@@ -17,9 +17,13 @@ v0.3 七段管线里的**美学评论官（识图）**此前因 DashScope 账号
 评分维度对齐 `../docs/QUALITY.md` 页面层 rubric。
 
 ```bash
-# 真 agent e2e:素材 → deckGenerator 自产 IR → 复核自修 → 原生 pptx
-pnpm generate ../demos/data/isdin_report_full.md crimson 15
-# 产物: ../out/<素材名>_crimson_mastra/(agent_deck.json 审计 + pptx + preview/)
+# 真 agent e2e:素材 → deckGenerator 自产 IR → 五重机器复核自修 → 原生 pptx
+pnpm generate ../demos/data/isdin_report_full.md crimson        # 页数按素材自动推荐
+pnpm generate <素材.md> <look> <页数>                            # 显式页数(下限硬控)
+#   --staged      三段流(事实清单→大纲→落地):长且无结构的素材才值得
+#   --vision      生成后 visionCritic 逐页评分出报告(看 LibreOffice 真渲染)
+#   --vision-fix  实验性:低分页自动回喂修订
+# 产物: ../out/<素材名>_<look>_mastra/(agent_deck.json 审计 + pptx + preview/ + rendered/)
 ```
 
 ## 用法

@@ -85,6 +85,8 @@ class Engine:
         re-ink post-pass; else source image re-inked; else procedural fallback."""
         out = str(asset_dir / f"hero_{idx}.png")
         src = getattr(slide.data, "src", "")
+        if src and not Path(src).exists():   # 模型偶发往 src 填废值——忽略,走 prompt/兜底
+            src = ""
         prompt = getattr(slide.data, "prompt", "")
         if prompt and not src:
             src = genimage.generate(prompt, str(asset_dir / f"hero_{idx}_raw.png"),
