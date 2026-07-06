@@ -105,6 +105,13 @@ def recommend_pages(n_facts: int) -> int:
     return min(40, max(10, evidence + 6))
 
 
+def recommend_pages_from_source(text: str) -> int:
+    """快路径版页数推荐:没有事实清单时按素材体量估,约 450 个中文字符/页。
+    这是全工程唯一的体量启发式实现——SKILL.md 与外部驱动(mastra 等)都应
+    经 cli --recommend-pages 消费,不要各自复制这个除数。"""
+    return min(36, max(12, round(len(text) / 450)))
+
+
 def outline_contract(look_id: str, n_slides: int) -> str:
     kinds = " ".join(available_kinds(look_id))
     g = look_guidance(look_id)
@@ -174,9 +181,9 @@ def check_outline(outline: dict, look_id: str, n_slides: int,
         issues.append({"type": "too-many-sections",
                        "detail": f"section 共 {n_sections} 页,上限 3"})
 
-    # look 密度配额(与 critic/density.py 的档位一致)
-    from .critic.density import PROFILES
-    quota = PROFILES.get(look_id, {}).get("exhibit_min", 0)
+    # look 密度配额(档位声明在 look 包,经 critic/density 消费)
+    from .critic.density import density_profile
+    quota = density_profile(look_id).get("exhibit_min", 0)
     n_exhibit = sum(1 for s in slides if s.get("kind") == "exhibit")
     if quota and n_exhibit < quota:
         issues.append({"type": "exhibit-quota",

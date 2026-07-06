@@ -18,7 +18,7 @@ SPEC = SpecLock(
     colors={
         "bg-content": "#FBF8F1",    # 暖纸（源模板母版底 #FDFBF7 的略暖版）
         "surface": "#F2EDE3",       # 浅暖卡底
-        "bg": "#767D8B", "bg-2": "#6A7180",   # 深灰蓝（收尾/深色卡）
+        "bg": "#6A7180", "bg-2": "#5F6775",   # 深灰蓝（收尾/深色卡;on-dark 对比 ≥4.5）
         "ink": "#5B6170",           # 正文深灰蓝（标题灰蓝的可读加深档）
         "muted": "#9CA1AB",         # 辅助文字
         "hairline": "#E2DCD0",      # 暖发丝线
@@ -66,4 +66,9 @@ LOOK = Look(
     image_style_suffix=STYLE_SUFFIX,
     image_postprocess=morandi_ify,
     image_fallback=make_hero,
+    pick_when="工作汇报/项目进展/对上沟通",
+    density={                       # 汇报版:数字页与格状页不许太薄
+        "kpi_stats_min": 3,
+        "icon_grid_min": 4,
+    },
 )

@@ -16,7 +16,8 @@ Usage:
   python3 -m ppt_engine.cli --deck deck.json --source material.md [--check-only]
       # --source: 生成后追加事实评论官(数字溯源/闭合槽位)结果 fact_issues
       # --check-only: 只做 IR 校验+事实复核不排版——给 agent 修复回路用的廉价档
-  python3 -m ppt_engine.cli --describe riso   # (旧)seed 主题元数据
+  python3 -m ppt_engine.cli --looks                              # look 选型菜单(JSON)
+  python3 -m ppt_engine.cli --recommend-pages --source material.md   # 按素材量推荐页数
 
 --out 缺省时按统一约定落盘:out/<deck标题slug>/<slug>.pptx + preview/ 截图。
 """
@@ -66,33 +67,16 @@ def _normalize_deck(payload):
     return payload
 
 
-def describe(look_id: str) -> int:
-    """Emit a look's generator-facing contract: the single source generators
-    (mastra & co.) assemble prompts and normalization rules from."""
-    from .theme import THEMES
-    theme = THEMES.get(look_id)
-    if theme is None:
-        _emit({"ok": False, "stage": "describe",
-               "error": f"unknown look '{look_id}' (have: {', '.join(THEMES)})"})
-        return 5
-    _emit({
-        "ok": True,
-        "id": theme.id,
-        "name": theme.name,
-        "icons": sorted(theme.icons),
-        "constraints": theme.constraints(),
-        "agent_instructions": theme.agent_instructions(),
-    })
-    return 0
-
-
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(prog="ppt_engine.cli")
     ap.add_argument("--deck", help="path to Deck JSON (default: read stdin)")
     ap.add_argument("--out", help="output .pptx path (default: out/<title-slug>/<slug>.pptx)")
     ap.add_argument("--shots", default=None, help="dir for per-slide browser preview PNGs")
     ap.add_argument("--no-embed", action="store_true", help="skip font subsetting/embed")
-    ap.add_argument("--describe", metavar="LOOK", help="print look metadata as JSON and exit")
+    ap.add_argument("--looks", action="store_true",
+                    help="list available looks (id/name/pick_when) as JSON and exit")
+    ap.add_argument("--recommend-pages", action="store_true",
+                    help="recommend a page count from --source size (single heuristic home)")
     ap.add_argument("--contract", metavar="LOOK", help="print the generation contract (plain text) and exit")
     ap.add_argument("--slides", type=int, default=None,
                     help="target page count: hint for --contract; coverage floor for deck checks")
@@ -107,6 +91,20 @@ def main(argv=None) -> int:
                     help="also rasterize the real pptx via LibreOffice (vision review channel: "
                          "browser shots miss native charts/hero art)")
     args = ap.parse_args(argv)
+
+    if args.looks:
+        from .looks import list_looks
+        _emit({"ok": True, "looks": list_looks()})
+        return 0
+
+    if args.recommend_pages:
+        if not args.source:
+            _emit({"ok": False, "stage": "recommend-pages", "error": "--recommend-pages 需要 --source"})
+            return 2
+        from .stages import recommend_pages_from_source
+        text = Path(args.source).read_text("utf-8")
+        _emit({"ok": True, "recommended_pages": recommend_pages_from_source(text)})
+        return 0
 
     if args.contract:
         from .contract import render_contract
@@ -124,9 +122,6 @@ def main(argv=None) -> int:
         else:
             print(render_contract(args.contract, n))
         return 0
-
-    if args.describe:
-        return describe(args.describe)
 
     raw = Path(args.deck).read_text("utf-8") if args.deck else sys.stdin.read()
     try:

@@ -122,8 +122,10 @@ async function main() {
 
   // 快路径(默认):deck 契约 + 素材直出 IR,三重复核回喂。
   // 实测同素材下与三段流质量持平且格式更稳(prompt 小),耗时 1/4。
-  // 未显式传页数时按素材体量估:中文约 450 字符/页(与 stages.recommend_pages 同量级)
-  if (!nSlides) nSlides = Math.min(36, Math.max(12, Math.round(source.length / 450)));
+  // 页数启发式只有 stages.py 一处实现,这里经 cli 消费,不复制除数
+  if (!nSlides)
+    nSlides = JSON.parse(
+      cli(["--recommend-pages", "--source", srcPath]).stdout).recommended_pages;
   let deckAsk =
     `${contractOf("deck", look, nSlides)}\n\n素材如下,请组织成约 ${nSlides} 页的 deck` +
     `(信息量撑得起就多分页,一页一论点,不要为凑短挤压证据),` +

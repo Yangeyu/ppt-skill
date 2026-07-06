@@ -14,7 +14,7 @@ _shared/ 放跨 look 公共原型（创作轨 custom.html.j2 等），无 __init
 LOOK 常量，零引擎改动。设计规格文档随包放（spec.md，frontmatter 同
 ppt-master design_spec）。"""
 from __future__ import annotations
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from importlib import import_module
 from pathlib import Path
 from typing import Callable
@@ -28,6 +28,9 @@ class Look:
     image_style_suffix: str = ""        # t2i 风格纪律，引擎拼在内容 prompt 之后
     image_postprocess: Callable | None = None   # (src_png, spec, out_png) 再上墨
     image_fallback: Callable | None = None      # (art, spec, out_png) 离线兜底
+    pick_when: str = ""                 # 选型指引：什么内容气质该选这个 look
+    density: dict = field(default_factory=dict) # 密度纪律：critic/density 消费的配额
+                                        # （空 = 稀疏是该 look 的风格，不设下限）
 
 
 def _discover() -> dict[str, Look]:
@@ -55,6 +58,7 @@ def get_look(spec) -> Look:
 
 
 def list_looks() -> list[dict]:
-    """发现索引（对应 ppt-master 的 index 文件）——给 planner/MCP/CLI 挑选用。"""
-    return [{"id": k, "name": v.spec.name, "summary": getattr(v.spec, "rationale", "")}
+    """发现索引（对应 ppt-master 的 index 文件）——给 MCP/CLI 挑选用。"""
+    return [{"id": k, "name": v.spec.name, "pick_when": v.pick_when,
+             "summary": getattr(v.spec, "rationale", "")}
             for k, v in LOOKS.items()]

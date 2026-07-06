@@ -64,4 +64,6 @@ LOOK = Look(
     image_style_suffix=STYLE_SUFFIX,
     image_postprocess=swiss_ify,
     image_fallback=make_hero,
+    pick_when="数据年报/极简客观的陈述",
+    # density 留空:留白与克制是 swiss 的哲学,不设密度下限
 )

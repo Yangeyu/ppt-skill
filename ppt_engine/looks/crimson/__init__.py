@@ -65,4 +65,13 @@ LOOK = Look(
     image_style_suffix=STYLE_SUFFIX,
     image_postprocess=crimson_ify,
     image_fallback=make_hero,
+    pick_when="竞品分析/战略报告/证据密集的论证",
+    density={                       # 咨询高密度:证据页信息量下限(critic/density 消费)
+        "exhibit_min": 2,           # 全篇 exhibit 页数下限(每章主论证一页)
+        "kpi_stats_min": 3,         # 或任一 stat 带 delta
+        "bullets_min": 4,
+        "icon_grid_min": 4,
+        "table_rows_min": 3,
+        "so_what_required": True,   # 内容页必须给 so_what/takeaway
+    },
 )

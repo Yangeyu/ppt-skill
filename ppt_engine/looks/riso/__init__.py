@@ -26,7 +26,9 @@ SPEC = SpecLock(
         "primary-2": "#FF5C8A",     # Riso Fluorescent Pink
         "blue": "#1E4DBC", "pink": "#FF5C8A", "mustard": "#E8A02E", "black": "#1A1A1A",
         "on-paper-muted": "#6B6256",
-        "pos": "#1E4DBC", "neg": "#FF5C8A",
+        # neg 是语义色(负增长小字),荧光粉压纸只有 2.56 不可读,用深墨粉档;
+        # 大面积装饰仍走 primary-2/pink 的荧光原色
+        "pos": "#1E4DBC", "neg": "#D93D6E",
         "on-dark": "#F5EFE0", "on-dark-muted": "#BDB8A8", "glow": "#0F0F0F",
     },
     # 角色字体（majorFont/minorFont，≤2 族的评论官纪律管这里）；
@@ -55,4 +57,6 @@ LOOK = Look(
     image_style_suffix=STYLE_SUFFIX,
     image_postprocess=riso_ify,
     image_fallback=make_hero,
+    pick_when="文化/创意/轻松题材,宣言式表达",
+    # density 留空:大字稀疏页与密集页交替是 riso 的风格纪律,不设下限
 )

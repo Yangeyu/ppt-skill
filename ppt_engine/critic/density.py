@@ -2,34 +2,26 @@
 
 背景:实测发现"丰富度"类 prompt 指令(icon_grid 填满/kpi 带 delta/别只剩
 三行字)遵守度不稳定,单模块版式容易产出稀页。与 section≤3 同理,下沉为
-机器规则回喂。档位按 look 声明——crimson(咨询高密度)最严,swiss/riso 的
-哲学本就是稀疏克制,不设下限。"""
+机器规则回喂。档位是 look 知识,声明在各 look 包的 LOOK.density 里
+(crimson 咨询高密度最严;swiss/riso 的哲学本就是稀疏克制,留空=不设下限),
+本评论官只消费注册表,不特判任何 look。"""
 from __future__ import annotations
 
-# look → 密度档位。exhibit_min 同时被 stages.check_outline 用作大纲配额。
-PROFILES: dict[str, dict] = {
-    "crimson": {
-        "exhibit_min": 2,          # 全篇 exhibit 页数下限(每章主论证一页)
-        "kpi_stats_min": 3,        # 或任一 stat 带 delta
-        "bullets_min": 4,
-        "icon_grid_min": 4,
-        "table_rows_min": 3,
-        "so_what_required": True,  # 内容页必须给 so_what/takeaway
-    },
-    "morandi": {
-        "kpi_stats_min": 3,
-        "icon_grid_min": 4,
-    },
-    # swiss / riso:稀疏是风格纪律,不设密度下限
-}
+from ..looks import LOOKS
 
 _CONTENT_KINDS = {"kpi", "bullets", "two_col", "comparison", "process",
                   "icon_grid", "timeline", "table", "pillars"}
 
 
+def density_profile(look_id: str) -> dict:
+    """该 look 的密度档位(exhibit_min 同时被 stages.check_outline 用作大纲配额)。"""
+    look = LOOKS.get(look_id)
+    return look.density if look else {}
+
+
 def check_density(deck: dict, look_id: str | None = None) -> list[dict]:
     """deck 为 Deck IR 的 dict 形态。返回 issues(空 = 达标)。"""
-    prof = PROFILES.get(look_id or deck.get("theme", ""), {})
+    prof = density_profile(look_id or deck.get("theme", ""))
     if not prof:
         return []
     issues = []
