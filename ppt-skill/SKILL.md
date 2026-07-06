@@ -14,8 +14,9 @@ description: 把素材/主题生成高颜值、原生可编辑的 PPT。当用�
   都在契约里,且随代码演进——每次任务第一步都要重新获取。
 - **事实红线**:数字与事实只能逐字引用素材原文;禁止推导(加总/比值/换算);
   素材没给的联系方式/信息留空。引擎的事实评论官会机器复核,违规会被退回。
-- 所有命令在**本 skill 根目录**(本文件所在目录)执行;首次使用需
-  `pip install -e .` + `python -m playwright install chromium`。
+- 所有命令在**本 skill 根目录**(本文件所在目录)执行;目录自带 `.venv/` 时
+  用 `.venv/bin/python` 代替 `python`;首次使用需 `pip install -e .` +
+  `python -m playwright install chromium`。
 
 ## 工作流(默认快路径)
 
