@@ -26,12 +26,17 @@ async function main() {
   const t0 = Date.now();
   let step = 0;
   try {
-    const res = await skillRunner.generate(ask, {
+    // 流式而非单发 .generate():推理模型的长思考期在非流式下没有任何字节回来,
+    // 响应头都不发,撞 headersTimeout(实测 30min 也能挂);流式(SSE)响应头立发、
+    // token 持续滴流,超时只看 bodyTimeout 的"块间隔",与 TTFB 解耦。
+    const stream = await skillRunner.stream(ask, {
       maxSteps: 40,
       onStepFinish: () => { step += 1; },   // 工具调用明细由工具自己打日志
     });
+    let finalText = "";
+    for await (const chunk of stream.textStream) finalText += chunk;
     console.log(`\n—— agent 最终报告(${((Date.now() - t0) / 1000).toFixed(0)}s / ${step} steps)——\n`);
-    console.log(res.text);
+    console.log(finalText);
   } catch (e: any) {
     // 网络抖动常死在收尾的报告轮——此时产物往往已经建完,别让 exit 1 误导
     console.error(`\n✗ agent 会话中断(${step} steps 后):${e?.message ?? e}`);

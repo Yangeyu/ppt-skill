@@ -5,12 +5,16 @@
   <div class="c-body" style="align-items:center;">
     <div class="c-kpis">
       {% for s in d.stats %}
-      <div class="c-kpi">
+      <div data-ppt="rect" class="c-kpi" style="background:{{ colors['bg-content'] }};border:1px solid {{ colors['hairline'] }};">
         <div data-ppt="rect" class="c-kpi-rule" {% if loop.first %}style="background:{{ colors['accent'] }};"{% endif %}></div>
-        <div data-ppt="text" class="c-etag" style="margin-top:10px;">E{{ '%02d' % loop.index }}</div>
-        <div data-ppt="text" class="c-kpi-val" style="margin-top:12px;color:{{ colors['accent'] if loop.first else colors['ink'] }};">{{ s.value }}</div>
+        <div data-ppt="text" class="c-etag" style="margin-top:14px;">E{{ '%02d' % loop.index }}</div>
+        <div data-ppt="text" class="c-kpi-val" style="margin-top:16px;color:{{ colors['accent'] if loop.first else colors['ink'] }};">{{ s.value }}</div>
         <div data-ppt="text" class="c-kpi-label">{{ s.label }}</div>
-        {% if s.delta %}<div data-ppt="text" class="c-kpi-delta">{{ s.delta }}</div>{% endif %}
+        {% if s.delta %}
+        <div data-ppt="text" class="c-kpi-delta" style="color:{{ colors['accent'] if s.delta_dir != 'flat' else colors['muted'] }};">
+          {{- '▲ ' if s.delta_dir == 'up' else ('▼ ' if s.delta_dir == 'down' else '') }}{{ s.delta -}}
+        </div>
+        {% endif %}
       </div>
       {% endfor %}
     </div>

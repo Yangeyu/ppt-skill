@@ -5,16 +5,19 @@
   <div class="c-body">
     <div class="c-pillars">
       {% for p in d.columns %}
-      <div class="c-pillar">
+      <div data-ppt="rect" class="c-pillar" style="background:{{ colors['bg-content'] }};border:1px solid {{ colors['hairline'] }};">
         <div data-ppt="rect" class="c-pillar-rule" {% if loop.first %}style="background:{{ colors['accent'] }};"{% endif %}></div>
+        <div data-ppt="text" class="c-pillar-no" style="color:{{ colors['accent'] }};">{{ '%02d' % loop.index }}</div>
         <div data-ppt="text" class="c-pillar-h">{{ p.heading }}</div>
         {% if p.tag %}<div data-ppt="text" class="c-pillar-tag">{{ p.tag }}</div>{% endif %}
-        {% for pt in p.points %}
-        <div class="c-pillar-row">
-          <div data-ppt="rect" class="c-pillar-mark"></div>
-          <div data-ppt="text" class="c-pillar-text">{{ pt }}</div>
+        <div class="c-pillar-rows">
+          {% for pt in p.points %}
+          <div class="c-pillar-row">
+            <div data-ppt="rect" class="c-pillar-mark"></div>
+            <div data-ppt="text" class="c-pillar-text">{{ pt }}</div>
+          </div>
+          {% endfor %}
         </div>
-        {% endfor %}
       </div>
       {% endfor %}
     </div>

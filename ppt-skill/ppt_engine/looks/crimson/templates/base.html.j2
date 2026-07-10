@@ -93,14 +93,14 @@ html, body { margin: 0; padding: 0; }
           text-transform: uppercase; }
 
 /* ===== kpi ===== */
-.c-kpis { width: 100%; display: flex; gap: 30px; align-items: stretch; }
-.c-kpi { flex: 1 1 0; display: flex; flex-direction: column; }
-.c-kpi-rule { width: 100%; height: 2px; background: var(--ink); }
+.c-kpis { width: 100%; display: flex; gap: 22px; align-items: stretch; }
+.c-kpi { flex: 1 1 0; display: flex; flex-direction: column; min-height: 258px; padding: 0 18px 16px; }
+.c-kpi-rule { width: calc(100% + 36px); margin: 0 -18px; height: 3px; background: var(--ink); }
 .c-kpi-val { font-family: var(--font-display); font-weight: 700; font-size: 54px; line-height: 1;
              letter-spacing: .01em; margin-top: 22px; }
 .c-kpi-label { font-family: var(--font-body); font-weight: 700; font-size: 14.5px; color: var(--ink); margin-top: 14px; }
-.c-kpi-delta { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .08em;
-               text-transform: uppercase; color: var(--muted); margin-top: 8px; }
+.c-kpi-delta { font-family: var(--font-mono); font-size: 11.5px; font-weight: 700; letter-spacing: .08em;
+               text-transform: uppercase; color: var(--muted); margin-top: auto; padding-top: 12px; }
 
 /* ===== table（墨色表头带 + 发丝线 + 隔行浅阶）===== */
 .c-table { width: 100%; height: 100%; display: flex; flex-direction: column; }
@@ -232,15 +232,18 @@ html, body { margin: 0; padding: 0; }
                color: var(--muted); margin-top: 9px; }
 
 /* ===== pillars（栏头证据柱）===== */
-.c-pillars { width: 100%; display: flex; gap: 30px; align-items: stretch; }
-.c-pillar { flex: 1 1 0; display: flex; flex-direction: column; }
-.c-pillar-rule { width: 100%; height: 2px; background: var(--ink); margin-bottom: 14px; }
-.c-pillar-h { font-family: var(--font-display); font-weight: 700; font-size: 19px; }
+.c-pillars { width: 100%; display: flex; gap: 22px; align-items: stretch; }
+.c-pillar { flex: 1 1 0; display: flex; flex-direction: column; padding: 0 20px 18px; }
+.c-pillar-rule { width: calc(100% + 40px); margin: 0 -20px 0; height: 3px; background: var(--ink); }
+.c-pillar-no { font-family: var(--font-mono); font-size: 26px; font-weight: 700; margin-top: 18px; }
+.c-pillar-h { font-family: var(--font-display); font-weight: 700; font-size: 20px; margin-top: 10px; }
 .c-pillar-tag { font-family: var(--font-mono); font-size: 9.5px; letter-spacing: .1em;
                 text-transform: uppercase; color: var(--muted); margin-top: 6px; }
-.c-pillar-row { display: flex; align-items: flex-start; gap: 11px; margin-top: 12px; }
+.c-pillar-rows { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: space-evenly;
+                 margin-top: 10px; }
+.c-pillar-row { display: flex; align-items: flex-start; gap: 11px; }
 .c-pillar-mark { width: 6px; height: 6px; margin-top: 7px; flex: 0 0 auto; background: var(--muted); }
-.c-pillar-text { font-family: var(--font-body); font-size: 13.5px; line-height: 1.45; color: var(--ink); }
+.c-pillar-text { font-family: var(--font-body); font-size: 14px; line-height: 1.5; color: var(--ink); }
 
 /* ===== exhibit（复合证据版面：结论句 + 主图模块 + 侧栏结构条 + 洞察框 + 意义条）===== */
 .cx-title-row { display: flex; flex-wrap: wrap; align-items: baseline; margin-top: 14px; max-width: 1168px; }
@@ -250,24 +253,26 @@ html, body { margin: 0; padding: 0; }
 .cx-mod { position: relative; display: flex; flex-direction: column; min-width: 0; }
 .cx-mod-h { font-family: var(--font-body); font-weight: 700; font-size: 13.5px; color: var(--ink);
             margin: 13px 16px 0; }
-.cx-chart-mod { flex: 1.35 1 0; }
+.cx-chart-mod { flex: 1.15 1 0; }
 .cx-chart-area { flex: 1 1 auto; margin: 8px 14px 10px; min-height: 0; }
 .cx-note-t { font-family: var(--font-mono); font-size: 10.5px; font-weight: 700; color: var(--accent); }
-.cx-side { flex: 1 1 0; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
-.cx-side-mod { flex: 1 1 0; }
+.cx-right { flex: 1 1 0; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.cx-side-mod { flex: 1 1 auto; }
 .cx-bars { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: space-evenly;
            margin: 4px 16px 10px; }
 .cx-bar-row { display: flex; align-items: center; gap: 10px; }
 .cx-bar-label { font-family: var(--font-body); font-size: 11px; color: var(--muted); flex: 0 0 96px; }
 .cx-bar-track { flex: 1 1 auto; height: 14px; position: relative; }
 .cx-bar-note { font-family: var(--font-mono); font-size: 11px; font-weight: 700; flex: 0 0 52px; text-align: right; }
-.cx-insights { flex: 0 0 auto; display: flex; gap: 16px; margin-top: 14px; }
-.cx-ins { flex: 1 1 0; display: flex; flex-direction: column; padding-bottom: 12px; }
-.cx-ins-head { display: flex; align-items: center; gap: 10px; margin: 12px 16px 0; }
+.cx-ins { flex: 1 1 auto; display: flex; flex-direction: column; padding-bottom: 10px; }
+.cx-ins-head { display: flex; align-items: center; gap: 10px; margin: 11px 14px 0; }
 .cx-ins-no { width: 18px; height: 18px; flex: 0 0 auto; display: flex; align-items: center; justify-content: center; }
 .cx-ins-no-t { font-family: var(--font-mono); font-size: 11px; font-weight: 700; color: var(--accent-on); }
 .cx-ins-h { font-family: var(--font-body); font-weight: 700; font-size: 13.5px; color: var(--ink); }
-.cx-ins-p { font-family: var(--font-body); font-size: 12px; line-height: 1.55; color: var(--ink); margin: 8px 16px 0; }
+.cx-ins-p-row { display: flex; align-items: flex-start; gap: 8px; margin: 7px 14px 0; }
+.cx-ins-dot { width: 5px; height: 5px; flex: 0 0 auto; margin-top: 7px; }
+.cx-ins-p-flow { flex: 1 1 auto; min-width: 0; display: flex; flex-wrap: wrap; align-items: baseline; }
+.cx-ins-p { font-family: var(--font-body); font-size: 12px; line-height: 1.55; color: var(--ink); }
 .cx-imp { flex: 0 0 auto; display: flex; align-items: stretch; margin-top: 14px; min-height: 64px; }
 .cx-imp-tab { flex: 0 0 96px; display: flex; align-items: center; justify-content: center; }
 .cx-imp-tab-t { font-family: var(--font-body); font-weight: 700; font-size: 13px; color: var(--accent-on);

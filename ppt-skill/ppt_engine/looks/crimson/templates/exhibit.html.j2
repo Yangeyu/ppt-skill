@@ -1,7 +1,8 @@
 {% extends "base.html.j2" %}
 {% block frame %}
-{# 复合证据版面(对标 CyberPPT 参考页):核心结论两行大标题 + 主图表模块 +
-   侧栏结构条模块 + ①② 编号洞察框 + 底部「对企业的意义」条 + 来源页脚 #}
+{# 复合证据版面(对标 CyberPPT 参考页):核心结论两行大标题 + 左主图表模块(通高)
+   + 右栏(侧栏结构条模块 + ①② 编号洞察框垂直堆叠)+ 底部「对企业的意义」条 +
+   来源页脚。左图右释的阅读回路:图上现象 → 右侧编号解读。 #}
 <div class="c-frame" style="padding:28px 56px 30px;">
   <div class="c-top">
     <div data-ppt="rect" class="c-badge" style="background:{{ colors['accent'] }};">
@@ -29,8 +30,8 @@
       </div>
       {% endif %}
     </div>
-    {% if d.side %}
-    <div class="cx-side">
+    {% if d.side or d.insights %}
+    <div class="cx-right">
       {% for mod in d.side %}
       <div data-ppt="rect" class="cx-mod cx-side-mod" style="background:{{ colors['bg-content'] }};border:1px solid {{ colors['hairline'] }};">
         <div data-ppt="text" class="cx-mod-h">{{ mod.title }}</div>
@@ -48,27 +49,29 @@
         </div>
       </div>
       {% endfor %}
+      {% for box in d.insights %}
+      <div data-ppt="rect" class="cx-ins" style="background:{{ colors['bg-content'] }};border:1px solid {{ colors['hairline'] }};">
+        <div class="cx-ins-head">
+          <div data-ppt="rect" class="cx-ins-no" style="background:{{ colors['accent'] }};">
+            <div data-ppt="text" class="cx-ins-no-t">{{ loop.index }}</div>
+          </div>
+          <div data-ppt="text" class="cx-ins-h">{{ box.title }}</div>
+        </div>
+        {% for pt in box.points %}
+        <div class="cx-ins-p-row">
+          <div data-ppt="rect" data-ppt-deco class="cx-ins-dot" style="background:{{ colors['accent'] }};"></div>
+          <div class="cx-ins-p-flow">
+            {% for seg in pt|marksplit %}
+            <div data-ppt="text" class="cx-ins-p"{% if seg.mark %} style="color:{{ colors['accent'] }};font-weight:700;"{% endif %}>{{ seg.text }}</div>
+            {% endfor %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% endfor %}
     </div>
     {% endif %}
   </div>
-
-  {% if d.insights %}
-  <div class="cx-insights">
-    {% for box in d.insights %}
-    <div data-ppt="rect" class="cx-ins" style="background:{{ colors['bg-content'] }};border:1px solid {{ colors['hairline'] }};">
-      <div class="cx-ins-head">
-        <div data-ppt="rect" class="cx-ins-no" style="background:{{ colors['accent'] }};">
-          <div data-ppt="text" class="cx-ins-no-t">{{ loop.index }}</div>
-        </div>
-        <div data-ppt="text" class="cx-ins-h">{{ box.title }}</div>
-      </div>
-      {% for pt in box.points %}
-      <div data-ppt="text" class="cx-ins-p">{{ pt|marksplit|map(attribute='text')|join('') }}</div>
-      {% endfor %}
-    </div>
-    {% endfor %}
-  </div>
-  {% endif %}
 
   {% if d.implications %}
   <div class="cx-imp">
