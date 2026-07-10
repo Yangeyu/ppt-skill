@@ -7,14 +7,16 @@
   "scripts": {
     "dev": "mastra dev",
     "build": "mastra build",
-    "vision": "tsx src/vision.ts",
-    "generate": "tsx src/generate.ts",
+    "test:e2e": "tsx src/skillgen.ts",
     "skillgen": "tsx src/skillgen.ts",
+    "generate": "tsx src/generate.ts",
+    "vision": "tsx src/vision.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@mastra/core": "latest",
     "@mastra/loggers": "latest",
+    "undici": "^7.28.0",
     "zod": "^3.25.0"
   },
   "devDependencies": {

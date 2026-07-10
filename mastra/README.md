@@ -9,8 +9,13 @@ ppt-tool 的 **Mastra** 模块（TypeScript）。用 [Mastra](https://mastra.ai/
 
 | 形态 | 命令 | 编排者 | 验证对象 |
 |---|---|---|---|
-| **skill 装载** | `pnpm skillgen` | **agent 自主**:SKILL.md 全文进 instructions,agent 只有平台通用工具(`bash`+`write_file`),skill 教的命令原样执行 | **skill 的引导力与可迁移性**(零适配代码;与 Claude Code 装载 ppt-master 同构) |
+| **skill 装载** | `pnpm skillgen`(别名 `pnpm test:e2e`) | **agent 自主**:SKILL.md 全文进 instructions,agent 只有平台通用工具(`bash`+`write_file`),skill 教的命令原样执行 | **skill 的引导力与可迁移性**(零适配代码;与 Claude Code 装载 ppt-master 同构) |
 | **pipeline** | `pnpm generate` | 驱动代码(generate.ts)编排回路,agent 只产 IR | 引擎+契约+评论官(确定性、便宜,适合回归) |
+
+> **e2e 验证以 `skillgen` 为唯一入口:agent 就是测试路口,由它自主跑完整个 PPT 流程。**
+> 验证时不要传页数(页数由 agent 走引擎 `--recommend-pages` 按内容决定),更不要为绕开
+> 环境问题改用 `generate` 或压页数——那会把"skill 自主出片能力"的验证污染成"驱动代码能出片"。
+> `generate` 只用于引擎/契约的确定性回归,它的通过**不能**代表 skill 引导力通过。
 
 ## Agents
 

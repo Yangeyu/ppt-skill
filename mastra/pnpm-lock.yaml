@@ -14,6 +14,9 @@ importers:
       '@mastra/loggers':
         specifier: latest
         version: 1.2.0(@mastra/core@1.49.0(express@5.2.1)(zod@3.25.76))
+      undici:
+        specifier: ^7.28.0
+        version: 7.28.0
       zod:
         specifier: ^3.25.0
         version: 3.25.76
@@ -2221,6 +2224,10 @@ packages:
 
   undici-types@6.21.0:
     resolution: {integrity: sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==}
+
+  undici@7.28.0:
+    resolution: {integrity: sha512-cRZYrTDwWznlnRiPjggAGxZXanty6M8RV1ff8Wm4LWXBp7/IG8v5DnOm74DtUBp9OONpK75YlPnIjQqX0dBDtA==}
+    engines: {node: '>=20.18.1'}
 
   unicorn-magic@0.3.0:
     resolution: {integrity: sha512-+QBBXBCvifc56fsbuxZQ6Sic3wqqc3WWaqxs58gvJrcOuN83HGTCwz3oS5phzU9LthRNE9VrJCFCLUgHeeFnfA==}
@@ -4767,6 +4774,8 @@ snapshots:
   ufo@1.6.4: {}
 
   undici-types@6.21.0: {}
+
+  undici@7.28.0: {}
 
   unicorn-magic@0.3.0: {}
 
