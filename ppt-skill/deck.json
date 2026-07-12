@@ -1,487 +1,469 @@
 {
-  "meta": {
-    "title": "怡思丁双抗防晒竞品分析报告"
+ "meta": {
+  "title": "怡思丁双抗防晒竞品分析"
+ },
+ "theme": "molecule",
+ "slides": [
+  {
+   "data": {
+    "kind": "cover",
+    "eyebrow": "竞品分析报告",
+    "title": "怡思丁双抗防晒竞品分析",
+    "subtitle": "怡思丁双抗防晒2026小红书种草策略",
+    "footer": "2026-07-03 | 内部资料",
+    "prompt": "A woman holding a sunscreen bottle under bright sunlight on a sunny beach with blue sky and ocean in the background, product positioned on the right side of the frame",
+    "src": "out/怡思丁双抗防晒竞品分析/t2i/hero_0_raw.png"
+   }
   },
-  "theme": "crimson",
-  "slides": [
-    {
-      "data": {
-        "kind": "hero",
-        "eyebrow": "竞品分析报告",
-        "title": "怡思丁双抗防晒",
-        "subtitle": "小红书竞品格局与攻防策略 · 2025.01-10",
-        "art": "16:9",
-        "prompt": "A sleek sunscreen product bottle on a sun-drenched Mediterranean terrace, warm golden light casting long shadows, minimalist composition with terracotta tiles and blue sea in the background, documentary photography style",
-        "facts": [
-          {
-            "value": "138篇",
-            "label": "商业笔记数"
-          },
-          {
-            "value": "67.6万",
-            "label": "预估投放金额"
-          },
-          {
-            "value": "7.59万",
-            "label": "互动总量"
-          }
-        ]
-      }
+  {
+   "data": {
+    "kind": "toc",
+    "title": "研究框架",
+    "items": [
+     {
+      "title": "竞品格局与达人结构",
+      "desc": "怡思丁投放规模最小，头部达人缺位是声量天花板",
+      "pages": "3-7"
+     },
+     {
+      "title": "内容打法与传播节奏",
+      "desc": "40°C暴晒实测有记忆点，Q3声量下滑69%",
+      "pages": "8-12"
+     },
+     {
+      "title": "卖点攻防与策略建议",
+      "desc": "抗热老独有差异化但传播力度远弱于竞品",
+      "pages": "13-19"
+     }
+    ]
+   }
+  },
+  {
+   "data": {
+    "kind": "section",
+    "number": "01",
+    "title": "竞品格局与达人结构",
+    "subtitle": "投放规模最小，头部达人缺位"
+   }
+  },
+  {
+   "data": {
+    "kind": "kpi",
+    "eyebrow": "2025年1-10月",
+    "title": "怡思丁投放规模最小，效率偏低",
+    "stats": [
+     {
+      "value": "138",
+      "label": "商业笔记数",
+      "delta_dir": "down"
+     },
+     {
+      "value": "67.6万",
+      "label": "预估投放金额",
+      "delta_dir": "down"
+     },
+     {
+      "value": "32.61%",
+      "label": "爆文率"
+     },
+     {
+      "value": "7.59万",
+      "label": "互动总量",
+      "delta_dir": "down"
+     }
+    ],
+    "so_what": "投放体量仅为竞品1/5至1/7，需扩大投放规模并引入头部达人"
+   }
+  },
+  {
+   "data": {
+    "kind": "chart",
+    "eyebrow": "2025年1-10月",
+    "title": "五品牌商业笔记与投放规模对照",
+    "chart_type": "column",
+    "categories": [
+     "蜜丝婷摇摇乐",
+     "理肤泉",
+     "蜜丝婷小黄帽",
+     "安热沙",
+     "怡思丁"
+    ],
+    "series": [
+     {
+      "name": "商业笔记(篇)",
+      "values": [
+       997,
+       632,
+       581,
+       371,
+       138
+      ]
+     },
+     {
+      "name": "投放金额(万)",
+      "values": [
+       374,
+       553,
+       236,
+       449,
+       67.6
+      ]
+     }
+    ],
+    "takeaway": "怡思丁商业笔记仅138篇，为五品牌中最少，声量规模显著落后"
+   }
+  },
+  {
+   "data": {
+    "kind": "figure",
+    "eyebrow": "怡思丁投放矩阵",
+    "title": "怡思丁腰部+初级双主力，头部零合作",
+    "src": "https://kiwoom.cbndata.com/projects/a27f58ee-3be1-4dba-97c2-2a97c9e64c55/files/0481e6e3-dcf5-3b0d-adbd-cff3222778d4/image118.png",
+    "caption": "千瓜数据平台，怡思丁投放矩阵，2025年1-10月",
+    "so_what": "怡思丁腰部41人贡献51%、初级86人贡献48%，头部达人零合作"
+   }
+  },
+  {
+   "data": {
+    "kind": "comparison",
+    "title": "三种达人分工模式中怡思丁头部缺位",
+    "left": {
+     "heading": "竞品达人模式",
+     "points": [
+      "理肤泉：头部达人贡献30%互动，单篇爆文8.77万",
+      "蜜丝婷：初级365人贡献53%+素人58人贡献14%",
+      "安热沙：腰部172人贡献66%互动，头部背书"
+     ]
     },
-    {
-      "data": {
-        "kind": "toc",
-        "eyebrow": "目录",
-        "title": "报告结构",
-        "items": [
-          {
-            "title": "执行摘要",
-            "desc": "三大维度交叉定位本品竞争位置",
-            "pages": "p3"
-          },
-          {
-            "title": "投放量效与达人结构",
-            "desc": "头部达人缺位锁死声量天花板",
-            "pages": "p4-5"
-          },
-          {
-            "title": "内容打法与场景占位",
-            "desc": "极端实测有记忆点但场景丰富度不足",
-            "pages": "p6-7"
-          },
-          {
-            "title": "卖点攻防与行动建议",
-            "desc": "抗热老差异化需加强传播力度",
-            "pages": "p8-10"
-          }
-        ]
-      }
+    "right": {
+     "heading": "怡思丁达人结构",
+     "points": [
+      "头部达人：0%互动，零合作",
+      "腰部达人：51.14%互动，41人",
+      "初级达人：48.43%互动，86人"
+     ]
     },
-    {
-      "data": {
-        "kind": "exhibit",
-        "eyebrow": "执行摘要",
-        "title": "怡思丁投放体量仅为竞品1/5至1/7,需以**头部达人破圈**、场景深耕、抗热老差异化突围",
-        "chart_title": "五品牌互动总量对比(万)",
-        "chart_type": "column",
-        "categories": [
-          "理肤泉",
-          "蜜丝婷·摇摇乐",
-          "安热沙",
-          "蜜丝婷·小黄帽",
-          "怡思丁"
-        ],
-        "series": [
-          {
-            "name": "互动总量(万)",
-            "values": [
-              105.72,
-              151.75,
-              32.44,
-              65.78,
-              7.59
-            ]
-          }
-        ],
-        "chart_note": "数据口径:2025年1-10月商业笔记互动总量",
-        "side": [
-          {
-            "title": "怡思丁达人层级互动贡献",
-            "bars": [
-              {
-                "label": "腰部达人",
-                "value": 51.14,
-                "note": "51.14%",
-                "em": true
-              },
-              {
-                "label": "初级达人",
-                "value": 48.43,
-                "note": "48.43%",
-                "em": true
-              },
-              {
-                "label": "头部达人",
-                "value": 0,
-                "note": "0%",
-                "em": true
-              }
-            ]
-          }
-        ],
-        "insights": [
-          {
-            "title": "声量天花板受限于头部缺位",
-            "points": [
-              "竞品理肤泉头部达人单篇爆文互动达**8.77万**,怡思丁头部达人为零",
-              "腰部+初级合计贡献99%互动,但体量仅为理肤泉的1/14"
-            ]
-          },
-          {
-            "title": "三种竞品模式已成型",
-            "points": [
-              "理肤泉「头部挑大梁」、蜜丝婷「初级铺量」、安热沙「腰部主力」",
-              "怡思丁「腰部+初级双主力」结构需明确自身分工"
-            ]
-          }
-        ],
-        "implications": [
-          {
-            "icon": "users",
-            "title": "头部达人破圈",
-            "desc": "参照理肤泉模式,以头部达人拉升声量天花板"
-          },
-          {
-            "icon": "target",
-            "title": "极端场景深耕",
-            "desc": "40°C暴晒实测已有验证,补充军训/泛生活场景"
-          },
-          {
-            "icon": "shield",
-            "title": "抗热老差异化",
-            "desc": "双抗差异化独一无二,传播力度需从52篇提升至150+篇"
-          }
-        ],
-        "source": "千瓜数据 2025.01-10;星图数据;尚普咨询"
-      }
+    "so_what": "怡思丁腰部+初级双主力但头部零合作，需引入头部达人突破声量天花板"
+   }
+  },
+  {
+   "data": {
+    "kind": "section",
+    "number": "02",
+    "title": "内容打法与传播节奏",
+    "subtitle": "极端实测有记忆点，Q3声量下滑69%"
+   }
+  },
+  {
+   "data": {
+    "kind": "comparison",
+    "title": "竞品内容场景丰富，怡思丁场景集中度高",
+    "left": {
+     "heading": "竞品内容策略",
+     "points": [
+      "蜜丝婷：旅游攻略+素人开箱双驱动，单篇互动2.46万",
+      "安热沙：深度绑定日本旅游，TOP5中3篇为日本攻略",
+      "理肤泉：社科人文破圈互动8.77万+军训场景"
+     ]
     },
-    {
-      "data": {
-        "kind": "section",
-        "number": "01",
-        "title": "投放量效与达人结构",
-        "subtitle": "Investment Efficiency & KOL Structure"
-      }
+    "right": {
+     "heading": "怡思丁内容策略",
+     "points": [
+      "40°C暴晒实测有记忆点，TOP1互动4689",
+      "防晒类占81.88%，场景集中度高",
+      "军训/泛生活/大促场景体量落后"
+     ]
     },
-    {
-      "data": {
-        "kind": "exhibit",
-        "eyebrow": "投放量效",
-        "title": "头部达人零合作使怡思丁**声量天花板**被锁死——单篇互动上限仅4689",
-        "chart_title": "五品牌预估投放金额对比(万)",
-        "chart_type": "column",
-        "categories": [
-          "理肤泉",
-          "蜜丝婷·摇摇乐",
-          "安热沙",
-          "蜜丝婷·小黄帽",
-          "怡思丁"
-        ],
-        "series": [
-          {
-            "name": "预估投放(万)",
-            "values": [
-              553,
-              374,
-              449,
-              236,
-              67.6
-            ]
-          }
-        ],
-        "chart_note": "怡思丁投放体量仅为竞品1/5至1/7",
-        "side": [
-          {
-            "title": "头部达人互动贡献对比",
-            "bars": [
-              {
-                "label": "理肤泉",
-                "value": 30,
-                "note": "30%"
-              },
-              {
-                "label": "蜜丝婷",
-                "value": 4.19,
-                "note": "4.19%"
-              },
-              {
-                "label": "怡思丁",
-                "value": 0,
-                "note": "0%",
-                "em": true
-              }
-            ]
-          }
-        ],
-        "insights": [
-          {
-            "title": "投放体量差距悬殊",
-            "points": [
-              "怡思丁**138篇**/67.6万投放,体量仅为竞品1/5至1/7",
-              "互动总量7.59万,声量天花板受限于头部达人缺位"
-            ]
-          },
-          {
-            "title": "头部达人缺位是核心瓶颈",
-            "points": [
-              "理肤泉头部达人单篇爆文互动**8.77万**,怡思丁头部达人为零",
-              "怡思丁腰部51%+初级48%双主力结构,无声量拉升杠杆"
-            ]
-          }
-        ],
-        "implications": [
-          {
-            "icon": "users",
-            "title": "引入头部达人",
-            "desc": "以1-2位头部达人制造破圈爆文,目标单篇互动5万+"
-          },
-          {
-            "icon": "trending-up",
-            "title": "腰部达人提效",
-            "desc": "优化腰部达人内容质量,提升单篇互动效率"
-          },
-          {
-            "icon": "shield",
-            "title": "避让铺量模式",
-            "desc": "蜜丝婷初级铺量需365人+58素人,怡思丁体量不适合复制"
-          }
-        ],
-        "source": "千瓜数据 2025.01-10"
-      }
-    },
-    {
-      "data": {
-        "kind": "section",
-        "number": "02",
-        "title": "内容打法与场景占位",
-        "subtitle": "Content Strategy & Scene Positioning"
-      }
-    },
-    {
-      "data": {
-        "kind": "exhibit",
-        "eyebrow": "内容打法",
-        "title": "40°C暴晒实测已验证高效,但**场景丰富度不足**——军训/泛生活体量落后",
-        "chart_title": "视频笔记效率对比(%)",
-        "chart_type": "column",
-        "categories": [
-          "蜜丝婷·摇摇乐",
-          "蜜丝婷·小黄帽",
-          "怡思丁"
-        ],
-        "series": [
-          {
-            "name": "视频数量占比(%)",
-            "values": [
-              35,
-              42,
-              40.58
-            ]
-          },
-          {
-            "name": "视频互动贡献(%)",
-            "values": [
-              75,
-              65,
-              54
-            ]
-          }
-        ],
-        "chart_note": "视频以35-42%数量贡献54-75%互动,效率优势已成品类共识",
-        "side": [
-          {
-            "title": "怡思丁内容分类分布",
-            "bars": [
-              {
-                "label": "防晒",
-                "value": 81.88,
-                "note": "81.88%",
-                "em": true
-              },
-              {
-                "label": "运动",
-                "value": 6.52,
-                "note": "6.52%",
-                "em": true
-              },
-              {
-                "label": "旅游攻略",
-                "value": 1.45,
-                "note": "1.45%",
-                "em": true
-              }
-            ]
-          }
-        ],
-        "insights": [
-          {
-            "title": "极端实测有记忆点但场景单一",
-            "points": [
-              "怡思丁防晒类占**81.88%**,场景集中度显著高于蜜丝婷(防晒68.17%+旅游2.71%+校园2.31%)",
-              "TOP5笔记中极端实测和海外旅游占主导,军训/大促/泛生活场景缺失"
-            ]
-          },
-          {
-            "title": "视频效率优势可放大",
-            "points": [
-              "怡思丁视频占比40.58%贡献**54%**互动,单篇效率高于图文",
-              "蜜丝婷·摇摇乐视频互动贡献达75%,爆款率有提升空间"
-            ]
-          }
-        ],
-        "implications": [
-          {
-            "icon": "target",
-            "title": "深耕极端场景",
-            "desc": "40°C暴晒实测TOP1互动4689,需补充军训/大促场景"
-          },
-          {
-            "icon": "rocket",
-            "title": "提升视频爆款率",
-            "desc": "视频效率优势已验证,在不增加投放量前提下提升互动"
-          },
-          {
-            "icon": "layers",
-            "title": "扩展场景丰富度",
-            "desc": "军训场景TOP笔记4.8万互动,Q3关键增量"
-          }
-        ],
-        "source": "千瓜数据 2025.01-10"
-      }
-    },
-    {
-      "data": {
-        "kind": "section",
-        "number": "03",
-        "title": "卖点攻防与传播节奏",
-        "subtitle": "Selling Point & Communication Rhythm"
-      }
-    },
-    {
-      "data": {
-        "kind": "exhibit",
-        "eyebrow": "卖点攻防",
-        "title": "「双抗/抗热老」有产品事实差异化,但传播力度远弱于竞品——**专研仅52篇**",
-        "chart_title": "科技概念与场景词笔记数对比",
-        "chart_type": "column",
-        "categories": [
-          "蜜丝婷·油皮",
-          "理肤泉·麦色滤",
-          "怡思丁·专研",
-          "蜜丝婷·户外",
-          "怡思丁·户外"
-        ],
-        "series": [
-          {
-            "name": "笔记数",
-            "values": [
-              175,
-              171,
-              52,
-              253,
-              56
-            ]
-          }
-        ],
-        "chart_note": "蜜丝婷·油皮175篇、理肤泉·麦色滤171篇,怡思丁·专研仅52篇",
-        "side": [
-          {
-            "title": "怡思丁话题季度互动(万)",
-            "bars": [
-              {
-                "label": "Q1互动",
-                "value": 3.63,
-                "note": "3.63万",
-                "em": true
-              },
-              {
-                "label": "Q3互动",
-                "value": 1.12,
-                "note": "1.12万",
-                "em": true
-              }
-            ]
-          }
-        ],
-        "insights": [
-          {
-            "title": "科技概念传播力度差距悬殊",
-            "points": [
-              "怡思丁「专研」**52篇**,远少于理肤泉「麦色滤」171篇和蜜丝婷「油皮」175篇",
-              "「双抗=抗光老+抗热老」在竞品中独一无二,但平台表达几乎不可见"
-            ]
-          },
-          {
-            "title": "Q3声量下滑暴露节点短板",
-            "points": [
-              "怡思丁话题Q1互动3.63万达峰后Q3仅**1.12万**(-69%)",
-              "军训/开学季为品类Q3关键增量,怡思丁在该节点布局不足"
-            ]
-          }
-        ],
-        "implications": [
-          {
-            "icon": "shield",
-            "title": "主攻抗热老",
-            "desc": "双抗差异化独一无二,传播力度需从52篇提升至150+篇"
-          },
-          {
-            "icon": "target",
-            "title": "补强军训节点",
-            "desc": "8-9月军训/开学季布局,Q3声量下滑69%需扭转"
-          },
-          {
-            "icon": "zap",
-            "title": "借势品牌资产",
-            "desc": "法网赛事/网球IP与品牌天然关联,需确认IP授权"
-          }
-        ],
-        "source": "千瓜数据 2025.01-10"
-      }
-    },
-    {
-      "data": {
-        "kind": "pillars",
-        "eyebrow": "综合研判",
-        "title": "2026小红书策略聚焦三大主攻方向",
-        "subtitle": "基于投放量效、内容打法、卖点攻防三维度交叉分析",
-        "columns": [
-          {
-            "heading": "投放端",
-            "tag": "头部达人破圈",
-            "points": [
-              "引入1-2位头部达人制造破圈爆文",
-              "目标单篇互动5万+,参照理肤泉模式",
-              "配合腰部达人放大声量"
-            ]
-          },
-          {
-            "heading": "内容端",
-            "tag": "场景丰富度扩展",
-            "points": [
-              "深耕40°C暴晒实测核心记忆点",
-              "补充军训(8-9月)/大促/泛生活场景",
-              "视频形式优先,提升爆款率"
-            ]
-          },
-          {
-            "heading": "卖点端",
-            "tag": "抗热老差异化",
-            "points": [
-              "主攻「双抗=抗光老+抗热老」独一无二定位",
-              "科技概念传播从52篇提升至150+篇",
-              "借势法网赛事/网球IP建立品牌资产线"
-            ]
-          }
-        ],
-        "so_what": "前提条件:头部达人合作费用约5-10万/篇,需预算支持;品牌资产线需确认IP授权",
-        "prompt": "Three strategic pillars illustrated with abstract geometric shapes in deep red and white, minimalist consulting style"
-      }
-    },
-    {
-      "data": {
-        "kind": "quote",
-        "quote": "「双抗=抗光老+抗热老」在竞品中独一无二,但平台表达力度远弱于竞品科技概念。",
-        "attribution": "基于五维度竞品分析综合研判"
-      }
-    },
-    {
-      "data": {
-        "kind": "closing",
-        "title": "谢谢",
-        "subtitle": "怡思丁双抗防晒2026小红书种草策略",
-        "contact": ""
-      }
-    }
-  ]
+    "so_what": "怡思丁需深耕40°C暴晒实测并扩展军训/泛生活/旅游场景，提升场景丰富度"
+   }
+  },
+  {
+   "data": {
+    "kind": "chart",
+    "eyebrow": "视频效率对比",
+    "title": "视频以40%数量贡献54%以上互动",
+    "chart_type": "column",
+    "categories": [
+     "蜜丝婷摇摇乐",
+     "蜜丝婷小黄帽",
+     "怡思丁"
+    ],
+    "series": [
+     {
+      "name": "视频数量占比(%)",
+      "values": [
+       35,
+       42,
+       40.58
+      ]
+     },
+     {
+      "name": "视频互动贡献(%)",
+      "values": [
+       75,
+       65,
+       54
+      ]
+     }
+    ],
+    "takeaway": "视频以35-42%数量贡献54-75%互动，怡思丁视频效率高于图文，可加大视频投入"
+   }
+  },
+  {
+   "data": {
+    "kind": "timeline",
+    "eyebrow": "品类传播节奏",
+    "title": "防晒品类呈双峰+夏季持续节奏",
+    "subtitle": "618前置+暑期放量+开学季收割三波段结构",
+    "milestones": [
+     {
+      "year": "Q1",
+      "title": "春季开囤达峰",
+      "desc": "2-3月春季开囤第一波峰值"
+     },
+     {
+      "year": "Q2",
+      "title": "618大促叠加",
+      "desc": "5-6月618大促+法网赛事第二波峰值"
+     },
+     {
+      "year": "Q3",
+      "title": "暑期高位持续",
+      "desc": "7-9月军训/玩水/旅游季维持高位"
+     },
+     {
+      "year": "Q4",
+      "title": "声量回落",
+      "desc": "Q4品类声量回落"
+     }
+    ],
+    "so_what": "防晒品类呈618前置+暑期放量+开学季收割三波段节奏，怡思丁需匹配品类节点"
+   }
+  },
+  {
+   "data": {
+    "kind": "kpi",
+    "eyebrow": "怡思丁话题数据",
+    "title": "怡思丁**Q3声量下滑69%**",
+    "stats": [
+     {
+      "value": "3.63万",
+      "label": "Q1互动(峰值)"
+     },
+     {
+      "value": "1.12万",
+      "label": "Q3互动",
+      "delta": "-69%",
+      "delta_dir": "down"
+     }
+    ],
+    "so_what": "节点外持续种草能力不足，需补强8-9月军训/开学季布局"
+   }
+  },
+  {
+   "data": {
+    "kind": "section",
+    "number": "03",
+    "title": "卖点攻防与策略建议",
+    "subtitle": "抗热老独有差异化，传播力度远弱于竞品"
+   }
+  },
+  {
+   "data": {
+    "kind": "bullets",
+    "eyebrow": "科技概念与场景词",
+    "title": "竞品科技概念强占位，怡思丁传播力度弱",
+    "bullets": [
+     {
+      "text": "理肤泉「麦色滤」171篇笔记形成科技概念强占位",
+      "emphasis": true
+     },
+     {
+      "text": "蜜丝婷「油皮」175篇+「户外」253篇，占据油皮适配心智"
+     },
+     {
+      "text": "安热沙「防晒大膜王」话题绑定日本旅游场景深度占位"
+     },
+     {
+      "text": "怡思丁「专研」仅52篇，「户外」56篇，传播力度远弱于竞品",
+      "emphasis": true
+     }
+    ],
+    "so_what": "怡思丁需加强「双抗」科技概念传播力度，从52篇提升至竞品量级"
+   }
+  },
+  {
+   "data": {
+    "kind": "table",
+    "eyebrow": "2025年1-10月",
+    "title": "四品牌科技概念与场景词占位对比",
+    "subtitle": "科技概念与场景词笔记数对比",
+    "headers": [
+     "品牌",
+     "科技概念/核心词",
+     "笔记数",
+     "核心场景词"
+    ],
+    "rows": [
+     [
+      "理肤泉",
+      "麦色滤",
+      "171篇",
+      "--"
+     ],
+     [
+      "蜜丝婷",
+      "油皮",
+      "175篇",
+      "户外253篇"
+     ],
+     [
+      "安热沙",
+      "防晒大膜王(话题)",
+      "--",
+      "日本旅游TOP5中3篇"
+     ],
+     [
+      "怡思丁",
+      "专研",
+      "52篇",
+      "户外56篇"
+     ]
+    ],
+    "so_what": "理肤泉麦色滤171篇、蜜丝婷油皮175篇强占科技心智，怡思丁专研仅52篇"
+   }
+  },
+  {
+   "data": {
+    "kind": "icon_grid",
+    "eyebrow": "怡思丁差异化",
+    "title": "怡思丁**抗热老**独有差异化",
+    "subtitle": "怡思丁「双抗=抗光老+抗热老」具备产品事实差异化",
+    "cards": [
+     {
+      "icon": "shield",
+      "title": "抗热老",
+      "subtitle": "竞品中独一无二",
+      "lines": [
+       "热保护科技",
+       "40°C暴晒验证机制"
+      ],
+      "punch": "独有差异化"
+     },
+     {
+      "icon": "zap",
+      "title": "暴晒实测",
+      "subtitle": "已验证高效",
+      "lines": [
+       "40°C暴晒实测",
+       "TOP1互动4689"
+      ]
+     },
+     {
+      "icon": "layers",
+      "title": "双抗机制",
+      "subtitle": "抗光老+抗热老",
+      "lines": [
+       "双抗=抗光老+抗热老",
+       "产品事实差异化"
+      ]
+     },
+     {
+      "icon": "trending-up",
+      "title": "传播缺口",
+      "subtitle": "专研52篇 vs 竞品171篇",
+      "lines": [
+       "需提升至150+篇"
+      ],
+      "punch": "传播力度不足"
+     }
+    ],
+    "so_what": "「抗热老」为独有差异化，但传播力度远弱于竞品科技概念，需大幅提升"
+   }
+  },
+  {
+   "data": {
+    "kind": "pillars",
+    "title": "2026策略聚焦三个主攻方向",
+    "subtitle": "2026年小红书策略应聚焦三个主攻方向",
+    "columns": [
+     {
+      "heading": "投放端",
+      "tag": "头部达人拉升",
+      "points": [
+       "引入头部达人，目标单篇互动5万+",
+       "配合腰部达人放大声量",
+       "头部达人合作费用约5-10万/篇"
+      ]
+     },
+     {
+      "heading": "内容端",
+      "tag": "极端场景扩展",
+      "points": [
+       "以40°C暴晒实测为核心记忆点",
+       "补充军训(8-9月)、大促、泛生活场景",
+       "视频形式优先，提升视频爆款率"
+      ]
+     },
+     {
+      "heading": "卖点端",
+      "tag": "抗热老强传播",
+      "points": [
+       "主攻「抗热老」差异化，竞品中独一无二",
+       "目标从52篇提升至150+篇",
+       "借势法网赛事/网球IP建立品牌资产线"
+      ]
+     }
+    ],
+    "so_what": "三管齐下：头部达人拉升声量、极端场景扩丰富度、抗热老强传播，同时避让同质化赛道",
+    "prompt": "Three pillars of sunscreen marketing strategy: influencer partnership, content scenario expansion, and technology concept communication, outdoor sunny beach setting with diverse lifestyle scenes",
+    "src": "out/怡思丁双抗防晒竞品分析/t2i/hero_16_raw.png"
+   }
+  },
+  {
+   "data": {
+    "kind": "process",
+    "eyebrow": "2026年行动节奏",
+    "title": "全年节奏匹配品类双峰+夏季持续规律",
+    "steps": [
+     {
+      "title": "Q1 引入头部达人",
+      "desc": "启动破圈种草，制造头部爆文",
+      "icon": "rocket"
+     },
+     {
+      "title": "Q2 前置618种草",
+      "desc": "大促节点种草，借势法网赛事",
+      "icon": "target"
+     },
+     {
+      "title": "Q3 补强军训节点",
+      "desc": "军训/开学季节点布局，补充场景",
+      "icon": "users"
+     },
+     {
+      "title": "Q4 年度复盘迭代",
+      "desc": "年度复盘与策略迭代",
+      "icon": "bar-chart"
+     }
+    ],
+    "so_what": "全年节奏匹配品类「双峰+夏季持续」规律，重点补强军训/开学季节点"
+   }
+  },
+  {
+   "data": {
+    "kind": "quote",
+    "quote": "怡思丁投放体量仅为竞品1/5至1/7，**头部达人缺位**是声量天花板；'抗热老'是独有差异化，需借头部达人突破。",
+    "attribution": "怡思丁双抗防晒竞品分析报告"
+   }
+  },
+  {
+   "data": {
+    "kind": "closing",
+    "title": "谢谢观看",
+    "subtitle": "2026年小红书种草策略：引入头部达人、深耕极端场景、主攻抗热老",
+    "contact": ""
+   }
+  }
+ ]
 }

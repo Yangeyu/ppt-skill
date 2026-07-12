@@ -1,0 +1,33 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+{# 双面板清单 — 左淡紫焦点卡(渐变短划) × 右浅灰中性卡 #}
+{% set grad = colors['primary']|replace('#','') ~ ',' ~ colors['primary-2']|replace('#','') ~ ',45' %}
+<div class="mo-frame">
+  {% include "_head.html.j2" %}
+  <div class="mo-body">
+    <div class="mo-cols">
+      {% for col in [d.left, d.right] %}
+      {% set focus = loop.first %}
+      <div data-ppt="rect" class="mo-col-card" style="background:{{ colors['tint'] if focus else colors['surface'] }};">
+        <div data-ppt="text" class="mo-col-h">{{ col.heading }}</div>
+        {% if focus %}
+        <div data-ppt="rect" data-grad="{{ grad }}" class="mo-col-bar"></div>
+        {% else %}
+        <div data-ppt="rect" class="mo-col-bar" style="background:{{ colors['muted'] }};"></div>
+        {% endif %}
+        <div class="mo-col-points">
+          {% for pt in col.points %}
+          <div class="mo-col-row">
+            <div data-ppt="rect" class="mo-col-mark" style="background:{{ colors['primary'] if focus else colors['muted'] }};"></div>
+            <div data-ppt="text" class="mo-col-text">{{ pt }}</div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% include "_sowhat.html.j2" %}
+</div>
+{% include "_foot.html.j2" %}
+{% endblock %}

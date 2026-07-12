@@ -1,0 +1,31 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+{# 主视觉页 — 左圆形图窗(t2i,后处理烤圆形蒙版) + 右侧陈述与事实栈(源模板「市场规模」页) #}
+<div class="mo-frame">
+  {% set hide_subtitle = true %}
+  {% include "_head.html.j2" %}
+  <div class="mo-hero-body">
+    <div class="mo-hero-imgbox">
+      <div data-ppt="image" data-src="{{ hero_img }}" style="position:absolute;inset:0;"></div>
+      {# 圆环遮罩:方图(兜底)与圆蒙版图(t2i)都稳定呈现圆窗 #}
+      <div data-ppt="image" data-ppt-deco data-ppt-z="5" data-src="{{ icons['mol-ring.png'] }}"
+           style="position:absolute;inset:0;background-image:url(data:image/png;base64,{{ icons['mol-ring.b64'] }});background-size:100% 100%;"></div>
+    </div>
+    <div class="mo-hero-right">
+      {% if d.subtitle %}<div data-ppt="text" class="mo-hero-sub" style="max-width:560px;">{{ d.subtitle }}</div>{% endif %}
+      {% if d.facts %}
+      <div class="mo-hero-facts">
+        {% for f in d.facts %}
+        <div class="mo-hero-fact">
+          <div data-ppt="text" class="mo-hero-fval">{{ f.value }}</div>
+          <div data-ppt="text" class="mo-hero-flabel">{{ f.label }}</div>
+        </div>
+        {% if not loop.last %}<div data-ppt="rect" style="width:100%;height:1px;background:var(--hairline);"></div>{% endif %}
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% include "_foot.html.j2" %}
+{% endblock %}

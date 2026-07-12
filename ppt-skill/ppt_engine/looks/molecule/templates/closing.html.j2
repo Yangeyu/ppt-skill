@@ -1,0 +1,21 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+{# 收尾页 — 左气泡竖簇,右重黑体致谢(源模板 Thank you 页) #}
+{% set grad = colors['primary']|replace('#','') ~ ',' ~ colors['primary-2']|replace('#','') ~ ',45' %}
+<div data-ppt="image" data-ppt-deco data-ppt-z="-10" data-src="{{ icons['mol-side-l.png'] }}"
+     style="position:absolute;left:0;top:60px;width:490px;height:504px;background-image:url(data:image/png;base64,{{ icons['mol-side-l.b64'] }});background-size:100% 100%;"></div>
+<div data-ppt="image" data-ppt-deco data-ppt-z="-10" data-src="{{ icons['mol-corner-soft.png'] }}"
+     style="position:absolute;right:48px;top:44px;width:215px;height:150px;background-image:url(data:image/png;base64,{{ icons['mol-corner-soft.b64'] }});background-size:100% 100%;"></div>
+<div style="position:absolute;left:64px;right:64px;top:38px;display:flex;justify-content:space-between;">
+  <div data-ppt="text" class="mo-chrome-t">{{ deck_title or 'INDUSTRY RESEARCH' }}</div>
+  <div data-ppt="text" class="mo-chrome-t">FIN</div>
+</div>
+<div style="position:absolute;left:47%;right:64px;top:0;height:100%;display:flex;flex-direction:column;justify-content:center;">
+  {% for seg in d.title|marksplit %}
+  <div data-ppt="text" class="mo-close-title"{% if seg.mark %} style="color:{{ colors['primary'] }};"{% endif %}>{{ seg.text }}</div>
+  {% endfor %}
+  <div data-ppt="rect" data-grad="{{ grad }}" style="width:64px;height:7px;border-radius:4px;margin-top:28px;background:linear-gradient(135deg,var(--primary),var(--primary-2));"></div>
+  {% if d.subtitle %}<div data-ppt="text" style="font-family:var(--font-body);font-size:16px;line-height:1.6;color:var(--ink);margin-top:24px;white-space:normal;max-width:520px;">{{ d.subtitle }}</div>{% endif %}
+  {% if d.contact %}<div data-ppt="text" style="font-family:var(--font-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-top:18px;">{{ d.contact }}</div>{% endif %}
+</div>
+{% endblock %}

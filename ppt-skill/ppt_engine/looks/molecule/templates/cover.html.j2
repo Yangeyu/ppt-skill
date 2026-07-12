@@ -1,0 +1,34 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+{# 封面 — 全出血主视觉(t2i,后处理烤左半白雾)或气泡簇资产;左侧重黑体大标题 + 渐变胶囊副标 #}
+{% if hero_img %}
+<div data-ppt="image" data-ppt-z="-20" data-src="{{ hero_img }}" style="position:absolute;inset:0;"></div>
+{% else %}
+<div data-ppt="image" data-ppt-deco data-ppt-z="-10" data-src="{{ icons['mol-hero.png'] }}"
+     style="position:absolute;right:0;top:24px;width:686px;height:504px;background-image:url(data:image/png;base64,{{ icons['mol-hero.b64'] }});background-size:100% 100%;"></div>
+<div data-ppt="image" data-ppt-deco data-ppt-z="-10" data-src="{{ icons['mol-corner-soft-l.png'] }}"
+     style="position:absolute;left:36px;bottom:40px;width:258px;height:180px;background-image:url(data:image/png;base64,{{ icons['mol-corner-soft-l.b64'] }});background-size:100% 100%;"></div>
+{% endif %}
+<div class="mo-cover-frame">
+  <div class="mo-chrome">
+    <div data-ppt="text" class="mo-chrome-t">{{ d.eyebrow or 'INDUSTRY RESEARCH REPORT' }}</div>
+    <div data-ppt="text" class="mo-chrome-t">MOLECULE</div>
+  </div>
+  <div style="flex:1 1 auto;display:flex;flex-direction:column;justify-content:center;max-width:760px;">
+    {% for seg in d.title|marksplit %}
+    <div data-ppt="text" class="mo-cover-title"{% if seg.mark %} style="color:{{ colors['primary'] }};"{% endif %}>{{ seg.text }}</div>
+    {% endfor %}
+    {% if d.subtitle %}
+    <div class="mo-cover-chip">
+      <div data-ppt="rect" data-grad="{{ colors['primary']|replace('#','') }},{{ colors['primary-2']|replace('#','') }},45" class="mo-cover-chip-bg"></div>
+      <div data-ppt="text" class="mo-cover-chip-t">{{ d.subtitle }}</div>
+      <div style="visibility:hidden;height:40px;padding:0 22px;font-weight:700;font-size:15px;white-space:nowrap;">{{ d.subtitle }}</div>
+    </div>
+    {% endif %}
+  </div>
+  <div style="display:flex;justify-content:space-between;align-items:baseline;">
+    <div data-ppt="text" class="mo-chrome-t">{{ deck_title or '' }}</div>
+    {% if d.footer %}<div data-ppt="text" class="mo-chrome-t">{{ d.footer }}</div>{% endif %}
+  </div>
+</div>
+{% endblock %}

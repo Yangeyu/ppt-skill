@@ -1,0 +1,29 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+{# 对照表 — 发丝线账本;表头 Inter 大写紫,首列加重 #}
+<div class="mo-frame">
+  {% include "_head.html.j2" %}
+  <div class="mo-body">
+    <div class="mo-table">
+      <div class="mo-trow h-row">
+        {% for h in d.headers %}
+        <div class="mo-tcell"><div data-ppt="text" class="mo-tcell-h">{{ h }}</div></div>
+        {% endfor %}
+      </div>
+      <div data-ppt="rect" class="mo-trule strong"></div>
+      {% for row in d.rows %}
+      <div class="mo-trow">
+        {% for cell in row %}
+        <div class="mo-tcell">
+          <div data-ppt="text" class="mo-tcell-t {{ 'lead-col' if loop.first else '' }}">{{ cell }}</div>
+        </div>
+        {% endfor %}
+      </div>
+      {% if not loop.last %}<div data-ppt="rect" class="mo-trule"></div>{% endif %}
+      {% endfor %}
+    </div>
+  </div>
+  {% include "_sowhat.html.j2" %}
+</div>
+{% include "_foot.html.j2" %}
+{% endblock %}

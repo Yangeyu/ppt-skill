@@ -44,6 +44,7 @@ KIND_HINTS = {
     "quote":     "金句页",
     "closing":   "收尾页",
     "exhibit":   "复合证据版面(结论句大标题+主图表+侧栏结构条+洞察框+意义条+来源)",
+    "figure":    "素材证据图页(引用素材**已有**的配图:src 逐字抄图片 URL,caption 抄图注原文;不要用 prompt 重新生成素材已有的图)",
 }
 
 # 事实纪律:全 look 通用,由 critic/facts.py 机器复核,违反会被回喂重做
@@ -154,7 +155,8 @@ def render_contract(look_id: str | None = None, n_slides: int = 14) -> str:
     """给生成端(任何 agent)的完整契约文本。"""
     look_id = look_id if look_id in LOOKS else DEFAULT_LOOK
     look = LOOKS[look_id]
-    icons = ", ".join(sorted((look.icons or ICONS)))
+    # look.icons 里混有装饰资产(brush-*.png / mol-*.b64 等文件键),不是可选图标
+    icons = ", ".join(sorted(k for k in (look.icons or ICONS) if "." not in k))
     parts = [
         f"你在为「{look.spec.name}({look_id})」产出一份 Deck IR,共约 {n_slides} 页。"
         '整体输出一个 JSON 对象:\n'

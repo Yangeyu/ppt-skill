@@ -1,0 +1,27 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+{# 素材证据图页 — 素材已有配图(远程 URL 由 build 下载,pad 纸色适配 16:9 不裁不变形),
+   发丝线框 + 图注原文;下载失败时优雅降级为图注卡 #}
+<div class="mo-frame">
+  {% include "_head.html.j2" %}
+  <div class="mo-body">
+    <div style="flex:1 1 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:0;">
+      {% if hero_img %}
+      <div style="position:relative;width:704px;height:396px;flex:0 0 auto;">
+        <div data-ppt="image" data-src="{{ hero_img }}" style="position:absolute;inset:0;"></div>
+        <div data-ppt="rect" style="position:absolute;inset:0;border:1px solid var(--hairline);"></div>
+      </div>
+      {% if d.caption %}
+      <div data-ppt="text" style="font-family:var(--font-body);font-size:13px;color:var(--muted);margin-top:14px;">{{ d.caption }}</div>
+      {% endif %}
+      {% else %}
+      {# 下载失败降级:浅色占位卡 + 图注文字(正常流,避免 flex 居中文字的锚点错位) #}
+      <div data-ppt="rect" style="width:704px;height:160px;background:var(--surface);border-radius:16px;"></div>
+      <div data-ppt="text" style="font-family:var(--font-body);font-size:14px;color:var(--muted);margin-top:14px;">{{ d.caption or d.title }}</div>
+      {% endif %}
+    </div>
+  </div>
+  {% include "_sowhat.html.j2" %}
+</div>
+{% include "_foot.html.j2" %}
+{% endblock %}

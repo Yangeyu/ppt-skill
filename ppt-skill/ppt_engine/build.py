@@ -9,8 +9,10 @@ from __future__ import annotations
 import json
 import re
 import shutil
+import sys
 import tempfile
 from pathlib import Path
+from urllib import request as _urlreq
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from playwright.sync_api import sync_playwright
 from .spec import SpecLock, resolve_spec
@@ -45,6 +47,38 @@ def _crop_to_aspect(path: str, aspect: float) -> None:
         nh = int(w / aspect)
         box = (0, (h - nh) // 2, w, (h - nh) // 2 + nh)
     im.crop(box).save(path)
+
+
+def _pad_to_aspect(path: str, aspect: float, color: str = "#FFFFFF") -> None:
+    """Letterbox-pad a PNG to the slot aspect — evidence figures (data
+    screenshots) must reach the native image box undistorted and uncropped."""
+    from PIL import Image
+    im = Image.open(path).convert("RGB")
+    w, h = im.size
+    if abs(w / h - aspect) < 0.02:
+        return
+    if w / h > aspect:
+        nw, nh = w, int(w / aspect)
+    else:
+        nw, nh = int(h * aspect), h
+    bg = Image.new("RGB", (nw, nh), color)
+    bg.paste(im, ((nw - w) // 2, (nh - h) // 2))
+    bg.save(path)
+
+
+def _fetch_remote(url: str, asset_dir: Path, idx: int) -> str:
+    """素材原文引用的远程证据图:下载落地;失败返回 ""(该页降级为无图)。"""
+    ext = Path(url.split("?")[0]).suffix or ".png"
+    dst = asset_dir / f"src_{idx}{ext}"
+    try:
+        opener = _urlreq.build_opener(_urlreq.ProxyHandler({}))
+        req = _urlreq.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+        with opener.open(req, timeout=45) as r, open(dst, "wb") as f:
+            f.write(r.read())
+        return str(dst)
+    except Exception as e:  # noqa: BLE001 — 网络失败不阻塞构建
+        print(f"[build] src download failed ({e}): {url[:100]}", file=sys.stderr)
+        return ""
 
 
 def marksplit(s: str) -> list[dict]:
@@ -104,6 +138,8 @@ class Engine:
         slot = look.image_slots.get(slide.kind, {})
         out = str(asset_dir / f"hero_{idx}.png")
         src = getattr(slide.data, "src", "")
+        if src.startswith(("http://", "https://")):   # 素材图通道:远程证据图先落地
+            src = _fetch_remote(src, asset_dir, idx)
         if src and not Path(src).exists():   # 模型偶发往 src 填废值——忽略,走 prompt/兜底
             src = ""
         prompt = getattr(slide.data, "prompt", "")
@@ -112,16 +148,21 @@ class Engine:
                                     style_suffix=look.image_style_suffix,
                                     size=slot.get("size", "1664*928")) or ""
         if src:
-            if look.image_postprocess:
+            # 证据截图类槽位声明 postprocess=False:再上墨会伤数据图可读性
+            if look.image_postprocess and slot.get("postprocess", True):
                 look.image_postprocess(src, theme, out)
             else:
                 shutil.copyfile(src, out)
-        elif look.image_fallback:
+        elif look.image_fallback and slot.get("fallback", True):
             look.image_fallback(getattr(slide.data, "art", "sun"), theme, out)
         else:
             return ""
         if slot.get("aspect"):
-            _crop_to_aspect(out, slot["aspect"])
+            # fit=pad:证据图不裁不变形,纸色补边;默认居中裁切
+            if slot.get("fit") == "pad":
+                _pad_to_aspect(out, slot["aspect"], slot.get("pad_color", "#FFFFFF"))
+            else:
+                _crop_to_aspect(out, slot["aspect"])
         return out
 
     def build(self, deck: Deck, out_path: str, screenshot_dir: str | None = None,
@@ -145,7 +186,7 @@ class Engine:
             for idx, slide in enumerate(deck.slides):
                 extra = {"page_no": idx + 1, "page_total": len(deck.slides),
                          "deck_title": deck.meta.title}
-                if slide.kind == "hero" or getattr(slide.data, "prompt", ""):
+                if slide.kind in ("hero", "figure") or getattr(slide.data, "prompt", ""):
                     extra["hero_img"] = self._slide_image(slide, theme, look, asset_dir, idx)
                 page.set_content(self.html_for(slide, theme, fonts, extra, look),
                                  wait_until="load")

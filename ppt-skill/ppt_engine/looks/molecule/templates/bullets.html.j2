@@ -1,0 +1,27 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+{# 要点页 — 渐变圆徽序号行;有 prompt 时左侧纵向插图列(圆角蒙版) #}
+<div class="mo-frame">
+  {% include "_head.html.j2" %}
+  <div class="mo-body">
+    {% if hero_img %}
+    <div class="mo-illu-col">
+      <div data-ppt="image" data-src="{{ hero_img }}" style="position:absolute;inset:0;"></div>
+    </div>
+    {% endif %}
+    <div class="mo-vlist">
+      {% for b in d.bullets %}
+      <div class="mo-vitem">
+        <div class="mo-vrow">
+          <div data-ppt="icon" class="mo-badge mo-vbadge">{{ '%02d' % loop.index }}</div>
+          <div data-ppt="text" class="mo-vtext {{ 'em' if b.emphasis else '' }}">{{ b.text }}</div>
+        </div>
+        {% if not loop.last %}<div data-ppt="rect" class="mo-vrule"></div>{% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% include "_sowhat.html.j2" %}
+</div>
+{% include "_foot.html.j2" %}
+{% endblock %}

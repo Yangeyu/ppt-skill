@@ -1,0 +1,25 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+{# 时间线 — 发丝线横轴 + 渐变圆点节点;末站放大点亮 #}
+{% set grad = colors['primary']|replace('#','') ~ ',' ~ colors['primary-2']|replace('#','') ~ ',45' %}
+<div class="mo-frame">
+  {% include "_head.html.j2" %}
+  <div class="mo-body" style="align-items:center;">
+    <div class="mo-tl">
+      <div data-ppt="rect" class="mo-tl-axis"></div>
+      <div class="mo-tl-row">
+        {% for m in d.milestones %}
+        <div class="mo-tl-item">
+          <div data-ppt="text" class="mo-tl-year">{{ m.year }}</div>
+          <div data-ppt="rect" data-grad="{{ grad }}" class="mo-tl-node" {% if loop.last %}style="width:19px;height:19px;margin-top:18px;"{% endif %}></div>
+          <div data-ppt="text" class="mo-tl-title">{{ m.title }}</div>
+          {% if m.desc %}<div data-ppt="text" class="mo-tl-desc">{{ m.desc }}</div>{% endif %}
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  {% include "_sowhat.html.j2" %}
+</div>
+{% include "_foot.html.j2" %}
+{% endblock %}

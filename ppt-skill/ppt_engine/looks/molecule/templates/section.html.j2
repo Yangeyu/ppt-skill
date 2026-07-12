@@ -1,0 +1,23 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+{# 章节幕 — 左巨号编号 + 渐变短划 + 标题;右缘气泡竖簇 #}
+<div data-ppt="image" data-ppt-deco data-ppt-z="-10" data-src="{{ icons['mol-side.png'] }}"
+     style="position:absolute;right:0;top:0;width:525px;height:540px;background-image:url(data:image/png;base64,{{ icons['mol-side.b64'] }});background-size:100% 100%;"></div>
+<div data-ppt="image" data-ppt-deco data-ppt-z="-10" data-src="{{ icons['mol-corner-soft.png'] }}"
+     style="position:absolute;left:640px;bottom:24px;width:215px;height:150px;background-image:url(data:image/png;base64,{{ icons['mol-corner-soft.b64'] }});background-size:100% 100%;"></div>
+<div style="position:absolute;left:64px;right:64px;top:38px;display:flex;justify-content:space-between;">
+  <div data-ppt="text" class="mo-chrome-t">{{ deck_title or 'INDUSTRY RESEARCH' }}</div>
+  <div data-ppt="text" class="mo-chrome-t">{{ '%02d / %02d'|format(page_no, page_total) if page_total else 'SECTION' }}</div>
+</div>
+<div class="mo-sec-frame">
+  <div data-ppt="text" class="mo-sec-num">{{ d.number }}.</div>
+  <div data-ppt="rect" data-grad="{{ colors['primary']|replace('#','') }},{{ colors['primary-2']|replace('#','') }},45" class="mo-sec-bar"></div>
+  <div style="display:flex;align-items:baseline;">
+    {% for seg in d.title|marksplit %}
+    <div data-ppt="text" class="mo-sec-title"{% if seg.mark %} style="color:{{ colors['primary'] }};"{% endif %}>{{ seg.text }}</div>
+    {% endfor %}
+  </div>
+  {% if d.subtitle %}<div data-ppt="text" class="mo-sec-sub" style="max-width:560px;">{{ d.subtitle }}</div>{% endif %}
+</div>
+{% include "_foot.html.j2" %}
+{% endblock %}

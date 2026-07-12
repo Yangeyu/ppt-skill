@@ -1,0 +1,29 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+{# 目录 — CONTENTS 大字 + 横排渐变圆徽(源模板签名页) + 角部气泡点缀 #}
+<div data-ppt="image" data-ppt-deco data-ppt-z="-10" data-src="{{ icons['mol-corner-soft.png'] }}"
+     style="position:absolute;right:48px;top:34px;width:301px;height:210px;background-image:url(data:image/png;base64,{{ icons['mol-corner-soft.b64'] }});background-size:100% 100%;"></div>
+<div class="mo-frame">
+  <div class="mo-chrome">
+    <div data-ppt="text" class="mo-chrome-t">{{ deck_title or 'INDUSTRY RESEARCH' }}</div>
+    <div data-ppt="text" class="mo-chrome-t">{{ '%02d / %02d'|format(page_no, page_total) if page_total else 'MOLECULE' }}</div>
+  </div>
+  <div class="mo-head">
+    <div data-ppt="text" style="font-family:var(--font-mono);font-weight:700;font-size:56px;letter-spacing:.06em;color:var(--ink);">CONTENTS</div>
+    {% if d.title and d.title != '目录' %}<div data-ppt="text" class="mo-sub">{{ d.title }}</div>{% endif %}
+  </div>
+  <div class="mo-body" style="align-items:center;">
+    <div class="mo-toc">
+      {% for it in d['items'] %}
+      <div class="mo-toc-item">
+        <div data-ppt="icon" class="mo-badge mo-toc-badge">{{ '%02d' % loop.index }}</div>
+        <div data-ppt="text" class="mo-toc-title">{{ it.title }}</div>
+        {% if it.desc %}<div data-ppt="text" class="mo-toc-desc">{{ it.desc }}</div>{% endif %}
+        {% if it.pages %}<div data-ppt="text" class="mo-toc-pages">{{ it.pages }}</div>{% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% include "_foot.html.j2" %}
+{% endblock %}

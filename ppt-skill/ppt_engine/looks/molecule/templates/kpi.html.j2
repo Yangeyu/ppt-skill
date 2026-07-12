@@ -1,0 +1,25 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+{# 大数字页 — 浅灰圆角卡 + 渐变短划 + delta 方向着色 #}
+{% set grad = colors['primary']|replace('#','') ~ ',' ~ colors['primary-2']|replace('#','') ~ ',45' %}
+<div class="mo-frame">
+  {% include "_head.html.j2" %}
+  <div class="mo-body" style="align-items:center;">
+    <div class="mo-kpis">
+      {% for s in d.stats %}
+      <div data-ppt="rect" class="mo-kpi">
+        <div data-ppt="rect" data-grad="{{ grad }}" class="mo-kpi-bar"></div>
+        <div data-ppt="text" class="mo-kpi-val"{% if loop.first %} style="color:{{ colors['primary-2'] }};"{% endif %}>{{ s.value }}</div>
+        <div data-ppt="text" class="mo-kpi-label">{{ s.label }}</div>
+        {% if s.delta %}
+        <div data-ppt="text" class="mo-kpi-delta" style="color:{{ colors['pos'] if s.delta_dir == 'up' else (colors['neg'] if s.delta_dir == 'down' else colors['muted']) }};">
+          {{ '▲ ' if s.delta_dir == 'up' else ('▼ ' if s.delta_dir == 'down' else '') }}{{ s.delta }}</div>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% include "_sowhat.html.j2" %}
+</div>
+{% include "_foot.html.j2" %}
+{% endblock %}

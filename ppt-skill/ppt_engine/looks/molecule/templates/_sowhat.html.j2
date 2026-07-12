@@ -1,0 +1,7 @@
+{% set grad = colors['primary']|replace('#','') ~ ',' ~ colors['primary-2']|replace('#','') ~ ',45' %}
+{% if d.so_what is defined and d.so_what %}
+<div data-ppt="rect" class="mo-sowhat">
+  <div data-ppt="rect" data-grad="{{ grad }}" class="mo-sowhat-dot"></div>
+  <div data-ppt="text" class="mo-sowhat-t">{{ d.so_what }}</div>
+</div>
+{% endif %}

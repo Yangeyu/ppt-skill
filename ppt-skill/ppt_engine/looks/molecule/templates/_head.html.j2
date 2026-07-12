@@ -1,0 +1,19 @@
+{% set grad = colors['primary']|replace('#','') ~ ',' ~ colors['primary-2']|replace('#','') ~ ',45' %}
+<div class="mo-chrome">
+  <div data-ppt="text" class="mo-chrome-t">{{ deck_title or 'INDUSTRY RESEARCH' }}</div>
+  <div data-ppt="text" class="mo-chrome-t">{{ '%02d / %02d'|format(page_no, page_total) if page_total else 'MOLECULE' }}</div>
+</div>
+<div class="mo-head">
+  {% if d.eyebrow %}
+  <div class="mo-kick-row">
+    <div data-ppt="rect" data-grad="{{ grad }}" class="mo-kick-dot"></div>
+    <div data-ppt="text" class="mo-kicker">{{ d.eyebrow }}</div>
+  </div>
+  {% endif %}
+  <div class="mo-title-row">
+    {% for seg in d.title|marksplit %}
+    <div data-ppt="text" class="mo-title"{% if seg.mark %} style="color:{{ colors['primary'] }};"{% endif %}>{{ seg.text }}</div>
+    {% endfor %}
+  </div>
+  {% if d.subtitle is defined and d.subtitle and not hide_subtitle %}<div data-ppt="text" class="mo-sub">{{ d.subtitle }}</div>{% endif %}
+</div>

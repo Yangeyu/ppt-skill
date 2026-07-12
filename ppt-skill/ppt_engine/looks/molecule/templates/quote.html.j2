@@ -1,0 +1,19 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+{# 金句页 — 居中重黑体判断句(强调词紫) + 渐变圆点 + 角部气泡点缀 #}
+{% set grad = colors['primary']|replace('#','') ~ ',' ~ colors['primary-2']|replace('#','') ~ ',45' %}
+<div data-ppt="image" data-ppt-deco data-ppt-z="-10" data-src="{{ icons['mol-corner-soft.png'] }}"
+     style="position:absolute;right:40px;bottom:36px;width:301px;height:210px;background-image:url(data:image/png;base64,{{ icons['mol-corner-soft.b64'] }});background-size:100% 100%;"></div>
+<div data-ppt="image" data-ppt-deco data-ppt-z="-10" data-src="{{ icons['mol-corner-soft-l.png'] }}"
+     style="position:absolute;left:36px;top:40px;width:194px;height:135px;background-image:url(data:image/png;base64,{{ icons['mol-corner-soft-l.b64'] }});background-size:100% 100%;"></div>
+<div class="mo-quote-frame">
+  <div data-ppt="rect" data-grad="{{ grad }}" style="width:14px;height:14px;border-radius:50%;margin-bottom:38px;background:linear-gradient(135deg,var(--primary),var(--primary-2));"></div>
+  <div class="mo-quote-row">
+    {% for seg in d.quote|marksplit %}
+    <div data-ppt="text" class="mo-quote-text"{% if seg.mark %} style="color:{{ colors['primary'] }};"{% endif %}>{{ seg.text }}</div>
+    {% endfor %}
+  </div>
+  {% if d.attribution %}<div data-ppt="text" class="mo-quote-attr">{{ d.attribution }}</div>{% endif %}
+</div>
+{% include "_foot.html.j2" %}
+{% endblock %}

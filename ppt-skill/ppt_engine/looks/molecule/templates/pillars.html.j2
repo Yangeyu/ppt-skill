@@ -1,0 +1,27 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+{# 支柱/分栏 — 浅灰圆角卡 + 顶缘渐变条 #}
+{% set grad = colors['primary']|replace('#','') ~ ',' ~ colors['primary-2']|replace('#','') ~ ',45' %}
+<div class="mo-frame">
+  {% include "_head.html.j2" %}
+  <div class="mo-body">
+    <div class="mo-pillars">
+      {% for p in d.columns %}
+      <div data-ppt="rect" class="mo-pillar">
+        <div data-ppt="rect" data-grad="{{ grad }}" class="mo-pillar-cap"></div>
+        <div data-ppt="text" class="mo-pillar-h">{{ p.heading }}</div>
+        {% if p.tag %}<div data-ppt="text" class="mo-pillar-tag">{{ p.tag }}</div>{% endif %}
+        {% for pt in p.points %}
+        <div class="mo-pillar-row">
+          <div data-ppt="rect" class="mo-pillar-mark"></div>
+          <div data-ppt="text" class="mo-pillar-text">{{ pt }}</div>
+        </div>
+        {% endfor %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% include "_sowhat.html.j2" %}
+</div>
+{% include "_foot.html.j2" %}
+{% endblock %}

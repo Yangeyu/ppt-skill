@@ -1,0 +1,21 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+{# 单图表页 — 原生图表 + 右侧淡紫 takeaway 卡 #}
+<div class="mo-frame">
+  {% include "_head.html.j2" %}
+  <div class="mo-body" style="align-items:center;">
+    <div class="mo-chart-wrap">
+      <div class="mo-chart-area">
+        <div data-ppt="chart" data-chart='{{ chart_json|safe }}' class="mo-chart-box"></div>
+      </div>
+      {% if d.takeaway %}
+      <div data-ppt="rect" class="mo-take">
+        <div data-ppt="text" class="mo-take-k">TAKEAWAY</div>
+        <div data-ppt="text" class="mo-take-text">{{ d.takeaway }}</div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% include "_foot.html.j2" %}
+{% endblock %}

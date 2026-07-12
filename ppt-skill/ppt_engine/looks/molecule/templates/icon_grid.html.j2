@@ -1,0 +1,27 @@
+{% extends "base.html.j2" %}
+{% block frame %}
+{# 图标证据格 — 浅灰圆角卡 + 渐变圆图标徽(icon 截图烘焙) #}
+<div class="mo-frame">
+  {% include "_head.html.j2" %}
+  {# ≤4 卡走 2×2(3+1 孤行难看),>4 卡走 3 列 #}
+  <div class="mo-grid {{ 'two-row' if d.cards|length > 3 else '' }} {{ 'cols-2' if d.cards|length == 4 else '' }}">
+    {% for card in d.cards %}
+    <div data-ppt="rect" class="mo-cell">
+      <div data-ppt="text" class="mo-cell-num">{{ '%02d' % loop.index }}</div>
+      <div data-ppt="icon" class="mo-cell-ico">
+        {% set ic = icons.get(card.icon, '') %}
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">{{ (ic if '<' in ic else icons['check-circle'])|safe }}</svg>
+      </div>
+      <div data-ppt="text" class="mo-cell-title">{{ card.title }}</div>
+      {% if card.subtitle %}<div data-ppt="text" class="mo-cell-sub">{{ card.subtitle }}</div>{% endif %}
+      {% for ln in card.lines %}
+      <div data-ppt="text" class="mo-cell-line {{ 'first' if loop.first else '' }}">{{ ln }}</div>
+      {% endfor %}
+      {% if card.punch %}<div data-ppt="text" class="mo-cell-punch">{{ card.punch }}</div>{% endif %}
+    </div>
+    {% endfor %}
+  </div>
+  {% include "_sowhat.html.j2" %}
+</div>
+{% include "_foot.html.j2" %}
+{% endblock %}

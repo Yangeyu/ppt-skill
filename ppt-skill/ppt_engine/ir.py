@@ -260,6 +260,18 @@ class ExhibitData(BaseModel):
     source: str = Field(default="", max_length=60)
 
 
+class FigureData(BaseModel):
+    """素材证据图页:引用素材中**已有**的配图(投放矩阵/榜单截图等),
+    src 逐字抄素材里的图片 URL 或本地路径——这是"素材图"通道,与 t2i 生成
+    (prompt)互斥;远程 URL 由 build 下载,pad 适配不裁切不变形。"""
+    kind: Literal["figure"] = "figure"
+    eyebrow: str = Field(default="", max_length=24)
+    title: str = Field(max_length=24)
+    src: str = Field(max_length=300)                    # 素材原文的图片 URL/路径,逐字引用
+    caption: str = Field(default="", max_length=48)     # 素材里的图注原文
+    so_what: str = Field(default="", max_length=60)
+
+
 class CustomData(BaseModel):
     """创作轨（B 层）—— LLM 写的 HTML 片段，吃设计系统套件的 class/令牌变量。
     无字数预算（靠套件约束 + 评论官）；叶子必带 data-ppt；颜色用 var(--*)/.c-*；
@@ -275,7 +287,7 @@ SlideData = Annotated[
     Union[CoverData, HeroData, SectionData, KpiData, BulletsData, ChartData,
           TocData, TwoColData, CompareData, ProcessData, IconGridData,
           TimelineData, TableData, PillarsData, QuoteData, ClosingData,
-          ExhibitData, CustomData],
+          ExhibitData, FigureData, CustomData],
     Field(discriminator="kind"),
 ]
 

@@ -1,0 +1,6 @@
+{% if page_total %}
+<div class="mo-foot">
+  <div data-ppt="text" class="mo-foot-t">{{ foot_left|default(deck_title, true) }}</div>
+  <div data-ppt="text" class="mo-foot-t">{{ '%02d'|format(page_no) }}</div>
+</div>
+{% endif %}
