@@ -68,5 +68,7 @@ STYLE_SUFFIX = (
     "consulting report: a single clear subject, restrained composition, "
     "soft directional studio light, muted warm-grey tonality, generous "
     "negative space, shallow depth of field, plain seamless background. "
+    "Wide horizontal banner framing with the subject kept in the middle "
+    "band of the frame (top and bottom thirds stay empty background). "
     "No text, no letters, no watermark, no logo, no border, no clutter."
 )

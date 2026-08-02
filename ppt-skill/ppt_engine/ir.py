@@ -64,7 +64,8 @@ class SectionData(BaseModel):
 class KpiData(BaseModel):
     kind: Literal["kpi"] = "kpi"
     eyebrow: str = Field(default="", max_length=24)
-    title: str = Field(max_length=24)
+    title: str = Field(max_length=40)                   # 结论句标题(SCR)
+    lead: str = Field(default="", max_length=110)       # 叙事段:标题下的承接语境(look 可选渲染)
     stats: list[Stat] = Field(min_length=2, max_length=4)
     so_what: str = Field(default="", max_length=60)     # 咨询式结论条(look 可选渲染)
 
@@ -72,7 +73,8 @@ class KpiData(BaseModel):
 class BulletsData(BaseModel):
     kind: Literal["bullets"] = "bullets"
     eyebrow: str = Field(default="", max_length=24)
-    title: str = Field(max_length=24)
+    title: str = Field(max_length=40)
+    lead: str = Field(default="", max_length=110)
     bullets: list[Bullet] = Field(min_length=1, max_length=6)
     so_what: str = Field(default="", max_length=60)
     prompt: str = Field(default="", max_length=300)     # 左侧插图列 t2i prompt(纵向构图,可选)
@@ -81,11 +83,15 @@ class BulletsData(BaseModel):
 class ChartData(BaseModel):
     kind: Literal["chart"] = "chart"
     eyebrow: str = Field(default="", max_length=24)
-    title: str = Field(max_length=24)
+    title: str = Field(max_length=40)
+    lead: str = Field(default="", max_length=110)
+    subtitle: str = Field(default="", max_length=56)    # 单位/口径/周期行,如 "篇 · 2026年1—7月 · 千瓜数据"
     chart_type: Literal["column", "bar", "line"] = "column"
     categories: list[str]
     series: list[Series] = Field(min_length=1, max_length=4)
+    note: str = Field(default="", max_length=40)        # 图上直接标注(要读者看的那根柱/那条线)
     takeaway: str = Field(default="", max_length=60)
+    source: str = Field(default="", max_length=60)      # 数据来源(页脚)
 
 
 Point = Annotated[str, Field(max_length=60)]
@@ -112,7 +118,8 @@ class Column(BaseModel):
 class TwoColData(BaseModel):
     kind: Literal["two_col"] = "two_col"
     eyebrow: str = Field(default="", max_length=24)
-    title: str = Field(max_length=24)
+    title: str = Field(max_length=40)
+    lead: str = Field(default="", max_length=110)
     left: Column
     right: Column
     so_what: str = Field(default="", max_length=60)
@@ -121,7 +128,8 @@ class TwoColData(BaseModel):
 class CompareData(BaseModel):
     kind: Literal["comparison"] = "comparison"
     eyebrow: str = Field(default="", max_length=24)
-    title: str = Field(max_length=24)
+    title: str = Field(max_length=40)
+    lead: str = Field(default="", max_length=110)
     left: Column
     right: Column
     so_what: str = Field(default="", max_length=60)
@@ -137,7 +145,8 @@ class Step(BaseModel):
 class ProcessData(BaseModel):
     kind: Literal["process"] = "process"
     eyebrow: str = Field(default="", max_length=24)
-    title: str = Field(max_length=24)
+    title: str = Field(max_length=40)
+    lead: str = Field(default="", max_length=110)
     steps: list[Step] = Field(min_length=2, max_length=5)
     so_what: str = Field(default="", max_length=60)
     prompt: str = Field(default="", max_length=300)     # 顶部插图横幅 t2i prompt(横向构图,可选)
@@ -156,7 +165,8 @@ class IconGridData(BaseModel):
     a couple lines + a punch line)."""
     kind: Literal["icon_grid"] = "icon_grid"
     eyebrow: str = Field(default="", max_length=24)
-    title: str = Field(max_length=24)
+    title: str = Field(max_length=40)
+    lead: str = Field(default="", max_length=110)
     subtitle: str = Field(default="", max_length=56)   # mono strapline under title
     cards: list[IconCard] = Field(min_length=2, max_length=6)
     so_what: str = Field(default="", max_length=60)
@@ -171,7 +181,8 @@ class Milestone(BaseModel):
 class TimelineData(BaseModel):
     kind: Literal["timeline"] = "timeline"
     eyebrow: str = Field(default="", max_length=24)
-    title: str = Field(max_length=24)
+    title: str = Field(max_length=40)
+    lead: str = Field(default="", max_length=110)
     subtitle: str = Field(default="", max_length=56)
     milestones: list[Milestone] = Field(min_length=2, max_length=5)
     so_what: str = Field(default="", max_length=60)
@@ -180,11 +191,13 @@ class TimelineData(BaseModel):
 class TableData(BaseModel):
     kind: Literal["table"] = "table"
     eyebrow: str = Field(default="", max_length=24)
-    title: str = Field(max_length=24)
+    title: str = Field(max_length=40)
+    lead: str = Field(default="", max_length=110)
     subtitle: str = Field(default="", max_length=56)
     headers: list[str] = Field(min_length=2, max_length=5)
     rows: list[list[str]] = Field(min_length=1, max_length=8)
     so_what: str = Field(default="", max_length=60)
+    source: str = Field(default="", max_length=60)      # 数据来源(页脚)
 
 
 class Pillar(BaseModel):
@@ -196,7 +209,8 @@ class Pillar(BaseModel):
 class PillarsData(BaseModel):
     kind: Literal["pillars"] = "pillars"
     eyebrow: str = Field(default="", max_length=24)
-    title: str = Field(max_length=24)
+    title: str = Field(max_length=40)
+    lead: str = Field(default="", max_length=110)
     subtitle: str = Field(default="", max_length=56)
     columns: list[Pillar] = Field(min_length=2, max_length=4)
     so_what: str = Field(default="", max_length=60)
@@ -249,6 +263,7 @@ class ExhibitData(BaseModel):
     kind: Literal["exhibit"] = "exhibit"
     eyebrow: str = Field(default="核心结论", max_length=24)
     title: str = Field(max_length=72)                        # 结论句,允许两行 + **强调**
+    lead: str = Field(default="", max_length=110)            # 叙事段(可选,标题下承接语境)
     chart_title: str = Field(default="", max_length=30)
     chart_type: Literal["column", "bar", "line"] = "column"
     categories: list[str] = []
@@ -266,7 +281,8 @@ class FigureData(BaseModel):
     (prompt)互斥;远程 URL 由 build 下载,pad 适配不裁切不变形。"""
     kind: Literal["figure"] = "figure"
     eyebrow: str = Field(default="", max_length=24)
-    title: str = Field(max_length=24)
+    title: str = Field(max_length=40)
+    lead: str = Field(default="", max_length=110)
     src: str = Field(max_length=300)                    # 素材原文的图片 URL/路径,逐字引用
     caption: str = Field(default="", max_length=48)     # 素材里的图注原文
     so_what: str = Field(default="", max_length=60)

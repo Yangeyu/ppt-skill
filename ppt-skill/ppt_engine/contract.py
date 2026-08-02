@@ -33,7 +33,7 @@ KIND_HINTS = {
     "section":   "章节幕",
     "kpi":       "大数字页",
     "bullets":   "要点页",
-    "chart":     "单图表页",
+    "chart":     "单图表证据页(subtitle 写单位·口径·周期,note 点名要读者看的那根柱/线,source 写数据来源)",
     "two_col":   "双面板清单",
     "comparison": "左右对比",
     "process":   "步骤/方法",

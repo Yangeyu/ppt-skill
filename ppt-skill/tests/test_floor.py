@@ -93,7 +93,7 @@ def test_punctuation_only_contrast_is_warning_not_error():
 
 # ---- SpecLock 渲染接口（build/render/oox/fonts 的消费面） ------------------
 def test_speclock_render_surface():
-    sp = LOOKS["swiss"].spec
+    sp = LOOKS["crimson"].spec
     assert isinstance(sp.css_vars(), str) and "--type-display" in sp.css_vars()
     assert set(sp.scheme()) >= {"dk1", "lt1", "accent1", "accent2"}
     assert sp.color_slot()                      # 反查表非空

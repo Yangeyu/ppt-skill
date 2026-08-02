@@ -67,11 +67,18 @@ LOOK = Look(
     image_fallback=make_hero,
     pick_when="竞品分析/战略报告/证据密集的论证",
     density={                       # 咨询高密度:证据页信息量下限(critic/density 消费)
-        "exhibit_min": 2,           # 全篇 exhibit 页数下限(每章主论证一页)
+        "exhibit_min": 3,           # 全篇 exhibit 页数下限(每章主论证一页,含执行摘要)
         "kpi_stats_min": 3,         # 或任一 stat 带 delta
         "bullets_min": 4,
         "icon_grid_min": 4,
         "table_rows_min": 3,
         "so_what_required": True,   # 内容页必须给 so_what/takeaway
+        "lead_required": True,      # 内容页必须给 lead 叙事段(标题下承接语境)
+    },
+    # 插图槽。aspect 必须与模板图元素盒子宽高比一致,否则原生嵌图变形。
+    image_slots={
+        # 顶部证据图版条(.ch-strip);超宽条取窗偏上(focus 0.3)保住人像面部
+        # (t2i 人像的面部几乎总在画面上三分之一)
+        "hero": {"size": "1664*928", "aspect": 1280 / 248, "focus": 0.3},
     },
 )

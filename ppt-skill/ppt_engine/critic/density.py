@@ -66,4 +66,7 @@ def check_density(deck: dict, look_id: str | None = None) -> list[dict]:
                 thin("缺 so_what 结论条——给决策者一句含义")
             if kind == "chart" and not d.get("takeaway"):
                 thin("缺 takeaway——图表必须直接标注要读者看什么")
+        if prof.get("lead_required"):
+            if kind in (_CONTENT_KINDS | {"chart"}) and not d.get("lead"):
+                thin("缺 lead 叙事段——标题下给 1~2 句承接语境(本页讲什么、为何重要)")
     return issues

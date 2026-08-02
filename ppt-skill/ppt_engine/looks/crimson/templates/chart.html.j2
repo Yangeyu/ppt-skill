@@ -1,19 +1,25 @@
 {% extends "base.html.j2" %}
 {% block frame %}
-{# EXHIBIT —— 栏头编号 + 原生图表(直接标注,强调序列深红) + takeaway 走 SO WHAT 条 #}
+{# 单图表证据页 —— 结论句标题 + 叙事段(lead) + EXHIBIT 栏头 + 原生图表(直接标注,
+   强调序列深红) + 图上注释框(note) + takeaway 走 SO WHAT 条 + 来源页脚 #}
 <div class="c-frame">
   {% include "_head.html.j2" %}
-  <div class="c-body" style="flex-direction:column;">
+  <div class="c-body" style="flex-direction:column;margin-top:20px;">
     <div class="c-exh">
       <div data-ppt="text" class="c-etag">EXHIBIT {{ '%02d'|format(page_no) if page_total else '01' }}</div>
-      <div data-ppt="text" class="c-top-r" style="margin-left:0;">UNIT AS LABELED · DIRECT ANNOTATION</div>
     </div>
     <div class="c-chart-area">
       <div data-ppt="chart" data-chart='{{ chart_json|safe }}' class="c-chart-box"></div>
     </div>
+    {% if d.note %}
+    <div data-ppt="rect" style="flex:0 0 auto;align-self:center;margin-top:8px;padding:5px 16px;border:1px dashed {{ colors['accent'] }};">
+      <div data-ppt="text" class="cx-note-t">{{ d.note }}</div>
+    </div>
+    {% endif %}
   </div>
   {% set sw_text = d.takeaway %}
   {% include "_sowhat.html.j2" %}
 </div>
+{% set foot_left = d.source or deck_title %}
 {% include "_foot.html.j2" %}
 {% endblock %}

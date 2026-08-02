@@ -17,6 +17,7 @@
     {% endfor %}
   </div>
   <div data-ppt="rect" style="width:120px;height:3px;background:{{ colors['accent'] }};margin-top:10px;"></div>
+  {% if d.lead %}<div data-ppt="text" class="c-lead cx">{{ d.lead }}</div>{% endif %}
 
   <div class="cx-body">
     <div data-ppt="rect" class="cx-mod cx-chart-mod" style="background:{{ colors['bg-content'] }};border:1px solid {{ colors['hairline'] }};">

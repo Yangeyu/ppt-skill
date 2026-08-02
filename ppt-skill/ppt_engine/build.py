@@ -33,8 +33,10 @@ TPL_DIR = Path(__file__).parent / "looks" / "_shared"
 _MARK_RE = re.compile(r"\*\*(.+?)\*\*")
 
 
-def _crop_to_aspect(path: str, aspect: float) -> None:
-    """Center-crop a PNG to the slot's w/h aspect (native images can't srcRect)."""
+def _crop_to_aspect(path: str, aspect: float, focus: float = 0.5) -> None:
+    """Crop a PNG to the slot's w/h aspect (native images can't srcRect).
+    focus = 被裁维度上取窗中心的位置(0=起点,0.5=居中,1=末端)——超宽横条裁
+    人像时偏上(如 0.4)可保住主体面部。"""
     from PIL import Image
     im = Image.open(path)
     w, h = im.size
@@ -42,10 +44,12 @@ def _crop_to_aspect(path: str, aspect: float) -> None:
         return
     if w / h > aspect:
         nw = int(h * aspect)
-        box = ((w - nw) // 2, 0, (w - nw) // 2 + nw, h)
+        left = min(max(int(w * focus - nw / 2), 0), w - nw)
+        box = (left, 0, left + nw, h)
     else:
         nh = int(w / aspect)
-        box = (0, (h - nh) // 2, w, (h - nh) // 2 + nh)
+        top = min(max(int(h * focus - nh / 2), 0), h - nh)
+        box = (0, top, w, top + nh)
     im.crop(box).save(path)
 
 
@@ -162,7 +166,7 @@ class Engine:
             if slot.get("fit") == "pad":
                 _pad_to_aspect(out, slot["aspect"], slot.get("pad_color", "#FFFFFF"))
             else:
-                _crop_to_aspect(out, slot["aspect"])
+                _crop_to_aspect(out, slot["aspect"], slot.get("focus", 0.5))
         return out
 
     def build(self, deck: Deck, out_path: str, screenshot_dir: str | None = None,

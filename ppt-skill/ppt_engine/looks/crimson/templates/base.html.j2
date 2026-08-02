@@ -47,6 +47,14 @@ html, body { margin: 0; padding: 0; }
 .c-rule-strong { flex: 0 0 auto; width: 100%; height: 2px; background: var(--ink); margin-top: 16px; }
 .c-rule-hair { flex: 0 0 auto; width: 100%; height: 1px; background: var(--hairline); margin-top: 3px; }
 
+/* ---- 叙事段（lead，标题与证据之间的承接语境）---- */
+.c-lead { font-family: var(--font-body); font-size: 14px; line-height: 1.62; color: var(--ink);
+          margin-top: 14px; max-width: 1136px; }
+.c-lead.cx { font-size: 12.5px; line-height: 1.55; margin-top: 10px; max-width: 1168px; }
+
+/* ---- 图表单位/口径行（EXHIBIT 栏头右侧）---- */
+.c-unit { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .08em; color: var(--muted); }
+
 .c-body { flex: 1 1 auto; margin-top: 26px; display: flex; min-height: 0; }
 
 /* ---- SO WHAT 结论条（T9 标签 + T10 正文）---- */
@@ -285,7 +293,7 @@ html, body { margin: 0; padding: 0; }
 .cx-imp-d { font-family: var(--font-body); font-size: 10.5px; line-height: 1.4; color: var(--muted); margin-top: 3px; }
 
 /* 正文类可折行（覆盖单行默认）*/
-.c-title, .c-sub, .c-sw-text, .c-vtext, .c-cmp-text, .c-col-text, .c-tcell-t, .c-cell-line,
+.c-lead, .c-title, .c-sub, .c-sw-text, .c-vtext, .c-cmp-text, .c-col-text, .c-tcell-t, .c-cell-line,
 .c-tl-desc, .c-step-desc, .c-pillar-text, .c-quote-text, .c-out-sub, .ch-sub, .c-toc-desc,
 .cc-sub, .cs-title, .cx-title, .cx-ins-p, .cx-imp-d, .cx-imp-tab-t, .cx-ins-h, .cx-mod-h { white-space: normal; }
 /* flex 行内折行正文必须允许收缩填满 */
