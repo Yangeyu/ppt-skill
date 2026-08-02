@@ -52,11 +52,14 @@ def check_facts(deck: dict, source: str, *, max_sections: int = 3) -> list[dict]
                 "detail": f"contact「{contact}」在素材中不存在——留空(\"\")",
             })
 
+    # 章节数上限随 deck 体量缩放:短 deck 最多 3 幕,长报告约每 6 页允许一幕
+    # (页数是覆盖率承诺,章节结构应服务于素材本身的论证骨架,不硬压)
+    cap = max(max_sections, len(slides) // 6)
     n_sections = sum(1 for s in slides if s.get("data", {}).get("kind") == "section")
-    if n_sections > max_sections:
+    if n_sections > cap:
         issues.append({
             "slide": 0, "type": "too-many-sections",
-            "detail": f"section 章节幕共 {n_sections} 页,超过上限 {max_sections}——"
+            "detail": f"section 章节幕共 {n_sections} 页,超过上限 {cap}(约每 6 页一幕)——"
                       "合并相邻主题,删多余章节幕",
         })
     return issues

@@ -18,7 +18,11 @@ from .oox_theme import inject_theme
 ALIGN = {"left": PP_ALIGN.LEFT, "center": PP_ALIGN.CENTER, "right": PP_ALIGN.RIGHT,
          "start": PP_ALIGN.LEFT, "end": PP_ALIGN.RIGHT, "justify": PP_ALIGN.JUSTIFY}
 CHART_T = {"column": XL_CHART_TYPE.COLUMN_CLUSTERED, "bar": XL_CHART_TYPE.BAR_CLUSTERED,
-           "line": XL_CHART_TYPE.LINE_MARKERS}
+           "line": XL_CHART_TYPE.LINE_MARKERS,
+           "pie": XL_CHART_TYPE.PIE, "donut": XL_CHART_TYPE.DOUGHNUT,
+           "stacked_column": XL_CHART_TYPE.COLUMN_STACKED,
+           "stacked_bar": XL_CHART_TYPE.BAR_STACKED,
+           "radar": XL_CHART_TYPE.RADAR}
 ZRANK = {"rect": 0, "line": 0, "image": 5, "icon": 6, "chart": 5, "text": 10}
 # families that carry CJK glyphs — used to split a:latin (Latin face) from
 # a:ea (East-Asian face) so a heavy Latin display + a CJK black can coexist in one run
@@ -219,21 +223,38 @@ def _add_chart(slide, p, theme):
     chart = gf.chart
     chart.has_title = False
     multi = len(c["series"]) > 1
-    chart.has_legend = multi
-    if multi:
+    circular = ctype in ("pie", "donut")
+    chart.has_legend = multi or circular      # 环形图靠图例读分类
+    if chart.has_legend:
         chart.legend.position = XL_LEGEND_POSITION.BOTTOM
         chart.legend.include_in_layout = False
     chart.font.size = Pt(12)
     _chart_transparent(chart)
-    for i, series in enumerate(chart.plots[0].series):
+    plot = chart.plots[0]
+    if circular:
+        # 单序列按分块着色(强调序列在首):占比图不标数等于没画,直接上值标签
+        for i, pt in enumerate(plot.series[0].points):
+            hexv = theme.chart_palette[i % len(theme.chart_palette)]
+            pt.format.fill.solid()
+            pt.format.fill.fore_color.rgb = RGBColor.from_string(hexv)
+        plot.has_data_labels = True
+        plot.data_labels.show_value = True
+        plot.data_labels.font.size = Pt(11)
+        return
+    for i, series in enumerate(plot.series):
         hexv = theme.chart_palette[i % len(theme.chart_palette)]
-        if ctype == "line":
+        if ctype in ("line", "radar"):
             series.format.line.color.rgb = RGBColor.from_string(hexv)
             series.format.line.width = Pt(2.5)
         else:
             series.format.fill.solid()
             series.format.fill.fore_color.rgb = RGBColor.from_string(hexv)
             series.format.line.fill.background()
+    if not multi and ctype in ("column", "bar"):
+        # 单序列量级对比:直接标注数值(咨询图表纪律)
+        plot.has_data_labels = True
+        plot.data_labels.show_value = True
+        plot.data_labels.font.size = Pt(11)
 
 
 def render_deck(deck, slides_prims, theme, out_path):

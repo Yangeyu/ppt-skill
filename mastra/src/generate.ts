@@ -80,7 +80,18 @@ async function stageLoop(label: string, ask: string, maxRepair: number,
   let payload: any = null;
   for (let round = 0; round <= maxRepair; round++) {
     console.error(`→ ${label}(第 ${round + 1} 次)…`);
-    payload = parseJson(await genWithRetry(ask));
+    const raw = await genWithRetry(ask);
+    try {
+      payload = parseJson(raw);
+    } catch (e) {
+      // 模型偶发输出坏 JSON(单引号键/截断)——同样走回喂修复,不打死流程
+      if (round === maxRepair) throw e;
+      console.error(`  ✗ 输出不是合法 JSON,回喂重出(${String(e).slice(0, 80)})`);
+      ask = `你上一版${label}不是合法 JSON,解析错误:${String(e).slice(0, 160)}。\n` +
+            `请修复后重新输出**完整且合法**的 JSON(属性名必须用双引号,` +
+            `不要输出 JSON 以外的任何文字)。上一版原文:\n${raw}`;
+      continue;
+    }
     const problems = check(payload);
     if (problems.length === 0) return payload;
     console.error(`  ✗ ${problems.length} 处问题,回喂修复`);

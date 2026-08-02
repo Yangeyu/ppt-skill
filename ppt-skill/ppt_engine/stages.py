@@ -99,17 +99,19 @@ def _page_tolerance(n_target: int) -> int:
 
 
 def recommend_pages(n_facts: int) -> int:
-    """按素材信息量推荐页数:证据页约 3~4 条事实/页 + 结构页(封面/目录/章节幕/收尾)。
-    页数应由素材派生,而非调用方拍脑袋——目标是覆盖充分,不是把报告压进定长模板。"""
-    evidence = max(4, round(n_facts / 3.5))
-    return min(40, max(10, evidence + 6))
+    """按素材信息量推荐页数:证据页约 2~3 条事实/页 + 结构页(封面/目录/章节幕/收尾)。
+    页数应由素材派生,而非调用方拍脑袋——目标是覆盖充分、论证充分,
+    不是把报告压进定长模板:报告的专业性靠丰富的证据页支撑,宁富勿缩。"""
+    evidence = max(4, round(n_facts / 2.5))
+    return min(48, max(12, evidence + 6))
 
 
 def recommend_pages_from_source(text: str) -> int:
-    """快路径版页数推荐:没有事实清单时按素材体量估,约 450 个中文字符/页。
+    """快路径版页数推荐:没有事实清单时按素材体量估,约 300 个中文字符/页
+    (宁富勿缩——结构化报告的每个子小节都应有自己的证据页,压缩伤论证)。
     这是全工程唯一的体量启发式实现——SKILL.md 与外部驱动(mastra 等)都应
     经 cli --recommend-pages 消费,不要各自复制这个除数。"""
-    return min(36, max(12, round(len(text) / 450)))
+    return min(48, max(12, round(len(text) / 300)))
 
 
 def outline_contract(look_id: str, n_slides: int) -> str:

@@ -33,6 +33,19 @@ def check_density(deck: dict, look_id: str | None = None) -> list[dict]:
                        "detail": f"exhibit 复合版面仅 {n_exhibit} 页,本风格要求 ≥{prof['exhibit_min']}"
                                  "——把有数字支撑的主论证升格为 exhibit"})
 
+    # 图表类型多样性:量级/占比/结构/画像各有对应图型,整本只用一种 = 选型失职
+    if (m := prof.get("chart_variety_min")):
+        types = [s.get("data", {}).get("chart_type", "column") for s in slides
+                 if s.get("data", {}).get("kind") in ("chart", "exhibit")
+                 and s.get("data", {}).get("series")]
+        need = min(m, len(types))
+        if len(types) >= 3 and len(set(types)) < need:
+            issues.append({"slide": 0, "type": "chart-monoculture",
+                           "detail": f"全篇 {len(types)} 页图表只用了 {len(set(types))} 种类型"
+                                     f"({'/'.join(sorted(set(types)))}),要求 ≥{need} 种——"
+                                     "占比/份额用 donut 或 pie,层级/构成用 stacked_column 或 "
+                                     "stacked_bar,多对象多维画像用 radar,趋势用 line,量级对比用 column/bar"})
+
     for idx, slide in enumerate(slides, 1):
         d = slide.get("data", {})
         kind = d.get("kind", "")

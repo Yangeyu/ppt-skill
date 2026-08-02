@@ -86,7 +86,8 @@ class ChartData(BaseModel):
     title: str = Field(max_length=40)
     lead: str = Field(default="", max_length=110)
     subtitle: str = Field(default="", max_length=56)    # 单位/口径/周期行,如 "篇 · 2026年1—7月 · 千瓜数据"
-    chart_type: Literal["column", "bar", "line"] = "column"
+    chart_type: Literal["column", "bar", "line", "pie", "donut",
+                        "stacked_column", "stacked_bar", "radar"] = "column"
     categories: list[str]
     series: list[Series] = Field(min_length=1, max_length=4)
     note: str = Field(default="", max_length=40)        # 图上直接标注(要读者看的那根柱/那条线)
@@ -265,7 +266,8 @@ class ExhibitData(BaseModel):
     title: str = Field(max_length=72)                        # 结论句,允许两行 + **强调**
     lead: str = Field(default="", max_length=110)            # 叙事段(可选,标题下承接语境)
     chart_title: str = Field(default="", max_length=30)
-    chart_type: Literal["column", "bar", "line"] = "column"
+    chart_type: Literal["column", "bar", "line", "pie", "donut",
+                        "stacked_column", "stacked_bar", "radar"] = "column"
     categories: list[str] = []
     series: list[Series] = Field(default_factory=list, max_length=4)
     chart_note: str = Field(default="", max_length=40)       # 图下标注(如 CAGR 框)

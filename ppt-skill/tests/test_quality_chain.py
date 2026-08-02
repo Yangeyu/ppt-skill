@@ -99,15 +99,15 @@ def test_density_silent_for_sparse_looks():
 
 # ---- 页数派生(覆盖率导向,单一实现) ----------------------------------------
 def test_recommend_pages_from_source_scales_and_clamps():
-    assert recommend_pages_from_source("字" * 450 * 20) == 20
+    assert recommend_pages_from_source("字" * 300 * 20) == 20
     assert recommend_pages_from_source("短") == 12            # 下限
-    assert recommend_pages_from_source("字" * 450 * 99) == 36  # 上限
+    assert recommend_pages_from_source("字" * 300 * 99) == 48  # 上限
 
 
 def test_recommend_pages_from_facts():
-    assert recommend_pages(35) == 16       # 35/3.5=10 证据页 + 6 结构页
-    assert recommend_pages(0) == 10        # 下限
-    assert recommend_pages(500) == 40      # 上限
+    assert recommend_pages(35) == 20       # 35/2.5=14 证据页 + 6 结构页
+    assert recommend_pages(0) == 12        # 下限
+    assert recommend_pages(500) == 48      # 上限
 
 
 # ---- SpecLock 解析(look 包是唯一身份来源) ----------------------------------

@@ -74,6 +74,7 @@ LOOK = Look(
         "table_rows_min": 3,
         "so_what_required": True,   # 内容页必须给 so_what/takeaway
         "lead_required": True,      # 内容页必须给 lead 叙事段(标题下承接语境)
+        "chart_variety_min": 3,     # 图表类型 ≥3 种(占比/结构/画像各有对应图型,禁全柱状)
     },
     # 插图槽。aspect 必须与模板图元素盒子宽高比一致,否则原生嵌图变形。
     image_slots={
