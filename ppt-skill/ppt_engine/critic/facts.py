@@ -28,14 +28,39 @@ def _walk(obj, path="deck"):
             yield from _walk(v, f"{path}[{i}]")
 
 
+def _canon_num(v) -> str:
+    """数值 → 与素材 token 可比的字符串形态(整数去掉 .0)。"""
+    f = float(v)
+    return str(int(f)) if f.is_integer() else repr(f)
+
+
 def check_facts(deck: dict, source: str, *, max_sections: int = 3) -> list[dict]:
     """deck 为 Deck IR 的 dict 形态;source 为素材原文。返回 issues(空 = 干净)。"""
     issues: list[dict] = []
-    src_nums = set(_NUM.findall(source))
+    # 千分位逗号是排版差异不是数字差异:"47,397" 应能对上 series 值 47397
+    src_nums = set(_NUM.findall(source)) | set(_NUM.findall(source.replace(",", "")))
+    # series 数值走数值域比对(素材 "27.30" 应能对上 JSON 解析出的 27.3)
+    src_vals = {float(t) for t in src_nums}
     slides = deck.get("slides", [])
 
     for idx, slide in enumerate(slides, 1):
         d = slide.get("data", {})
+        # 图表 series 数值溯源(字符串遍历覆盖不到数值数组——模型会在这里推导补数)
+        ctype = d.get("chart_type", "column")
+        for s_ in (d.get("series") or []):
+            vals = [v for v in (s_.get("values") or []) if isinstance(v, (int, float))]
+            missing = [v for v in vals if float(v) not in src_vals]
+            # 占比图例外:唯一一个补足 100% 的分块是画图所需的呈现推导,放行
+            if (ctype in ("pie", "donut") and len(missing) == 1
+                    and 99.0 <= sum(vals) <= 101.0):
+                missing = []
+            for v in missing:
+                issues.append({
+                    "slide": idx, "type": "number-unsourced",
+                    "detail": f"series「{s_.get('name', '')}」含素材中没有的数值"
+                              f"「{_canon_num(v)}」——图表数值必须逐字来自素材,不得推导/"
+                              "指数化;占比图仅允许一个补足 100% 的'其他'分块",
+                })
         for path, text in _walk(d, d.get("kind", "?")):
             for tok in _NUM.findall(text):
                 if len(tok) > 1 and tok not in src_nums:

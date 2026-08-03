@@ -69,6 +69,23 @@ def test_facts_passes_verbatim_numbers():
     assert check_facts(deck, SOURCE) == []
 
 
+def test_facts_catches_derived_series_value():
+    # series 数值数组是字符串遍历的盲区:模型在这里推导补数/指数化打分
+    deck = _deck([{"kind": "chart", "chart_type": "column",
+                   "categories": ["甲", "乙"],
+                   "series": [{"name": "x", "values": [81.88, 18.12]}]}])  # 18.12=100-81.88 推导
+    issues = check_facts(deck, SOURCE)
+    assert any(i["type"] == "number-unsourced" for i in issues)
+
+
+def test_facts_allows_donut_complement_slice():
+    # 占比图唯一补足 100% 的分块 = 呈现所需,放行;千分位逗号不阻断溯源
+    deck = _deck([{"kind": "chart", "chart_type": "donut",
+                   "categories": ["占比", "其他"],
+                   "series": [{"name": "x", "values": [81.88, 18.12]}]}])
+    assert check_facts(deck, SOURCE) == []
+
+
 def test_facts_catches_fabricated_contact():
     deck = _deck([{"kind": "closing", "title": "谢谢", "contact": "+86 21 6237 0000"}])
     issues = check_facts(deck, SOURCE)
